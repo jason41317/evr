@@ -48,7 +48,7 @@
                     <?php } ?>
                 </table>
 
-                <div id="span_particular" data-description="Particular" class="drag_member" style="position: absolute;left: <?php echo $layouts->particular_pos_left; ?>px;top: <?php echo $layouts->particular_pos_top; ?>px;font-style: <?php echo $layouts->particular_is_italic; ?>;font-weight:<?php echo ($layouts->particular_is_bold?'bold':'normal'); ?>;font-size: <?php echo $layouts->particular_font_size; ?>;font-family: <?php echo $layouts->particular_font_family; ?>">***Paul Christian Rueda***</div>
+                <div id="span_particular" data-description="Particular" class="drag_member" style="position: absolute;left: <?php echo $layouts->particular_pos_left; ?>px;top: <?php echo $layouts->particular_pos_top; ?>px;font-style: <?php echo $layouts->particular_is_italic; ?>;font-weight:<?php echo ($layouts->particular_is_bold?'bold':'normal'); ?>;font-size: <?php echo $layouts->particular_font_size; ?>;font-family: <?php echo $layouts->particular_font_family; ?>">***Particular***</div>
 
                 <div id="span_amount_words" data-description="Amount in Words"  class="drag_member" style="position: absolute;left: <?php echo $layouts->words_pos_left; ?>px;top: <?php echo $layouts->words_pos_top; ?>px;font-style: <?php echo $layouts->words_is_italic; ?>;font-weight:<?php echo ($layouts->words_is_bold?'bold':'normal'); ?>;font-size: <?php echo $layouts->words_font_size; ?>;font-family: <?php echo $layouts->words_font_family; ?>">***One million pesos only***</div>
 

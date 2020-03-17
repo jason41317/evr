@@ -60,7 +60,7 @@ class Email extends CORE_Controller {
                 $email_setting  = array('mailtype'=>'html');
                 $this->email->initialize($email_setting);
 
-                $this->email->from('jdevsystems@jdevsolution.com', 'Paul Christian Rueda');
+                $this->email->from('jdevsystems@jdevsolution.com', 'JDEV OFFICE SOLUTION');
                 $this->email->to($info[0]->email_address);
                 //$this->email->cc('another@another-example.com');
                 //$this->email->bcc('them@their-example.com');

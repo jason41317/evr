@@ -155,7 +155,7 @@ class Sales_invoice extends CORE_Controller
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_invoice=$this->Sales_invoice_model;
                 $response['data']=$this->response_rows(
-                    'sales_invoice.is_active=TRUE AND sales_invoice.is_deleted=FALSE AND sales_invoice.inv_type=1'.($id_filter==null?'':' AND sales_invoice.sales_invoice_id='.$id_filter)
+                    'sales_invoice.is_active=TRUE  AND sales_invoice.sales_invoice_id < 1000 AND sales_invoice.is_deleted=FALSE AND sales_invoice.inv_type=1'.($id_filter==null?'':' AND sales_invoice.sales_invoice_id='.$id_filter)
                 );
                 echo json_encode($response);
                 break;

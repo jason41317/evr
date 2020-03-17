@@ -105,7 +105,7 @@ class Sales_invoice_other extends CORE_Controller
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_invoice=$this->Sales_invoice_model;
                 $response['data']=$this->response_rows(
-                    'sales_invoice.inv_type=2 AND sales_invoice.is_active=TRUE AND sales_invoice.is_deleted=FALSE'.($id_filter==null?'':' AND sales_invoice.sales_invoice_id='.$id_filter)
+                    'sales_invoice.inv_type=2 AND sales_invoice.sales_invoice_id < 1000 AND sales_invoice.is_active=TRUE AND sales_invoice.is_deleted=FALSE'.($id_filter==null?'':' AND sales_invoice.sales_invoice_id='.$id_filter)
                 );
                 echo json_encode($response);
                 break;
@@ -528,29 +528,16 @@ class Sales_invoice_other extends CORE_Controller
                 'sales_invoice.customer_id',
                 'sales_invoice.inv_type',
 				'sales_invoice.is_journal_posted',
-                'sales_invoice_items.product_id',
-                'products.product_code',
-                'products.product_desc',
-                'sales_invoice_items.unit_id',
-                'units.unit_name',
-                'sales_invoice_items.inv_qty',
                 'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
                 'DATE_FORMAT(sales_invoice.date_due,"%m/%d/%Y") as date_due',
                 'departments.department_id',
                 'departments.department_name',
                 'customers.customer_name',
-                'sales_invoice_items.inv_price',
-                'sales_invoice_items.inv_discount',
-                'sales_invoice_items.inv_tax_rate',
-                'sales_invoice_items.inv_line_total_price',
                 'dd.department_name as issued_department'
             ),
             array(
-                array('sales_invoice_items','sales_invoice.sales_invoice_id=sales_invoice_items.sales_invoice_id','left'),
                 array('departments','departments.department_id=sales_invoice.department_id','left'),
                 array('customers','customers.customer_id=sales_invoice.customer_id','left'),
-                array('units','sales_invoice_items.unit_id=units.unit_id','left'),
-                array('products','sales_invoice_items.product_id=products.product_id','left'),
                 array('departments as dd','dd.department_id=sales_invoice.issue_to_department','left')
             ),null,'sales_invoice.sales_invoice_id'
         );

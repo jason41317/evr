@@ -412,7 +412,7 @@ class Purchases extends CORE_Controller
                             $email_setting  = array('mailtype'=>'html');
                             $this->email->initialize($email_setting);
 
-                            $this->email->from('jdevsystems@jdevsolution.com', 'Paul Christian Rueda');
+                            $this->email->from('jdevsystems@jdevsolution.com', 'JDEV OFFICE SOLUTION INC');
                             $this->email->to($info[0]->user_email);
                             //$this->email->cc('another@another-example.com');
                             //$this->email->bcc('them@their-example.com');
