@@ -1,70 +1,32 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
-
     <title>JCORE - <?php echo $title; ?></title>
-
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
-
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
-
-    <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <style>
-        html{
-            zoom: 0.82;
-            zoom: 82%;
-        }
-
-
-
     </style>
-
-
-
     <?php echo $_switcher_settings; ?>
     <?php echo $_def_js_files; ?>
-
-
     <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
 
-    <!-- Date range use moment.js same as full calendar plugin -->
-    <script src="assets/plugins/fullcalendar/moment.min.js"></script>
-    <!-- Data picker -->
-    <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
-
     <!-- Select2 -->
     <script src="assets/plugins/select2/select2.full.min.js"></script>
-
-
-    <!-- Date range use moment.js same as full calendar plugin -->
-    <script src="assets/js/plugins/fullcalendar/moment.min.js"></script>
-    <!-- Data picker -->
-    <script src="assets/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 
     <!-- twitter typehead -->
     <script src="assets/plugins/twittertypehead/handlebars.js"></script>
@@ -91,9 +53,6 @@ $(document).ready(function(){
 
     var getProduct=function(){
         dt=$('#tbl_products').DataTable({
-            "fnInitComplete": function (oSettings, json) {
-                $.unblockUI();
-                },
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
@@ -115,8 +74,8 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ""
                 },
-                { targets:[1],data: "product_code" },
-                { targets:[2],data: "product_desc" },
+                { targets:[1],data: "product_code" ,  render: $.fn.dataTable.render.ellipsis(20)},
+                { targets:[2],data: "product_desc",  render: $.fn.dataTable.render.ellipsis(150) },
                 { targets:[3],data: "product_type" },
                 { targets:[4],data: "category_name" },
                 {
@@ -1055,16 +1014,16 @@ $(document).ready(function(){
                                                 </button>
                                                 <h2 style="margin-top: 0px !important;margin-bottom: 0px !important;">Products</h2><hr>
                                                 <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New product" ><i class="fa fa-plus-circle"></i> Create New Product</button>
-                                                <table id="tbl_products" class="custom-design table-striped" cellspacing="0" width="100%">
+                                                <table id="tbl_products" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>    
-                                                        <th></th>
-                                                        <th>PLU</th>
-                                                        <th>Product Description</th>
-                                                        <th>Product Type</th>
-                                                        <th>Category</th>
-                                                        <th>On Hand</th>
-                                                        <th><center>Action</center></th>
+                                                        <th width="3%"></th>
+                                                        <th width="10%">PLU</th>
+                                                        <th width="42%">Product Description</th>
+                                                        <th width="15%">Product Type</th>
+                                                        <th width="10%">Category</th>
+                                                        <th width="10%">On Hand</th>
+                                                        <th width="10%"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>

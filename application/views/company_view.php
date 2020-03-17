@@ -127,7 +127,7 @@
                                             </div>
  -->
                                             <div class="panel-body">
-                                              <h2>Company Information</h2>
+                                              <h2 class="h2-panel-heading">Company Information</h2><hr>
 
                                                <form id="frm_company" role="form" class="form-horizontal row-border">
 

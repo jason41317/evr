@@ -93,15 +93,15 @@
                                     <div id="div_tax_list">
                                         <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
                                             <div class="panel-body table-responsive">
-                                                <h2 style="margin-top:0;">Tax Setup</h2>
-                                                <table id="tbl_tax" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                                    <thead class="table-erp">
+                                                    <h2 class="h2-panel-heading"> Tax Setup</h2><hr>
+                                                <table id="tbl_tax" class="table table-striped" cellspacing="0" width="100%">
+                                                    <thead class="">
                                                     <tr>
-                                                        <th></th>
+                                                        <th width="5%"></th>
                                                         <th>Tax</th>
                                                         <th>Tax Rate</th>
                                                         <th>Description</th>
-                                                        <th><center>Action</center></th>
+                                                        <th width="10%"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>

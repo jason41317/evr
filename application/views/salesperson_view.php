@@ -1,33 +1,22 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
     <head>
-
         <meta charset="utf-8">
-
         <title>JCORE - <?php echo $title; ?></title>
-
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-touch-fullscreen" content="yes">
         <meta name="description" content="Avenxo Admin Theme">
         <meta name="author" content="">
-
         <?php echo $_def_css_files; ?>
-
         <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
         <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
         <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
-
         <style>
-
             .toolbar{
                 float: left;
             }
-
             td.details-control {
                 background: url('assets/img/Folder_Closed.png') no-repeat center center;
                 cursor: pointer;
@@ -86,13 +75,13 @@
                                             <div id="div_category_list">
                                                 <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
                                                     <div class="panel-body table-responsive">
-                                                    <h2 style="margin-top: 0;">Sales Person</h2>
-                                                        <table id="tbl_salesperson" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                                            <thead class="table-erp">
+                                                    <h2 class="h2-panel-heading"> Sales Person</h2><hr>
+                                                        <table id="tbl_salesperson" class="table table-striped" cellspacing="0" width="100%">
+                                                            <thead class="">
                                                             <tr>
                                                                 <th>Acronym Name</th>
                                                                 <th>Salesperson</th>
-                                                                <th><center>Action</center></th>
+                                                                <th width="10%"><center>Action</center></th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>

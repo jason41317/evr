@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <!-- Mirrored from avenxo.kaijuthemes.com/ui-typography.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 06 Jun 2016 12:09:25 GMT -->
 <head>
     <meta charset="utf-8">
@@ -11,25 +10,16 @@
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
-
-
     <style>
         .toolbar{
             float: left;
         }
-
         td.details-control {
             background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
@@ -37,12 +27,10 @@
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
-
         .child_table{
             padding: 5px;
             border: 1px #ff0000 solid;
         }
-
         .glyphicon.spinning {
             animation: spin 1s infinite linear;
             -webkit-animation: spin2 1s infinite linear;
@@ -121,9 +109,9 @@
 <div id="div_user_group_list">
     <div class="panel panel-default"  style="border-top: 3px solid #2196f3;">
         <div class="panel-body table-responsive">
-            <h2>User Group</h2>
-            <table id="tbl_user_group_list" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                <thead class="table-erp">
+            <h2 class="h2-panel-heading">User Group</h2><hr>
+            <table id="tbl_user_group_list" class="table table-striped" cellspacing="0" width="100%">
+                <thead>
                 <tr>
                     <th></th>
                     <th>User Group</th>

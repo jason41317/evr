@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <!-- Mirrored from avenxo.kaijuthemes.com/ui-typography.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 06 Jun 2016 12:09:25 GMT -->
 <head>
     <meta charset="utf-8">
@@ -11,34 +10,15 @@
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
-
-
-
-
-
-
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
-
-
         .alert {
             border-width: 0;
             border-style: solid;
@@ -50,16 +30,11 @@
             font-weight: bolder;
             font-size: 14px;
         }
-
         .alert-danger {
             color: #dd191d;
             background-color: #f9bdbb;
             border-color: #e84e40;
         }
-
-
-
-
         #tbl_items td,#tbl_items tr,#tbl_items th{
             table-layout: fixed;
             border: 1px solid gray;
@@ -158,82 +133,50 @@
         .form-group {
             margin-bottom: 15px;
         }
-
-
     </style>
 </head>
-
 <body class="animated-content"  style="font-family: tahoma;">
-
 <?php echo $_top_navigation; ?>
-
 <div id="wrapper">
     <div id="layout-static">
-
-
         <?php echo $_side_bar_navigation;
-
         ?>
-
-
         <div class="static-content-wrapper white-bg">
-
-
             <div class="static-content"  >
                 <div class="page-content"><!-- #page-content -->
-
                     <ol class="breadcrumb"  style="margin-bottom: 0;">
                         <li><a href="Dashboard">Dashboard</a></li>
                         <li><a href="Sales_invoice_other">Other Sales Invoice</a></li>
                     </ol>
-
-
                     <div class="container-fluid"">
                     <div data-widget-group="group1">
                         <div class="row">
                             <div class="col-md-12">
-
                                 <div id="div_sales_invoice_list">
-
                                     <div class="panel panel-default" style="border: 3px solid #2980b9;min-height: 650px;">
-                                        <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Other Sales Invoice</b></div></a>
-
                                         <div class="panel-body table-responsive">
-                                            <table id="tbl_sales_invoice" class="custom-design table-striped" cellspacing="0" width="100%" style="">
+                                        <h2 class="h2-panel-heading">Other Sales Invoice</h2><hr>
+                                            <table id="tbl_sales_invoice" class="table table-striped" cellspacing="0" width="100%" style="">
                                                 <thead class="">
                                                 <tr>
-                                                    <th></th>
-                                                    <th>Invoice #</th>
+                                                    <th width="3%"></th>
+                                                    <th width="15%">Invoice #</th>
                                                     <th>Invoice Date</th>
                                                     <th>Due Date</th>
                                                     <th>Issued to Branch</th>
-                                                    <th>Remarks</th>
-                                                    <th><center>Action</center></th>
+                                                    <th width="25%">Remarks</th>
+                                                    <th width="10%"><center>Action</center></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-
-
-
                                                 </tbody>
                                             </table>
                                         </div>
-
-
-
-
-
                                         <!-- <div class="panel-footer"></div> -->
                                     </div>
-
                                 </div>
-
-
                                 <div id="div_sales_invoice_fields" style="display: none;">
-
-
                                     <div class="panel panel-default" style="border: 4px solid #2980b9;border-radius: 8px;">
-
 
                                         <div class="pull-right">
                                             <h4 class="sales_invoice_title" style="margin-top: 0%;"></h4>
@@ -357,7 +300,7 @@
 
                                             <form id="frm_items">
                                                 <div class="table-responsive"  style="min-height: 200px;padding: 1px;">
-                                                    <table id="tbl_items" class="custom-design table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                                    <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
 
                                                         <thead class="">
                                                         <tr>
@@ -664,6 +607,7 @@
 
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
 
@@ -741,7 +685,7 @@
                     { targets:[3],data: "date_due" },
                     { targets:[4],data: "issued_department" },
 
-                    { targets:[5],data: "remarks" },
+                    { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(80)  },
                     {
                         targets:[6],
                         render: function (data, type, full, meta){

@@ -1077,7 +1077,6 @@
 }
 #topnav.navbar-black {
   background: #424242;
-
 }
 #topnav.navbar-black .logo-area .toolbar-trigger a span.icon-bg {
   background-color: #616161;
@@ -2027,7 +2026,7 @@ body {
 }
 .navbar-fixed-top + #wrapper,
 .navbar-fixed-top + #layout-fixed {
-  padding-top: 43px !important;
+  padding-top: 56px !important;
 }
 .navbar-fixed-top {
   width: 100%;
@@ -2051,7 +2050,7 @@ body {
 }
 .static-sidebar-wrapper,
 .static-sidebar {
-  width: 215px;
+  width: 256px;
 }
 .static-content-wrapper {
   display: table-cell;
@@ -2434,18 +2433,18 @@ body.error .error-wrapper h1 {
   margin-right: 24px;
 }
 #topnav .logo-area .toolbar-trigger a span.icon-bg {
-    display: block;
-    border-radius: 50%;
-    height: 30px;
-    width: 30px;
-    padding: 0;
-    line-height: 28px;
-    font-size: 16px;
-    text-align: center;
+  display: block;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  padding: 0;
+  line-height: 40px;
+  font-size: 17px;
+  text-align: center;
 }
 @media (min-width: 768px) {
   #topnav .logo-area {
-    width: 56px;
+    width: 456px;
     height: 56px;
     display: inline-block;
   }
@@ -2513,8 +2512,8 @@ body.error .error-wrapper h1 {
   padding: 8px 0 !important;
 }
 #topnav a.username img {
-  height: 30px;
-  width: 30px;
+  height: 40px;
+  width: 40px;
   float: right;
   border-radius: 50%;
 }
@@ -2729,7 +2728,7 @@ body.error .error-wrapper h1 {
   padding: 4px 0px;
 }
 .sidebar .widget .widget-body .userinfo {
-  padding: 23px 16px;
+  padding: 32px 16px;
   position: relative;
 }
 .sidebar .widget .widget-body .userinfo .avatar {
@@ -2741,11 +2740,11 @@ body.error .error-wrapper h1 {
   padding: 8px 0 8px 80px;
 }
 .sidebar .widget .widget-body .userinfo .info .username {
-  font-size: 15px;
-  line-height: 20px;
+  font-size: 18px;
+  line-height: 24px;
 }
 .sidebar .widget .widget-body .userinfo .info .useremail {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.35;
 }
 .sidebar .widget .widget-body .mini-progressbar {
@@ -2791,20 +2790,20 @@ body.error .error-wrapper h1 {
 }
 .sidebar nav.widget-body > ul.acc-menu li a {
   display: block;
-  padding: 7px 13px;
+  padding: 12px 16px;
   position: relative;
   font-weight: 400;
 }
 .sidebar nav.widget-body > ul.acc-menu > li > a > i {
   margin-left: 0px;
-  font-size: 14px;
+  font-size: 17px;
   margin-right: 16px;
   min-width: 24px;
   text-align: center;
   display: inline-block;
 }
 .sidebar nav.widget-body > ul.acc-menu ul li a {
-  padding: 6px 16px 6px 44px;
+  padding: 6px 16px 6px 56px;
   font-weight: 400;
 }
 .sidebar nav.widget-body > ul.acc-menu li.active > a {
@@ -2820,7 +2819,7 @@ body.error .error-wrapper h1 {
   padding: 0;
 }
 .sidebar nav.widget-body > ul.acc-menu li li li a {
-  padding-left: 61px;
+  padding-left: 72px;
 }
 .sidebar nav.widget-body > ul.acc-menu ul ul ul li a {
   padding-left: 88px;
@@ -3759,8 +3758,8 @@ ul .panel .panel-heading h2 {
 }
 .panel .panel-body {
   background-color: #fff;
-  font-size: 11px;
-  padding: 12px;
+  font-size: 14px;
+  padding: 16px;
 }
 .panel .panel-body.no-padding .alert {
   margin: 32px !important;
@@ -7403,7 +7402,7 @@ label.icheck.checkbox {
   border-bottom-left-radius: 2px;
 }
 .ui-pnotify-text {
-  font-size: 11px !important;
+  font-size: 12px !important;
   color: #fff;
 }
 .ui-pnotify-title {

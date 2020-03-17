@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <!-- Mirrored from avenxo.kaijuthemes.com/ui-typography.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 06 Jun 2016 12:09:25 GMT -->
 <head>
     <meta charset="utf-8">
@@ -11,32 +10,16 @@
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
-
-
     <style>
-        body{
-            -moz-transform: scale(.7,.7);
-            zoom: 0.7;
-            zoom: 70%;
-        }
-
-
         .toolbar{
             float: left;
         }
-
         td.details-control {
             background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
@@ -44,7 +27,6 @@
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
-
         .child_table{
             padding: 5px;
             border: 1px #ff0000 solid;
@@ -129,16 +111,16 @@
 
         <div class="tab-container tab-top tab-primary">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Accounts</a></li>
-                <li class=""><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li>
+                <li class="hidden"><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Accounts</a></li>
+                <li class="hidden "><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li>
 
-                <li class=""><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-calendar"></i> Accounting Period</a></li>
-                <li class=""><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li>
+                <li class="hidden "><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-calendar"></i> Accounting Period</a></li>
+                <li class="active"><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li>
 
             </ul>
             <div class="tab-content">
 
-                <div class="tab-pane active" id="accounts_integration_setting" style="min-height: 300px;">
+                <div class="tab-pane" id="accounts_integration_setting" style="min-height: 300px;">
 
                     <form id="frm_account_integration" role="form" class="form-horizontal row-border">
 
@@ -416,13 +398,9 @@
                 </div>
 
 
-                <div class="tab-pane" id="invoice_counter_setting" style="min-height: 300px;">
-
-                        <br >
+                <div class="tab-pane active" id="invoice_counter_setting" style="min-height: 300px;">
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-calendar"></i> Invoice Number Range per User/Cashier</strong></span></h4>
                         <hr />
-
-
                         <table id="tbl_invoice_no_range" class="table table-stripe table-bordered" cellspacing="0" width="100%">
                             <thead>
                                 <tr style="border-bottom: 1px solid black;">

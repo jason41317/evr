@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <!-- Mirrored from avenxo.kaijuthemes.com/ui-typography.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 06 Jun 2016 12:09:25 GMT -->
 <head>
     <meta charset="utf-8">
@@ -11,44 +10,23 @@
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
-
-
-
-
-
-
     <style>
-
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
         #tbl_items td,#tbl_items tr,#tbl_items th{
             table-layout: fixed;
             border: 1px solid gray;
             border-collapse: collapse;
         }
-
-
         .toolbar{
             float: left;
         }
-
         td.details-control {
             background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
@@ -56,178 +34,130 @@
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
-
         .child_table{
             padding: 5px;
             border: 1px #ff0000 solid;
         }
-
         .glyphicon.spinning {
             animation: spin 1s infinite linear;
             -webkit-animation: spin2 1s infinite linear;
         }
-
         .select2-container{
             min-width: 100%;
         }
-
         .dropdown-menu > .active > a,.dropdown-menu > .active > a:hover{
             background-color: dodgerblue;
         }
-
         @keyframes spin {
             from { transform: scale(1) rotate(0deg); }
             to { transform: scale(1) rotate(360deg); }
         }
-
         @-webkit-keyframes spin2 {
             from { -webkit-transform: rotate(0deg); }
             to { -webkit-transform: rotate(360deg); }
         }
-
         .custom_frame{
-
             border: 1px solid lightgray;
             margin: 1% 1% 1% 1%;
             -webkit-border-radius: 5px;
             -moz-border-radius: 5px;
             border-radius: 5px;
         }
-
         @media screen and (max-width: 480px) {
-
             table{
                 min-width: 800px;
             }
-
             .dataTables_filter{
                 min-width: 800px;
             }
-
             .dataTables_info{
                 min-width: 800px;
             }
-
             .dataTables_paginate{
                 float: left;
                 width: 100%;
             }
         }
-
         .numeric{
             text-align: right;
             width: 60%;
         }
-
         #btn_new {
             text-transform: capitalize !important;
         }
-
         .modal-body {
             text-transform: bold;
         }
-
         .boldlabel {
             font-weight: bold;
         }
-
         .inlinecustomlabel {
-          
             font-weight: bold;
         }
         .form-group {
             padding-bottom: 3px;
         }
-
         #is_tax_exempt {
             width:23px;
             height:23px;
         }
-
         /*.modal-body {
             padding-left:0px !important;
         }*/
-
         #label {
             text-align:left;
         }
-
         .form-group {
             padding:0;
             margin:5px;
         }
-
         .input-group {
             padding:0;
             margin:0;
         }
-
         textarea {
             resize: none;
         }
-
         .modal-body p {
             margin-left: 20px !important;
         }
-
         #img_user {
             padding-bottom: 15px;
         }
-
-
     </style>
 </head>
-
 <body class="animated-content"  style="font-family: tahoma;">
-
 <?php echo $_top_navigation; ?>
-
 <div id="wrapper">
 <div id="layout-static">
-
-
 <?php echo $_side_bar_navigation;
-
 ?>
-
-
 <div class="static-content-wrapper white-bg">
-
-
 <div class="static-content"  >
 <div class="page-content"><!-- #page-content -->
-
 <ol class="breadcrumb"  style="margin-bottom: 10px;">
     <li><a href="Dashboard">Dashboard</a></li>
     <li><a href="Sales_order">Sales Order</a></li>
 </ol>
-
-
 <div class="container-fluid"">
 <div data-widget-group="group1">
 <div class="row">
 <div class="col-md-12">
-
 <div id="div_user_list">
 
 
-
-
     <div class="panel panel-default" style="border: 4px solid #2980b9;">
-
-        <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Sales Order</b></div></a>
-
         <div class="panel-body table-responsive" >
-
-            <table id="tbl_sales_order" class="custom-design table-striped" cellspacing="0" width="100%">
+        <h2 class="h2-panel-heading">Sales Order</h2><hr>
+            <table id="tbl_sales_order" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
                     <th>&nbsp;&nbsp;</th>
-                    <th>SO #</th>
+                    <th width="15%">SO #</th>
                     <th>Order Date</th>
                     <th>Customer</th>
-                    <th>Remarks</th>
-                    <th>Status</th>
+                    <th width="25%">Remarks</th>
+                    <th width="10%">Status</th>
                     <th><center>Action</center></th>
                 </tr>
                 </thead>
@@ -368,7 +298,7 @@
             <form id="frm_items">
                 <div class="table-responsive">
                     <div class="table-responsive"  style="min-height: 200px;">
-                        <table id="tbl_items" class="custom-design table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                        <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
 
                         <thead class="">
                         <tr>
@@ -809,7 +739,7 @@
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 
 
 <!-- Date range use moment.js same as full calendar plugin -->
@@ -883,7 +813,7 @@ $(document).ready(function(){
                 { targets:[1],data: "so_no" },
                 { targets:[2],data: "date_order" },
                 { targets:[3],data: "customer_name" },
-                { targets:[4],data: "remarks" },
+                { targets:[4],data: "remarks", render: $.fn.dataTable.render.ellipsis(60) },
                 { targets:[5],data: "order_status" },
                 {
                     targets:[6],

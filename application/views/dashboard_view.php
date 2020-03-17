@@ -20,11 +20,6 @@
 
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
     .toolbar{
         float: left;
     }
@@ -241,7 +236,7 @@
 
                                         <div class="panel-body table-responsive" style="border-top: 3px solid #2196f3;">
                                         <h2>Purchase Order for Approval</h2>
-                                            <table id="tbl_po_list" class="custom-design table-striped" cellspacing="0" width="100%">
+                                            <table id="tbl_po_list" class="table table-striped" cellspacing="0" width="100%">
                                                 <thead class="">
                                                 <tr>
                                                     <th></th>

@@ -22,27 +22,11 @@
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
-
-
     <!-- Datepicker -->
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
-
-
-
-
-
     <style>
-
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
-
         #tbl_items td,#tbl_items tr,#tbl_items th{
             table-layout: fixed;
             border: 1px solid gray;
@@ -213,21 +197,19 @@
 
 <div id="div_delivery_list">
     <div class="panel panel-default">
-        <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Purchase Invoice</b></div></a>
-
         <div class="panel-body table-responsive">
-
-            <table id="tbl_delivery_invoice" class="custom-design table-striped" cellspacing="0" width="100%">
+            <h2 style="margin-bottom: 0;" class="h2-panel-heading"> Purchase Invoice</h2><hr>
+            <table id="tbl_delivery_invoice" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
-                    <th></th>
-                    <th>Invoice #</th>
+                    <th width="3%"></th>
+                    <th width="15%">Invoice #</th>
                     <th>Supplier</th>
-                    <th>External Ref#</th>
-                    <th>PO #</th>
+                    <th width="15%">External Ref#</th>
+                    <th width="15%">PO #</th>
                     <th>Terms</th>
-                    <th>Delivered</th>
-                    <th><center>Action</center></th>
+                    <th width="10%">Delivered</th>
+                    <th width="10%"><center>Action</center></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -424,7 +406,7 @@
 
         <form id="frm_items">
             <div class="table-responsive" style="min-height: 200px;padding: 1px;">
-                <table id="tbl_items" class="custom-design table-striped " cellspacing="0" width="100%" style="font-font:tahoma;">
+                <table id="tbl_items" class="table table-striped " cellspacing="0" width="100%" style="font-font:tahoma;">
                 <thead class="">
                 <tr>
                     <th width="10%">Qty</th>

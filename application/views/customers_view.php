@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <!-- Mirrored from avenxo.kaijuthemes.com/ui-typography.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 06 Jun 2016 12:09:25 GMT -->
 <head>
     <meta charset="utf-8">
@@ -11,38 +10,21 @@
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
-
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/blue.css" rel="stylesheet">              <!-- iCheck -->
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
-
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
-
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
-    <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-    </style>
-
     <?php echo $_switcher_settings; ?>
     <?php echo $_def_js_files; ?>
 
     <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
 
@@ -109,10 +91,10 @@
                         "data":           null,
                         "defaultContent": ""
                     },
-                    { targets:[1],data: "customer_name" },
-                    { targets:[2],data: "contact_name" },
-                    { targets:[3],data: "address" },
-                    { targets:[4],data: "contact_no" },
+                    { targets:[1],data: "customer_name" , render: $.fn.dataTable.render.ellipsis(60)},
+                    { targets:[2],data: "contact_name" , render: $.fn.dataTable.render.ellipsis(40)},
+                    { targets:[3],data: "address" , render: $.fn.dataTable.render.ellipsis(80)},
+                    { targets:[4],data: "contact_no" , render: $.fn.dataTable.render.ellipsis(30)},
                     {
                         targets:[5],
                         render: function (data, type, full, meta){
@@ -673,20 +655,20 @@
                                     <div id="div_customer_list">
                                         <div class="panel panel-default" style="border-top: 3px solid #2196f3;">                                  
                                             <div class="panel-body table-responsive"> 
+                                            <h2 class="h2-panel-heading"> Customers</h2><hr>
                                               <button class="btn btn-default btn-back" id="btn_backtofilter" title="Go back to filter">
                                                 <span class="fa fa-arrow-left" style="color: #9E9E9E;"></span>
-                                              </button>                                                                                                                                                                    
-                                              <h2 style="margin-top: 0px !important;">Customers</h2><hr>
+                                              </button>
                                                 <button class="btn btn-green" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title=" New product" ><i class="fa fa-plus-circle"></i>  New Customer</button>
-                                                <table id="tbl_customers" class="custom-design table-striped" cellspacing="0" width="100%">
+                                                <table id="tbl_customers" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>
                                                         <th>&nbsp;&nbsp;</th>
-                                                        <th>Customer Name</th>
-                                                        <th>Contact Person</th>
-                                                        <th>Address</th>
-                                                        <th>Contact No</th>
-                                                        <th><center>Action</center></th>
+                                                        <th width="25%">Customer Name</th>
+                                                        <th width="20%">Contact Person</th>
+                                                        <th width="30%">Address</th>
+                                                        <th width="10%">Contact No</th>
+                                                        <th width="10%"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>

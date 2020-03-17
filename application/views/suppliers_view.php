@@ -1,77 +1,46 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
-
     <title>JCORE - <?php echo $title; ?></title>
-
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
-
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/blue.css" rel="stylesheet">              <!-- iCheck -->
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
-
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
-
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
     </style>
-
-
     <?php echo $_switcher_settings; ?>
     <?php echo $_def_js_files; ?>
-
-
     <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
-
     <!-- Date range use moment.js same as full calendar plugin -->
     <script src="assets/plugins/fullcalendar/moment.min.js"></script>
     <!-- Data picker -->
     <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
-
     <!-- Select2 -->
     <script src="assets/plugins/select2/select2.full.min.js"></script>
-
-
     <!-- Date range use moment.js same as full calendar plugin -->
     <script src="assets/js/plugins/fullcalendar/moment.min.js"></script>
     <!-- Data picker -->
     <script src="assets/js/plugins/datapicker/bootstrap-datepicker.js"></script>
-
     <!-- twitter typehead -->
     <script src="assets/plugins/twittertypehead/handlebars.js"></script>
     <script src="assets/plugins/twittertypehead/bloodhound.min.js"></script>
     <script src="assets/plugins/twittertypehead/typeahead.bundle.min.js"></script>
     <script src="assets/plugins/twittertypehead/typeahead.jquery.min.js"></script>
-
     <!-- touchspin -->
     <script type="text/javascript" src="assets/plugins/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.js"></script>
 
@@ -98,9 +67,9 @@ $(document).ready(function(){
                         "data":           null,
                         "defaultContent": ""
                     },
-                    { targets:[1],data: "supplier_name" },
+                    { targets:[1],data: "supplier_name",render: $.fn.dataTable.render.ellipsis(60) },
                     { targets:[2],data: "contact_name" },
-                    { targets:[3],data: "address" },
+                    { targets:[3],data: "address", render: $.fn.dataTable.render.ellipsis(80) },
                     { targets:[4],data: "contact_no" },
                     { targets:[5],data: "tax_type" },
                     {
@@ -548,22 +517,18 @@ $(document).ready(function(){
 
                                     <div id="div_supplier_list">
                                         <div class="panel panel-default"  style="border-top: 3px solid #2196f3;">
-
-                                            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Suppliers</b></div></a>
-
-
                                             <div class="panel-body table-responsive">
-
-                                                <table id="tbl_suppliers" class="custom-design table-striped" cellspacing="0" width="100%">
+                                            <h2 class="h2-panel-heading"> Suppliers</h2><hr>
+                                                <table id="tbl_suppliers" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>
-                                                        <th>&nbsp;&nbsp;</th>
-                                                        <th>Company Name</th>
-                                                        <th>Contact Person</th>
-                                                        <th>Address</th>
-                                                        <th>Contact No</th>
-                                                        <th>Tax</th>
-                                                        <th><center>Action</center></th>
+                                                        <th width="3%">&nbsp;&nbsp;</th>
+                                                        <th width="22%">Company Name</th>
+                                                        <th width="15%">Contact Person</th>
+                                                        <th width="30%">Address</th>
+                                                        <th width="10%">Contact No</th>
+                                                        <th width="10%">Tax</th>
+                                                        <th width="10%"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>

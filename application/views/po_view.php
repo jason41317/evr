@@ -33,10 +33,6 @@
 
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
 
         #tbl_items td,#tbl_items tr,#tbl_items th{
             table-layout: fixed;
@@ -188,23 +184,19 @@
             <div class="col-md-12">
                 <div id="div_user_list">
                     <div class="panel panel-default">
-
-                        <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Purchase Order</b></div></a>
-
-
                         <div class="panel-body table-responsive">
-
-                            <table id="tbl_purchases" class="custom-design table-striped" cellspacing="0" width="100%">
+                        <h2 class="h2-panel-heading">Purchase Order</h2><hr>
+                            <table id="tbl_purchases" class="table table-striped" cellspacing="0" width="100%">
                                 <thead class="">
                                 <tr>
-                                    <th></th>
-                                    <th>PO#</th>
+                                    <th width="3%"></th>
+                                    <th width="15%">PO#</th>
                                     <th>Vendor</th>
-                                    <th>Terms</th>
-                                    <th>Approved</th>
-                                    <th>Status</th>
-                                    <th>Sent</th>
-                                    <th><center>Action</center></th>
+                                    <th width="10%">Terms</th>
+                                    <th width="10%" class="align-center">Approved</th>
+                                    <th width="10%" class="align-center">Status</th>
+                                    <th width="5%" class="align-center">Sent</th>
+                                    <th width="15%" class="align-center"><center>Action</center></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -320,7 +312,7 @@
 
                                     <form id="frm_items">
                                         <div class="table-responsive">
-                                            <table id="tbl_items" class="custom-design table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                            <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                                 <thead class="">
                                                 <tr>
                                                     <th width="10%">Qty</th>
@@ -762,9 +754,9 @@ $(document).ready(function(){
                 { targets:[1],data: "po_no" },
                 { targets:[2],data: "supplier_name" },
                 { targets:[3],data: "term_description" },
-                { targets:[4],data: "approval_status" },
-                { targets:[5],data: "order_status" },
-                {
+                { sClass:"align-center", targets:[4],data: "approval_status" },
+                { sClass:"align-center", targets:[5],data: "order_status" },
+                { sClass:"align-center",
                     targets:[6],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
@@ -779,7 +771,7 @@ $(document).ready(function(){
                     }
 
                 },
-                {
+                { sClass:"align-center",
                     targets:[7],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';

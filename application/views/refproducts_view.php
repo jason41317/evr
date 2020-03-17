@@ -86,9 +86,9 @@
                                     <div id="div_unit_list">
                                         <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
                                             <div class="panel-body table-responsive">
-                                                <h2 style="margin-top: 0;">Product Type</h2>
-                                                <table id="tbl_product_type" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                                    <thead class="table-erp">
+                                                <h2 class="h2-panel-heading">Product Type</h2><hr>
+                                                <table id="tbl_product_type" class="table table-striped" cellspacing="0" width="100%">
+                                                    <thead class="">
                                                     <tr>
                                                         <th>Product Type</th>
                                                         <th>Description</th>

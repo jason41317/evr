@@ -94,7 +94,7 @@ html > body > .ui-pnotify {
 
 .alert-danger,
 .alert-error {
-    color: #E9EDEF;
+    color: #E9EDEF!important;
     background-color: rgba(231, 76, 60, 0.88);
     border-color: rgba(231, 76, 60, 0.88);
 }

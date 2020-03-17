@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <!-- Mirrored from avenxo.kaijuthemes.com/ui-typography.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 06 Jun 2016 12:09:25 GMT -->
 <head>
     <meta charset="utf-8">
@@ -11,37 +10,18 @@
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
-
-
-
-
-
-
     <style>
-        html{
-            zoom: 0.82;
-            zoom: 82%;
-        }
-
-
         .toolbar{
             float: left;
         }
-
         td.details-control {
             background: url('assets/img/print.png') no-repeat center center;
             cursor: pointer;
@@ -49,21 +29,17 @@
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
-
         .child_table{
             padding: 5px;
             border: 1px #ff0000 solid;
         }
-
         .glyphicon.spinning {
             animation: spin 1s infinite linear;
             -webkit-animation: spin2 1s infinite linear;
         }
-
         .select2-container{
             min-width: 100%;
         }
-
         .dropdown-menu > .active > a,.dropdown-menu > .active > a:hover{
             background-color: dodgerblue;
         }
@@ -147,11 +123,9 @@ echo $_side_bar_navigation;
 
 <div id="div_user_list">
     <div class="panel panel-default">
-        <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Issuance</b></div></a>
-
         <div class="panel-body table-responsive">
-
-            <table id="tbl_issuances" class="custom-design table-striped" cellspacing="0" width="100%">
+            <h2 class="h2-panel-heading"> Adjustment (IN)</h2><hr>
+            <table id="tbl_issuances" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
                     <th></th>
@@ -276,7 +250,7 @@ echo $_side_bar_navigation;
                     </div><br />
                     <form id="frm_items">
                         <div class="table-responsive" style="min-height: 200px;padding: 1px;max-height: 400px;overflow: auto;">
-                            <table id="tbl_items" class="custom-design table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                            <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                 <thead class="">
                                     <tr>
 

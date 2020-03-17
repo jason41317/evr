@@ -86,9 +86,9 @@
                                             <div id="div_category_list">
                                                 <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
                                                     <div class="panel-body table-responsive">
-                                                    <h2 style="margin-top: 0;">Categories</h2>
-                                                        <table id="tbl_categories" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                                            <thead class="table-erp">
+                                                   <h2 class="h2-panel-heading"> Categories</h2><hr>
+                                                        <table id="tbl_categories" class="table table-striped" cellspacing="0" width="100%">
+                                                            <thead>
                                                             <tr>
                                                                 <th>Category Name</th>
                                                                 <th>Category Description</th>

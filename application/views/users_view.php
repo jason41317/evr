@@ -120,9 +120,9 @@
                                     <div id="div_user_list">
                                         <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
                                             <div class="panel-body table-responsive">
-                                              <h2>User Account</h2>
-                                                <table id="tbl_user_list" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                                    <thead class="table-erp">
+                                              <h2 class="h2-panel-heading">User Account</h2><hr>
+                                                <table id="tbl_user_list" class="table table-striped" cellspacing="0" width="100%">
+                                                    <thead>
                                                     <tr>
                                                         <th></th>
                                                         <th>Username</th>

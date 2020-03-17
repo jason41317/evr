@@ -11,44 +11,23 @@
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
-
-
-
-
-
-
     <style>
-        body{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
-
         #tbl_items td,#tbl_items tr,#tbl_items th{
             table-layout: fixed;
             border: 1px solid gray;
             border-collapse: collapse;
         }
-
-
         .toolbar{
             float: left;
         }
-
         td.details-control {
             background: url('assets/img/Folder_Closed.png') no-repeat center center;
             cursor: pointer;
@@ -56,7 +35,6 @@
         tr.details td.details-control {
             background: url('assets/img/Folder_Opened.png') no-repeat center center;
         }
-
         .child_table{
             padding: 5px;
             border: 1px #ff0000 solid;
@@ -108,71 +86,45 @@
             .dataTables_filter{
                 min-width: 800px;
             }
-
             .dataTables_info{
                 min-width: 800px;
             }
-
             .dataTables_paginate{
                 float: left;
                 width: 100%;
             }
         }
-
-
-
-
     </style>
 </head>
-
 <body class="animated-content"  style="font-family: tahoma;">
-
 <?php echo $_top_navigation; ?>
-
 <div id="wrapper">
     <div id="layout-static">
-
-
         <?php echo $_side_bar_navigation;
-
         ?>
-
-
         <div class="static-content-wrapper white-bg">
-
-
             <div class="static-content"  >
                 <div class="page-content"><!-- #page-content -->
-
                     <ol class="breadcrumb"  style="margin-bottom: 10px;">
                         <li><a href="Dashboard">Dashboard</a> > </li>
                         <li><a href="Adjustments">Adjustment</a></li>
                     </ol>
-
-
                     <div class="container-fluid"">
                     <div data-widget-group="group1">
                         <div class="row">
                             <div class="col-md-12">
-
                                 <div id="div_adjustment_list">
-
-
-
-
                                     <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
-                                        <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Adjustment (Out)</b></div></a>
-
                                        <div class="panel-body table-responsive">
-
-                                            <table id="tbl_adjustments_out" class="custom-design table-striped" cellspacing="0" width="100%">
+                                       <h2 class="h2-panel-heading">Adjustments (Out)</h2><hr>
+                                            <table id="tbl_adjustments_out" class="table table-striped" cellspacing="0" width="100%">
                                                 <thead class="">
                                                 <tr>
-                                                    <th></th>
-                                                    <th>#</th>
+                                                    <th width="3%"></th>
+                                                    <th>Adjustment #</th>
                                                     <th>Branch</th>
-                                                    <th>Remarks</th>
-                                                    <th>Adjustment</th>
+                                                    <th width="30%">Remarks</th>
+                                                    <th class="align-center">Adjustment</th>
                                                     <th><center>Action</center></th>
                                                 </tr>
                                                 </thead>
@@ -290,7 +242,7 @@
 
                                                 <form id="frm_items">
                                                     <div class="table-responsive" style="min-height: 200px;padding: 1px;max-height: 350px;overflow: auto;">
-                                                        <table id="tbl_items" class="custom-design table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                                        <table id="tbl_items" class=" table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                                             <thead class="">
                                                             <tr>
                                                                 <th width="10%">Qty</th>
@@ -509,6 +461,7 @@
 
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
 
@@ -584,8 +537,8 @@
                     },
                     { targets:[1],data: "adjustment_code" },
                     { targets:[2],data: "department_name" },
-                    { targets:[3],data: "remarks" },
-                    { targets:[4],data: "adjustment_type" },
+                    { targets:[3],data: "remarks" , render: $.fn.dataTable.render.ellipsis(80)},
+                    { sClass:"align-center", targets:[4],data: "adjustment_type" },
                     {
                         targets:[7],
                         render: function (data, type, full, meta){

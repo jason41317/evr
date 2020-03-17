@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <!-- Mirrored from avenxo.kaijuthemes.com/ui-typography.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 06 Jun 2016 12:09:25 GMT -->
 <head>
     <meta charset="utf-8">
@@ -11,41 +10,22 @@
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="description" content="Avenxo Admin Theme">
     <meta name="author" content="">
-
-
     <?php echo $_def_css_files; ?>
-
     <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
-
     <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
-
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
-
-
-
-
-
-
     <style>
-        html{
-            zoom: 0.82;
-            zoom: 82%;
-        }
-
         #span_invoice_no{
             min-width: 50px;
         }
         #span_invoice_no:focus{
             border: 3px solid orange;
             background-color: yellow;
-
         }
-
         .alert {
             border-width: 0;
             border-style: solid;
@@ -208,22 +188,19 @@
 <div id="div_sales_invoice_list">
 
     <div class="panel panel-default" style="border: 3px solid #00a546;min-height: 650px;border-radius:6px;">
-        <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Sales Invoice</b></div></a>
-
-
         <div class="panel-body table-responsive">
-
-            <table id="tbl_sales_invoice" class="custom-design table-striped" cellspacing="0" width="100%" style="">
+            <h2 class="h2-panel-heading"> Sales Invoice</h2><hr>
+            <table id="tbl_sales_invoice" class="table table-striped" cellspacing="0" width="100%" style="">
                 <thead class="">
                 <tr>
-                    <th></th>
-                    <th>Invoice #</th>
-                    <th>Invoice Date</th>
-                    <th>Due Date</th>
+                    <th width="3%"></th>
+                    <th width="10%">Invoice #</th>
+                    <th width="10%">Invoice Date</th>
+                    <th width="10%">Due Date</th>
                     <th>Customer</th>
-                    <th>Branch</th>
-                    <th>Remarks</th>
-                    <th><center>Action</center></th>
+                    <th width="10%">Branch</th>
+                    <th width="20%">Remarks</th>
+                    <th width="10%"><center>Action</center></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -393,7 +370,7 @@
 
             <form id="frm_items">
                 <div class="table-responsive"  style="min-height: 200px;padding: 1px;">
-                    <table id="tbl_items" class="custom-design table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                    <table id="tbl_items" class=" table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
 
                         <thead class="">
                         <tr>
@@ -856,6 +833,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#499bea', end
 
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
 
@@ -934,7 +912,7 @@ $(document).ready(function(){
                 { targets:[3],data: "date_due" },
                 { targets:[4],data: "customer_name" },
                 { targets:[5],data: "department_name" },
-                { targets:[6],data: "remarks" },
+                { targets:[6],data: "remarks" , render: $.fn.dataTable.render.ellipsis(60) },
                 {
                     targets:[7],
                     render: function (data, type, full, meta){
