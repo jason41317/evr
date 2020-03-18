@@ -73,9 +73,13 @@ class Adjustments extends CORE_Controller
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $m_adjustment=$this->Adjustment_model;
                 $response['data']=$this->response_rows(
-                    "adjustment_info.is_active=TRUE AND adjustment_info.adjustment_type='IN' AND adjustment_info.is_deleted=FALSE".($id_filter==null?"":" AND adjustment_info.adjustment_id=".$id_filter)
+                    "adjustment_info.is_active=TRUE AND adjustment_info.adjustment_type='IN' AND adjustment_info.is_deleted=FALSE
+                    AND DATE(adjustment_info.date_adjusted) BETWEEN '$tsd' AND '$ted'
+                    ".($id_filter==null?"":" AND adjustment_info.adjustment_id=".$id_filter)
                 );
                 echo json_encode($response);
                 break;

@@ -94,6 +94,22 @@
                 width: 100%;
             }
         }
+
+        #tbl_adjustments_out_filter{
+            display: none;
+        }
+
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
+
     </style>
 </head>
 <body class="animated-content"  style="font-family: tahoma;">
@@ -115,8 +131,35 @@
                             <div class="col-md-12">
                                 <div id="div_adjustment_list">
                                     <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
-                                       <div class="panel-body table-responsive">
+                                       <div class="panel-body table-responsive" style="overflow-x: hidden;">
                                        <h2 class="h2-panel-heading">Adjustments (Out)</h2><hr>
+                                            <div class="row">
+                                                <div class="col-lg-3"><br>
+                                                        <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Adjustment</button>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                        From :<br />
+                                                        <div class="input-group">
+                                                            <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                                             <span class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                             </span>
+                                                        </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                        To :<br />
+                                                        <div class="input-group">
+                                                            <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                                             <span class="input-group-addon">
+                                                                    <i class="fa fa-calendar"></i>
+                                                             </span>
+                                                        </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                        Search :<br />
+                                                         <input type="text" id="searchbox_tbl_adjustments_out" class="form-control">
+                                                </div>
+                                            </div><br>
                                             <table id="tbl_adjustments_out" class="table table-striped" cellspacing="0" width="100%">
                                                 <thead class="">
                                                 <tr>
@@ -126,6 +169,7 @@
                                                     <th width="30%">Remarks</th>
                                                     <th class="align-center">Adjustment</th>
                                                     <th><center>Action</center></th>
+                                                    <th>ID</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -242,7 +286,7 @@
 
                                                 <form id="frm_items">
                                                     <div class="table-responsive" style="min-height: 200px;padding: 1px;max-height: 350px;overflow: auto;">
-                                                        <table id="tbl_items" class=" table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
+                                                        <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
                                                             <thead class="">
                                                             <tr>
                                                                 <th width="10%">Qty</th>
@@ -526,7 +570,22 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "pageLength":15,
-                "ajax" : "Adjustment_out/transaction/list",
+                "order": [[ 6, "desc" ]],
+                oLanguage: {
+                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },
+                processing : true,
+                "ajax" : {
+                    "url" : "Adjustment_out/transaction/list",
+                    "bDestroy": true,            
+                    "data": function ( d ) {
+                            return $.extend( {}, d, {
+                                "tsd":$('#txt_start_date').val(),
+                                "ted":$('#txt_end_date').val()
+
+                            });
+                        }
+                }, 
                 "columns": [
                     {
                         "targets": [0],
@@ -540,25 +599,18 @@
                     { targets:[3],data: "remarks" , render: $.fn.dataTable.render.ellipsis(80)},
                     { sClass:"align-center", targets:[4],data: "adjustment_type" },
                     {
-                        targets:[7],
+                        targets:[5],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
                             return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                         }
-                    }
+                    },
+                    { visible:false, targets:[6],data: "adjustment_id" },
                 ]
 
             });
-
-
-            var createToolBarButton=function(){
-                var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Adjustment" >'+
-                    '<i class="fa fa-plus-circle"></i> New Adjustment</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
-
 
             _productType = $('#cbo_prodType').select2({
                 placeholder: "Please select Product Type",
@@ -751,6 +803,16 @@
                 }
             } );
 
+
+            $("#searchbox_tbl_adjustments_out").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
+
+            $("#txt_start_date,#txt_end_date").on("change", function () {        
+                $('#tbl_adjustments_out').DataTable().ajax.reload()
+            });
 
 
             //loads modal to create new department

@@ -74,8 +74,12 @@ class Adjustment_out extends CORE_Controller
         switch ($txn){
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_adjustment=$this->Adjustment_model;
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $response['data']=$this->response_rows(
-                    "adjustment_info.is_active=TRUE AND adjustment_info.adjustment_type='OUT' AND adjustment_info.is_deleted=FALSE".($id_filter==null?"":" AND adjustment_info.adjustment_id=".$id_filter)
+                    "adjustment_info.is_active=TRUE AND adjustment_info.adjustment_type='OUT' AND adjustment_info.is_deleted=FALSE
+                    AND DATE(adjustment_info.date_adjusted) BETWEEN '$tsd' AND '$ted'
+                    ".($id_filter==null?"":" AND adjustment_info.adjustment_id=".$id_filter)
                 );
                 echo json_encode($response);
                 break;
