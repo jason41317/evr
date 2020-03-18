@@ -23,25 +23,10 @@
 		.report-header {
 			font-weight: bolder;
 		}
-
-		hr {
-			border-top: 3px solid #404040;
-		}
 	</style>
 </head>
 <body>
-	<table width="100%">
-        <tr>
-            <td width="10%"><img src="<?php echo $company_info->logo_path; ?>" style="height: 100px; width: 100px; text-align: left;"></td>
-            <td width="90%" class="align-center">
-                <h1 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h1>
-                <p><?php echo $company_info->company_address; ?></p>
-                <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p>
-            </td>
-        </tr>
-    </table><hr>
 	<div class="">
-		<h3 class="report-header"><strong>PURCHASE ORDER</strong></h3>
 		<strong>P.O. # :</strong> <?php echo $purchase_info->po_no; ?></td> <br>
 		<strong>Date : </strong><?php echo date_format(new DateTime($purchase_info->date_created),"m/d/Y"); ?>
 	</div><br>
@@ -96,18 +81,6 @@
         	<td style="padding: 6px;" align="left" colspan="2"><h4><strong>Total After Tax</strong></h3></td>
         	<td style="padding: 6px;" align="right"><h4><strong><?php echo number_format($purchase_info->total_after_tax,2); ?></strong></h4></td>
         </tr>
-	</table>
-	<table width="100%" border="1" cellspacing="-1" style="border-top: 0;">
-		<tr>
-			<td style="padding: 6px;" align="center"><strong>Prepared by</strong></td>
-			<td style="padding: 6px;" align="center"><strong>Approved by</strong></td>
-			<td style="padding: 6px;" align="center"><strong>Received by</strong></td>
-		</tr>
-		<tr style="border-top: 1px solid black;">
-			<td style="padding: 6px;" align="center"><strong>&nbsp;</strong></td>
-			<td style="padding: 6px;" align="center"><strong>&nbsp;</strong></td>
-			<td style="padding: 6px;" align="center"><strong>&nbsp;</strong></td>
-		</tr>
 	</table>
 </body>
 </html>

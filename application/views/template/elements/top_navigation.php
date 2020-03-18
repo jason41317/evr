@@ -9,10 +9,8 @@
                         </span>
                     </a>
                 </span>
-
-        <a class="navbar-brand" href="#">JCore</a>
     </div><!-- logo-area -->
-
+    <span class="company_top_navigation" style="font-size: 1.2vw;vertical-align: middle;padding:13px 0px !important;display: inline-block;color: #067cb2;    font-family: 'Segoe UI', 'Source Sans Pro', Calibri, Candara, Arial, sans-serif;"><?php echo $this->session->company_top_navigation;?></span>
     <ul class="nav navbar-nav toolbar pull-right">
         <li class="toolbar-icon-bg hidden-xs" id="trigger-fullscreen">
             <a href="#" class="toggle-fullscreen"><span class="icon-bg"><i class="ti ti-fullscreen"></i></span></i></a>

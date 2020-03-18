@@ -84,13 +84,12 @@ class Purchases extends CORE_Controller
     function transaction($txn = null,$id_filter=null) {
             switch ($txn){
                 case 'list':  //this returns JSON of Purchase Order to be rendered on Datatable
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $filter_value = " purchase_order.is_deleted = FALSE  AND purchase_order.is_active = TRUE AND DATE(purchase_order.date_created) BETWEEN '$tsd' AND '$ted'";
+
                     $m_purchases=$this->Purchases_model;
-                    $response['data']=$this->row_response(
-                        array(
-                            'purchase_order.is_deleted'=>FALSE,
-                            'purchase_order.is_active'=>TRUE
-                        )
-                    );
+                    $response['data']=$this->row_response($filter_value);
                     echo json_encode($response);
                     break;
 

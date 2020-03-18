@@ -124,7 +124,7 @@ echo $_side_bar_navigation;
 <div id="div_user_list">
     <div class="panel panel-default">
         <div class="panel-body table-responsive">
-            <h2 class="h2-panel-heading"> Adjustment (IN)</h2><hr>
+            <h2 class="h2-panel-heading"> Issuances</h2><hr>
             <table id="tbl_issuances" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>

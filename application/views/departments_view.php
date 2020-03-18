@@ -78,10 +78,10 @@
                                                 <table id="tbl_departments" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>
-                                                        <th>Branch Name</th>
-                                                        <th>Branch Description</th>
-                                                        <th>Delivery Address</th>
-                                                        <th><center>Action</center></th>
+                                                        <th width="20%">Branch Name</th>
+                                                        <th width="20%">Branch Description</th>
+                                                        <th width="50%">Delivery Address</th>
+                                                        <th width="10%"><center>Action</center></th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>

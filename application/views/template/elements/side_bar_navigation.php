@@ -9,7 +9,6 @@
                         </div>
                         <div class="info">
                             <span class="username"><?php echo $this->session->user_fullname; ?></span>
-                            <span class="useremail"><?php echo $this->session->user_email; ?></span>
                         </div>
                     </div>
                 </div>
@@ -19,7 +18,7 @@
                     <ul class="acc-menu">
                         <li class="nav-separator"><span>Explore</span></li>
 
-                        <li><a href="Dashboard"><i class="ti ti-home"></i><span>Dashboard</span><span class="badge badge-orange">0</span></a></li>
+                        <li><a href="Dashboard"><i class="ti ti-home"></i><span>Dashboard</span></a></li>
 <!--                         <li class="<?php echo (in_array('1',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#"><i class="ti ti-wallet"></i><span>Financing</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('1-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="General_journal">General Journal</a></li>

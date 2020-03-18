@@ -144,10 +144,20 @@
             margin-left: 20px !important;
         }
 
-        #img_user {
-            padd
+        #tbl_purchases_filter{
+            display: none;
+        }
 
-
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
 
 
     </style>
@@ -173,7 +183,7 @@
 <div class="page-content"><!-- #page-content -->
 
 <ol class="breadcrumb"  style="margin-bottom: 10px;">
-    <li><a href="Dashboard">Dashboard</a> > </li>
+    <li><a href="Dashboard">Dashboard</a> </li>
     <li><a href="Purchases">Purchase Order</a></li>
 </ol>
 
@@ -184,8 +194,36 @@
             <div class="col-md-12">
                 <div id="div_user_list">
                     <div class="panel panel-default">
-                        <div class="panel-body table-responsive">
+                        <div class="panel-body table-responsive" style="overflow-x: hidden;">
                         <h2 class="h2-panel-heading">Purchase Order</h2><hr>
+
+                            <div class="row">
+                                <div class="col-lg-3"><br>
+                                        <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Purchase Order</button>
+                                </div>
+                                <div class="col-lg-3">
+                                        From :<br />
+                                        <div class="input-group">
+                                            <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                             <span class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                             </span>
+                                        </div>
+                                </div>
+                                <div class="col-lg-3">
+                                        To :<br />
+                                        <div class="input-group">
+                                            <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                             <span class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                             </span>
+                                        </div>
+                                </div>
+                                <div class="col-lg-3">
+                                        Search :<br />
+                                         <input type="text" id="searchbox_tbl_purchases" class="form-control">
+                                </div>
+                            </div><br>
                             <table id="tbl_purchases" class="table table-striped" cellspacing="0" width="100%">
                                 <thead class="">
                                 <tr>
@@ -197,6 +235,7 @@
                                     <th width="10%" class="align-center">Status</th>
                                     <th width="5%" class="align-center">Sent</th>
                                     <th width="15%" class="align-center"><center>Action</center></th>
+                                    <th class="align-center">id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -741,8 +780,24 @@ $(document).ready(function(){
         dt=$('#tbl_purchases').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "order": [[ 8, "desc" ]],
             "pageLength":15,
-            "ajax" : "Purchases/transaction/list",
+            // "ajax" : "Purchases/transaction/list",
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "Purchases/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date').val(),
+                            "ted":$('#txt_end_date').val()
+
+                        });
+                    }
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -780,16 +835,10 @@ $(document).ready(function(){
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash+'</center>';
                     }
-                }
+                },
+                { visible:false, targets:[8],data: "purchase_order_id" },
             ]
         });
-
-
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purcahase Order" >'+
-                '<i class="fa fa-plus-circle"></i> New Purchase Order</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
 
         $('.numeric').autoNumeric('init');
 
@@ -841,6 +890,14 @@ $(document).ready(function(){
             }
         });
 
+        $('.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+
+        });
 
 
         var products = new Bloodhound({
@@ -1012,6 +1069,15 @@ $(document).ready(function(){
         } );
 
 
+        $("#searchbox_tbl_purchases").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+        $("#txt_start_date,#txt_end_date").on("change", function () {        
+            $('#tbl_purchases').DataTable().ajax.reload()
+        });
 
 
 

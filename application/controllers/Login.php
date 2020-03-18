@@ -20,7 +20,7 @@ class Login extends CORE_Controller {
         $this->load->model('Rights_link_model');
         $this->load->model('User_group_right_model');
         $this->load->model('Refproduct_model');
-
+        $this->load->model('Company_model');
     }
 
 
@@ -102,6 +102,8 @@ class Login extends CORE_Controller {
                     $users=$this->Users_model;
                     $result=$users->authenticate_user($uname,$pword);
 
+                    $company=$this->Company_model->get_list(1);
+
                     if($result->num_rows()>0){//valid username and pword
                         $m_rights=$this->User_group_right_model;
                         $rights=$m_rights->get_list(
@@ -128,6 +130,7 @@ class Login extends CORE_Controller {
                                 'user_fullname'=>$result->row()->user_fullname,
                                 'user_email'=>$result->row()->user_email,
                                 'user_photo'=>$result->row()->photo_path,
+                                'company_top_navigation'=>$company[0]->company_name,
                                 'user_rights'=>$user_rights,
                                 'parent_rights'=>$parent_links
                             )

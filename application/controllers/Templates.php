@@ -103,7 +103,7 @@ class Templates extends CORE_Controller {
 
                         //show only inside grid with menu buttons
                         if($type=='fullview'||$type==null){
-                            echo $this->load->view('template/po_content_new',$data,TRUE);
+                            echo $this->load->view('template/po_content_new_wo_header',$data,TRUE);
                             echo $this->load->view('template/po_content_menus',$data,TRUE);
                         }
 
@@ -112,7 +112,7 @@ class Templates extends CORE_Controller {
 
                             //echo '<br /><hr /><center><strong>Purchase Order for Approval</strong></center><hr />';
                             echo '<br />';
-                            echo $this->load->view('template/po_content_new',$data,TRUE);
+                            echo $this->load->view('template/po_content_new_wo_header',$data,TRUE);
                             echo $this->load->view('template/po_content_approval_menus',$data,TRUE);
                         }
 
