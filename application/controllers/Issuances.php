@@ -59,8 +59,10 @@ class Issuances extends CORE_Controller
         switch ($txn){
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_issuance=$this->Issuance_model;
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $response['data']=$this->response_rows(
-                    'issuance_info.is_active=TRUE AND issuance_info.is_deleted=FALSE'.($id_filter==null?'':' AND issuance_info.issuance_id='.$id_filter)
+                    "issuance_info.is_active=TRUE AND issuance_info.is_deleted=FALSE AND DATE(issuance_info.date_issued) BETWEEN '$tsd' AND '$ted'".($id_filter==null?"":" AND issuance_info.issuance_id=".$id_filter)
                 );
                 echo json_encode($response);
                 break;

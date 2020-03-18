@@ -88,6 +88,21 @@
                 width: 100%;
             }
         }
+
+        #tbl_issuances_filter{
+            display: none;
+        }
+
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
     </style>
 </head>
 
@@ -111,7 +126,7 @@ echo $_side_bar_navigation;
 <div class="page-content"><!-- #page-content -->
 
 <ol class="breadcrumb"  style="margin-bottom: 10px;">
-    <li><a href="Dashboard">Dashboard</a> > </li>
+    <li><a href="Dashboard">Dashboard</a></li>
     <li><a href="Issuances">Issuance</a></li>
 </ol>
 
@@ -123,8 +138,35 @@ echo $_side_bar_navigation;
 
 <div id="div_user_list">
     <div class="panel panel-default">
-        <div class="panel-body table-responsive">
+        <div class="panel-body table-responsive" style="overflow-x: hidden;">
             <h2 class="h2-panel-heading"> Issuances</h2><hr>
+            <div class="row">
+                <div class="col-lg-3"><br>
+                    <button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Issuance</button>
+                </div>
+                <div class="col-lg-3">
+                        From :<br />
+                        <div class="input-group">
+                            <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                             <span class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                             </span>
+                        </div>
+                </div>
+                <div class="col-lg-3">
+                        To :<br />
+                        <div class="input-group">
+                            <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                             <span class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                             </span>
+                        </div>
+                </div>
+                <div class="col-lg-3">
+                        Search :<br />
+                         <input type="text" id="searchbox_tbl_issuances" class="form-control">
+                </div>
+            </div><br>
             <table id="tbl_issuances" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -134,6 +176,7 @@ echo $_side_bar_navigation;
                     <th>Issued to person</th>
                     <th>Remarks</th>
                     <th><center>Action</center></th>
+                    <th>ID</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -589,68 +632,68 @@ $(document).ready(function(){
         vat_input : 'td:eq(8)',
         net_vat : 'td:eq(9)'
     };
+// NOT IN USE ------------------------------------------------------------------------------------------------------  
+    // $('#tbl_si_list > tbody').on('click','button[name="accept_si"]',function(){
+    //         _selectRowObj=$(this).closest('tr');
+    //         var data=dt_si.row(_selectRowObj).data();
 
-    $('#tbl_si_list > tbody').on('click','button[name="accept_si"]',function(){
-            _selectRowObj=$(this).closest('tr');
-            var data=dt_si.row(_selectRowObj).data();
+    //         $('input,textarea').each(function(){
+    //             var _elem=$(this);
+    //             $.each(data,function(name,value){
+    //                 if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+    //                     _elem.val(value);
+    //                 }
+    //             });
 
-            $('input,textarea').each(function(){
-                var _elem=$(this);
-                $.each(data,function(name,value){
-                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
-                    }
-                });
+    //             $('input[name="issued_to_person"]').val(data.customer_name);
+    //             $('#cbo_departments').select2('val',data.department_id);
+    //             $('#cbo_customers').select2('val',data.customer_id);
+    //         });
 
-                $('input[name="issued_to_person"]').val(data.customer_name);
-                $('#cbo_departments').select2('val',data.department_id);
-                $('#cbo_customers').select2('val',data.customer_id);
-            });
+    //         $.ajax({
+    //             url : 'Sales_invoice/transaction/list/'+data.sales_invoice_id,
+    //             type : "GET",
+    //             cache : false,
+    //             dataType : 'json',
+    //             processData : false,
+    //             contentType : false,
+    //             beforeSend : function(){
+    //                 $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+    //             },
+    //             success : function(response){
+    //                 var rows=response.data;
+    //                 $('#tbl_items > tbody').html('');
 
-            $.ajax({
-                url : 'Sales_invoice/transaction/list/'+data.sales_invoice_id,
-                type : "GET",
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                },
-                success : function(response){
-                    var rows=response.data;
-                    $('#tbl_items > tbody').html('');
-
-                    $.each(rows,function(i,value){
-                        $('#tbl_items > tbody').prepend(newRowItem({
-                            issue_qty : value.inv_qty,
-                            unit_id : value.unit_id,
-                            unit_name : value.unit_name,
-                            product_id: value.product_id,
-                            product_desc : value.product_desc,
-                            issue_line_total_discount : value.inv_line_total_discount,
-                            tax_exempt : false,
-                            issue_tax_rate : value.inv_tax_rate,
-                            issue_price : value.inv_price,
-                            issue_discount : value.inv_discount,
-                            tax_type_id : null,
-                            issue_line_total_price : value.inv_line_total_price,
-                            issue_non_tax_amount: value.inv_non_tax_amount,
-                            issue_tax_amount:value.inv_tax_amount
-                        }));
-                    });
-
-
-                    reComputeTotal();
-
-                    $('#modal_si_list').modal('hide');
-                    resetSummary();
-                }
-            });
+    //                 $.each(rows,function(i,value){
+    //                     $('#tbl_items > tbody').prepend(newRowItem({
+    //                         issue_qty : value.inv_qty,
+    //                         unit_id : value.unit_id,
+    //                         unit_name : value.unit_name,
+    //                         product_id: value.product_id,
+    //                         product_desc : value.product_desc,
+    //                         issue_line_total_discount : value.inv_line_total_discount,
+    //                         tax_exempt : false,
+    //                         issue_tax_rate : value.inv_tax_rate,
+    //                         issue_price : value.inv_price,
+    //                         issue_discount : value.inv_discount,
+    //                         tax_type_id : null,
+    //                         issue_line_total_price : value.inv_line_total_price,
+    //                         issue_non_tax_amount: value.inv_non_tax_amount,
+    //                         issue_tax_amount:value.inv_tax_amount
+    //                     }));
+    //                 });
 
 
+    //                 reComputeTotal();
 
-        });
+    //                 $('#modal_si_list').modal('hide');
+    //                 resetSummary();
+    //             }
+    //         });
+
+
+
+    //     });
 
 
     var oTableDetails={
@@ -659,39 +702,54 @@ $(document).ready(function(){
         issue_tax_amount : 'tr:eq(2) > td:eq(1)',
         after_tax : 'tr:eq(3) > td:eq(1)'
     };
-
-    dt_si = $('#tbl_si_list').DataTable({
-            "bLengthChange" : false,
-            "ajax" : "Sales_invoice/transaction/list",
-            "columns" : [
-            {
-                "targets" : [0],
-                "class":     "details-control",
-                "orderable" : true,
-                "data" : null,
-                "defaultContent" : ""
-            },
-            { targets:[1], data: "sales_inv_no" },
-            { targets:[2], data: "date_invoice" },
-            { targets:[3], data: "customer_name"},
-            { targets:[4], data: "department_name"},
-            { targets:[5], data: "remarks"},
-            { 
-                targets:[6], 
-                render: function (data, type, full, meta){
-                    var btn_accept='<button class="btn btn-success btn-sm" name="accept_si"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i> Accept SI</button>';
-                    return '<center>'+btn_accept+'</center>';
-                }
-            }
-        ]
-    });
+// NOT IN USE ------------------------------------------------------------------------------------------------------  
+    // dt_si = $('#tbl_si_list').DataTable({
+    //         "bLengthChange" : false,
+    //         "ajax" : "Sales_invoice/transaction/list",
+    //         "columns" : [
+    //         {
+    //             "targets" : [0],
+    //             "class":     "details-control",
+    //             "orderable" : true,
+    //             "data" : null,
+    //             "defaultContent" : ""
+    //         },
+    //         { targets:[1], data: "sales_inv_no" },
+    //         { targets:[2], data: "date_invoice" },
+    //         { targets:[3], data: "customer_name"},
+    //         { targets:[4], data: "department_name"},
+    //         { targets:[5], data: "remarks"},
+    //         { 
+    //             targets:[6], 
+    //             render: function (data, type, full, meta){
+    //                 var btn_accept='<button class="btn btn-success btn-sm" name="accept_si"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i> Accept SI</button>';
+    //                 return '<center>'+btn_accept+'</center>';
+    //             }
+    //         }
+    //     ]
+    // });
 
     var initializeControls=function(){
 
         dt=$('#tbl_issuances').DataTable({
             "dom": '<"toolbar">frtip',
-            "bLengthChange":false,  
-            "ajax" : "Issuances/transaction/list",
+            "bLengthChange":false, 
+            "order": [[ 6, "desc" ]],
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "Issuances/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date').val(),
+                            "ted":$('#txt_end_date').val()
+
+                        });
+                    }
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -712,7 +770,9 @@ $(document).ready(function(){
 
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
-                }
+                },
+                {visible:false, targets:[6],data: "issuance_id" },
+
             ]
 
         });
@@ -720,13 +780,6 @@ $(document).ready(function(){
         $('#btn_receive_si').click(function(){
             $('#modal_si_list').modal('show');
         });
-
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Issuance" >'+
-                '<i class="fa fa-plus-circle"></i> New Issuance</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
-
 
         _productType = $('#cbo_prodType').select2({
             placeholder: "Please select Product Type",
@@ -915,6 +968,16 @@ $(document).ready(function(){
             }*/
         } );
 
+
+        $("#searchbox_tbl_issuances").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+        $("#txt_start_date,#txt_end_date").on("change", function () {        
+            $('#tbl_issuances').DataTable().ajax.reload()
+        });
 
 
         //loads modal to create new department
