@@ -81,9 +81,11 @@ class Deliveries extends CORE_Controller
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
             case 'list':  //this returns JSON of Purchase Order to be rendered on Datatable
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
 
                 $response['data']=$this->response_rows(
-                    'delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE'.($id_filter==null?'':' AND delivery_invoice.dr_invoice_id='.$id_filter)
+                    "delivery_invoice.is_active=TRUE AND delivery_invoice.is_deleted=FALSE AND DATE(delivery_invoice.date_delivered) BETWEEN '$tsd' AND '$ted'  ".($id_filter==null?"":" AND delivery_invoice.dr_invoice_id=".$id_filter)
                     ,
                     'delivery_invoice.dr_invoice_id'
                 );

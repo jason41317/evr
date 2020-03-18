@@ -24,8 +24,6 @@
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <!--/twitter typehead-->
     <link href="assets/plugins/twittertypehead/twitter.typehead.css" rel="stylesheet">
-    <!-- Datepicker -->
-    <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
     <style>
         #tbl_items td,#tbl_items tr,#tbl_items th{
             table-layout: fixed;
@@ -161,6 +159,21 @@
             padding-bottom: 15px;
         }
 
+        #tbl_delivery_invoice_filter{
+            display: none;
+        }
+
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
+
 
     </style>
 </head>
@@ -197,8 +210,35 @@
 
 <div id="div_delivery_list">
     <div class="panel panel-default">
-        <div class="panel-body table-responsive">
+        <div class="panel-body table-responsive" style="overflow-x: hidden;">
             <h2 style="margin-bottom: 0;" class="h2-panel-heading"> Purchase Invoice</h2><hr>
+            <div class="row">
+                <div class="col-lg-3"><br>
+                        <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Purchase Invoice</button>
+                </div>
+                <div class="col-lg-3">
+                        From :<br />
+                        <div class="input-group">
+                            <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                             <span class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                             </span>
+                        </div>
+                </div>
+                <div class="col-lg-3">
+                        To :<br />
+                        <div class="input-group">
+                            <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                             <span class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                             </span>
+                        </div>
+                </div>
+                <div class="col-lg-3">
+                        Search :<br />
+                         <input type="text" id="searchbox_tbl_delivery_invoice" class="form-control">
+                </div>
+            </div><br>
             <table id="tbl_delivery_invoice" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -210,6 +250,7 @@
                     <th>Terms</th>
                     <th width="10%">Delivered</th>
                     <th width="10%"><center>Action</center></th>
+                    <th>ID</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -875,8 +916,23 @@ $(document).ready(function(){
         dt=$('#tbl_delivery_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "order": [[ 8, "desc" ]],
             "pageLength":15,
-            "ajax" : "Deliveries/transaction/list",
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "Deliveries/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date').val(),
+                            "ted":$('#txt_end_date').val()
+
+                        });
+                    }
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -899,21 +955,11 @@ $(document).ready(function(){
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
-                }
+                },
+                { visible:false, targets:[8],data: "dr_invoice_id" }
+
             ]
         });
-
-
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Invoice" >'+
-                '<i class="fa fa-plus-circle"></i> New Purchase Invoice</button>';
-
-            $("div.toolbar").html(_btnNew);
-        }();
-
-
-
-
 
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -1188,6 +1234,15 @@ $(document).ready(function(){
         } );
 
 
+        $("#searchbox_tbl_delivery_invoice").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+        $("#txt_start_date,#txt_end_date").on("change", function () {        
+            $('#tbl_delivery_invoice').DataTable().ajax.reload()
+        });
 
         _cboSuppliers.on("select2:select", function (e) {
 
