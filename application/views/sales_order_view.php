@@ -124,6 +124,21 @@
         #img_user {
             padding-bottom: 15px;
         }
+        #tbl_sales_order_filter{
+            display: none;
+        }
+
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
+
     </style>
 </head>
 <body class="animated-content"  style="font-family: tahoma;">
@@ -147,8 +162,35 @@
 
 
     <div class="panel panel-default" style="border: 4px solid #2980b9;">
-        <div class="panel-body table-responsive" >
+        <div class="panel-body table-responsive" style="overflow-x: hidden;">
         <h2 class="h2-panel-heading">Sales Order</h2><hr>
+        <div class="row">
+            <div class="col-lg-3"><br>
+                <button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" ><i class="fa fa-plus-circle"></i> New Sales Order</button>
+            </div>
+            <div class="col-lg-3">
+                    From :<br />
+                    <div class="input-group">
+                        <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                         <span class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                         </span>
+                    </div>
+            </div>
+            <div class="col-lg-3">
+                    To :<br />
+                    <div class="input-group">
+                        <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                         <span class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                         </span>
+                    </div>
+            </div>
+            <div class="col-lg-3">
+                    Search :<br />
+                     <input type="text" id="searchbox_tbl_sales_order" class="form-control">
+            </div>
+        </div><br>
             <table id="tbl_sales_order" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -159,6 +201,7 @@
                     <th width="25%">Remarks</th>
                     <th width="10%">Status</th>
                     <th><center>Action</center></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -801,7 +844,24 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "ajax" : "Sales_order/transaction/list",
+            "order": [[ 7, "desc" ]],
+            // "ajax" : "Sales_order/transaction/list",
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "Sales_order/transaction/list",
+                
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date').val(),
+                            "ted":$('#txt_end_date').val()
+
+                        });
+                    }
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -823,16 +883,11 @@ $(document).ready(function(){
 
                         return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                     }
-                }
+                },
+                { visible:false, targets:[7],data: "sales_order_id" },
             ]
 
         }); 
-
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Order" >'+
-                '<i class="fa fa-plus-circle"></i> New Sales Order</button>';
-                $("div.toolbar").html(_btnNew);
-        }();
 
         _cboCustomers=$("#cbo_customers").select2({
             placeholder: "Please select customer.",
@@ -1061,6 +1116,7 @@ $(document).ready(function(){
     var bindEventHandlers=(function(){
         var detailRows = [];
 
+
         $('#tbl_sales_order tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
@@ -1098,6 +1154,17 @@ $(document).ready(function(){
 
             }
         } );
+
+        $("#searchbox_tbl_sales_order").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+        $("#txt_start_date,#txt_end_date").on("change", function () {        
+            $('#tbl_sales_order').DataTable().ajax.reload()
+        });
+
 
 
         //loads modal to create new department
