@@ -14,7 +14,7 @@ class Issuances extends CORE_Controller
         $this->load->model('Departments_model');
         $this->load->model('Tax_types_model');
         $this->load->model('Products_model');
-        $this->load->model('Customers_Model');
+        $this->load->model('Customers_model');
         $this->load->model('Refproduct_model');
 
     }
@@ -34,7 +34,7 @@ class Issuances extends CORE_Controller
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );
 
-        $data['customers']=$this->Customers_Model->get_list(
+        $data['customers']=$this->Customers_model->get_list(
             array('customers.is_active'=>TRUE, 'customers.is_deleted'=>FALSE)
         );
 

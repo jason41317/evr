@@ -32,13 +32,14 @@ class Sales_invoice_other extends CORE_Controller
 
         //data required by active view
         $data['departments']=$this->Departments_model->get_list(
-            array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
+            array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE),
+            'department_id,department_name,delivery_address'
         );
 
         //data required by active view
-        $data['customers']=$this->Customers_model->get_list(
-            array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
-        );
+        // $data['customers']=$this->Customers_model->get_list(
+        //     array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
+        // );
 
         $data['salespersons']=$this->Salesperson_model->get_list(
             array('salesperson.is_active'=>TRUE,'salesperson.is_deleted'=>FALSE),
@@ -87,7 +88,7 @@ class Sales_invoice_other extends CORE_Controller
         );*/
 
 
-        $data['products']=$this->Products_model->get_current_item_list();
+        // $data['products']=$this->Products_model->get_current_item_list();
 
 
         $data['title'] = 'Other Sales Invoice';
@@ -103,9 +104,13 @@ class Sales_invoice_other extends CORE_Controller
                 break;
 
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $m_invoice=$this->Sales_invoice_model;
                 $response['data']=$this->response_rows(
-                    'sales_invoice.inv_type=2 AND sales_invoice.sales_invoice_id < 1000 AND sales_invoice.is_active=TRUE AND sales_invoice.is_deleted=FALSE'.($id_filter==null?'':' AND sales_invoice.sales_invoice_id='.$id_filter)
+                    "sales_invoice.inv_type=2 AND sales_invoice.sales_invoice_id AND sales_invoice.is_active=TRUE AND sales_invoice.is_deleted=FALSE
+                    AND DATE(sales_invoice.date_invoice) BETWEEN '$tsd' AND '$ted'
+                    ".($id_filter==null?"":" AND sales_invoice.sales_invoice_id=".$id_filter)
                 );
                 echo json_encode($response);
                 break;

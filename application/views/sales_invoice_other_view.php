@@ -129,6 +129,21 @@
             }
         }
 
+        #tbl_sales_invoice_filter{
+            display: none;
+        }
+
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
+
 
         .form-group {
             margin-bottom: 15px;
@@ -153,9 +168,36 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div id="div_sales_invoice_list">
-                                    <div class="panel panel-default" style="border: 3px solid #2980b9;min-height: 650px;">
-                                        <div class="panel-body table-responsive">
+                                    <div class="panel panel-default" style="border: 3px solid #2980b9;">
+                                        <div class="panel-body table-responsive" style="overflow-x: hidden;">
                                         <h2 class="h2-panel-heading">Other Sales Invoice</h2><hr>
+                                        <div class="row">
+                                            <div class="col-lg-3"><br>
+                                                <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Sales Invoice</button>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                    From :<br />
+                                                    <div class="input-group">
+                                                        <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                                         <span class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                         </span>
+                                                    </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                    To :<br />
+                                                    <div class="input-group">
+                                                        <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                                         <span class="input-group-addon">
+                                                                <i class="fa fa-calendar"></i>
+                                                         </span>
+                                                    </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                    Search :<br />
+                                                     <input type="text" id="searchbox_tbl_sales_invoice" class="form-control">
+                                            </div>
+                                        </div><br>
                                             <table id="tbl_sales_invoice" class="table table-striped" cellspacing="0" width="100%" style="">
                                                 <thead class="">
                                                 <tr>
@@ -166,6 +208,7 @@
                                                     <th>Issued to Branch</th>
                                                     <th width="25%">Remarks</th>
                                                     <th width="10%"><center>Action</center></th>
+                                                    <th></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -426,7 +469,7 @@
                                     </div>
 
 
-                                    <div class="panel-footer" style="border-top: 3px solid #2980b9">
+                                    <div class="panel-footer">
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>Save Changes</button>
@@ -671,7 +714,24 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "pageLength":15,
-                "ajax" : "Sales_invoice_other/transaction/list",
+                "order": [[ 7, "desc" ]],
+                // "ajax" : "Sales_invoice_other/transaction/list",
+                oLanguage: {
+                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },
+                processing : true,
+                "ajax" : {
+                    "url" : "Sales_invoice_other/transaction/list",
+                    
+                    "bDestroy": true,            
+                    "data": function ( d ) {
+                            return $.extend( {}, d, {
+                                "tsd":$('#txt_start_date').val(),
+                                "ted":$('#txt_end_date').val()
+
+                            });
+                        }
+                }, 
                 "columns": [
                     {
                         "targets": [0],
@@ -694,7 +754,8 @@
 
                             return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
                         }
-                    }
+                    },
+                    {visible:false, targets:[7],data: "sales_invoice_id" },
                 ]
 
             });
@@ -728,14 +789,6 @@
                 ]
 
             });
-
-
-            var createToolBarButton=function(){
-                var _btnNew='<button class="btn btn-green" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="New Sales Invoice" >'+
-                    '<i class="fa fa-plus-circle"></i> New Sales Invoice</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
-
 
             _productType = $('#cbo_prodType').select2({
                 placeholder: "Please select Product Type",
@@ -931,7 +984,15 @@
 
             } );
 
+            $("#searchbox_tbl_sales_invoice").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
 
+            $("#txt_start_date,#txt_end_date").on("change", function () {        
+                $('#tbl_sales_invoice').DataTable().ajax.reload()
+            });
 
             $('#link_browse').click(function(){
                 $('#btn_receive_so').click();
@@ -1368,7 +1429,7 @@
             $('#btn_cancel').click(function(){
                 //$('#modal_so_list').modal('hide');
                 showList(true);
-                $('cbo_prodType').select2('val',null);
+                $('#cbo_prodType').select2('val',null);
             });
 
 

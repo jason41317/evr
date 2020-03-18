@@ -41,16 +41,16 @@ class Sales_order extends CORE_Controller
 
         //data required by active view
         $data['customers']=$this->Customers_model->get_list(
-            array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
+            array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE),
+                'customers.customer_id,
+                customers.customer_name'
         );
-
 
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE'
         );
 
-        $data['products']=$this->Products_model->get_current_item_list();
-
+        // $data['products']=$this->Products_model->get_current_item_list();
         $data['title'] = 'Sales Order';
         $this->load->view('sales_order_view', $data);
 

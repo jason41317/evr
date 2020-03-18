@@ -34,7 +34,8 @@ class Sales_invoice extends CORE_Controller
 
         //data required by active view
         $data['departments']=$this->Departments_model->get_list(
-            array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
+            array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE),
+            'department_id,department_name'
         );
 
         $data['salespersons']=$this->Salesperson_model->get_list(
@@ -44,7 +45,9 @@ class Sales_invoice extends CORE_Controller
 
         //data required by active view
         $data['customers']=$this->Customers_model->get_list(
-            array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE)
+            array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE),
+                'customers.customer_id,
+                customers.customer_name'
         );
 
         $data['refproducts']=$this->Refproduct_model->get_list(
@@ -89,12 +92,10 @@ class Sales_invoice extends CORE_Controller
 
         );*/
 
-
-        $data['products']=$this->Products_model->get_current_item_list();
+        // 2020 NOT IN USE
+        // $data['products']=$this->Products_model->get_current_item_list();
 
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
-
-
         $data['title'] = 'Sales Invoice';
         $this->load->view('sales_invoice_view', $data);
     }

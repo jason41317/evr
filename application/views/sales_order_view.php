@@ -260,10 +260,7 @@
                         Customer : <br />
                         <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                             <option value="0">[ Create New Customer ]</option>
-                            <?php $customers = $this->db->where('is_deleted',FALSE); ?>
-                            <?php $customers = $this->db->where('is_active',TRUE);?>
-                            <?php $customers = $this->db->get('customers');?>
-                            <?php foreach($customers->result() as $customer){ ?>
+                            <?php foreach($customers as $customer){ ?>
                                 <option value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
                             <?php } ?>
                         </select>

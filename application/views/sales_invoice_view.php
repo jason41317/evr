@@ -235,11 +235,11 @@
                 <thead class="">
                 <tr>
                     <th width="3%"></th>
-                    <th width="10%">Invoice #</th>
+                    <th width="7%">Invoice #</th>
                     <th width="10%">Invoice Date</th>
-                    <th width="10%">Due Date</th>
+                    <th width="7%">Due Date</th>
                     <th>Customer</th>
-                    <th width="10%">Branch</th>
+                    <th>Branch</th>
                     <th width="20%">Remarks</th>
                     <th width="10%"><center>Action</center></th>
                     <th>ID</th>
