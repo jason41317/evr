@@ -30,12 +30,6 @@
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
     <style>
-        body{
-
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
 
         .select2-container{
             min-width: 100%;
@@ -63,7 +57,7 @@
                                 <div class="modal-body">
 
 
-                                    <div class="row">
+                                    <div class="row hidden">
                                         <div class="col-sm-12">
                                             Branch : <br />
                                             <select name="department" id="cbo_departments" data-error-msg="Branch is required." required>
@@ -75,9 +69,8 @@
                                         </div>
                                     </div>
 
-                                    <br />
 
-                                    <div class="row">
+                                    <div class="row hidden">
                                         <div class="col-sm-12">
                                             Report : <br />
                                             <select name="report" id="cbo_report" data-error-msg="Branch is required." required>
@@ -86,8 +79,6 @@
                                             </select>
                                         </div>
                                     </div>
-
-                                    <br />
 
                                     <div class="row">
                                         <div class="col-sm-12">
@@ -117,14 +108,6 @@
 
                                     <br />
 
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <input type="checkbox" id="chk_show_all" value="1">Show Items with 0 Qty
-                                        </div>
-                                    </div>
-
-                                    <br />
-
 
                                     <div class="row">
                                         <div class="col-sm-12">
@@ -143,8 +126,12 @@
 
 
 
-
-
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                        Report will products with quantities greater than zero.
+                                            <input type="checkbox"  class="hidden" id="chk_show_all" value="1"><!-- Show Items with 0 Qty -->
+                                        </div>
+                                    </div>
 
 
 

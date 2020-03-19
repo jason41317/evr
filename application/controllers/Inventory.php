@@ -16,6 +16,7 @@ class Inventory extends CORE_Controller
                 'Departments_model',
                 'Refproduct_model',
                 'Products_model',
+                'Company_model',
                 'Suppliers_model'
             )
         );
@@ -49,37 +50,45 @@ class Inventory extends CORE_Controller
                 $date=date('Y-m-d',strtotime($this->input->get('date',TRUE)));
                 $supplier_id=$this->input->get('supid',TRUE);
 
-
+                $company_info=$this->Company_model->get_list()[0];
                 $excel=$this->excel;
                 $excel->setActiveSheetIndex(0);
 
                 //name the worksheet
                 $excel->getActiveSheet()->setTitle('Inventory Report '.date('M d Y',strtotime($date)));
 
+                $excel->getActiveSheet()->setCellValue('A1', $company_info->company_name);
+                $excel->getActiveSheet()->setCellValue('A2', $company_info->company_address);
                 //header
                 //create headers
-                $excel->getActiveSheet()->getStyle('A4:I4')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->getStyle('A4:J4')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A4', 'Product')
                     ->setCellValue('B4', 'Unit')
                     ->setCellValue('C4', 'Product type')
                     ->setCellValue('D4', 'Supplier')
                     ->setCellValue('E4', 'Category')
-                    ->setCellValue('F4', 'Purchase')
-                    ->setCellValue('G4', 'SRP')
-                    ->setCellValue('H4', 'On Hand');
+                    ->setCellValue('F4', 'Batch')
+                    ->setCellValue('G4', 'Expiration')
+                    ->setCellValue('H4', 'Purchase')
+                    ->setCellValue('I4', 'SRP')
+                    ->setCellValue('J4', 'On Hand');
 
-                $inventory=$m_products->get_inventory($date,$prod_type_id,$is_show_all,$supplier_id);
+
+                $inventory=$m_products->get_all_items_inventory_excel($date,$prod_type_id,$supplier_id);
+                // $inventory=$m_products->get_inventory($date,$prod_type_id,$is_show_all,$supplier_id); // OLD REPORT
                 $rows=array();
                 foreach($inventory as $x){
                     $rows[]=array(
                         $x->product_desc,
-                        $x->unit_name,
+                        $x->size,
                         $x->product_type,
                         $x->supplier_name,
                         $x->category_name,
+                        $x->batch_no,
+                        $x->expiration,
                         $x->purchase_cost,
                         $x->sale_price,
-                        $x->on_hand
+                        $x->on_hand_per_batch
                     );
                 }
 
@@ -90,7 +99,7 @@ class Inventory extends CORE_Controller
                 }
 
                 //autofit column
-                foreach(range('A','H') as $columnID)
+                foreach(range('A','J') as $columnID)
                 {
                     $excel->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(TRUE);
                 }

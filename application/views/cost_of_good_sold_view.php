@@ -34,10 +34,6 @@
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
 
     <style>
-        html{
-            zoom: 0.75;
-            zoom: 75%;
-        }
 
         .toolbar{
             float: left;
@@ -55,45 +51,27 @@
             text-align: right;
         }
 
-
     </style>
-
 </head>
-
 <body class="animated-content" style="font-family: tahoma;">
-
 <?php echo $_top_navigation; ?>
-
 <div id="wrapper">
     <div id="layout-static">
-
         <?php echo $_side_bar_navigation;?>
-
         <div class="static-content-wrapper white-bg">
             <div class="static-content"  >
-
-                <div class="page-content"><!-- #page-content -->
-
-
-                    <div class="container-fluid" style="padding: 5px;!important;">
+                <div class="page-content"><!-- #page-content --><br>
+                    <div class="container-fluid" style="padding: 5px!important;">
                         <div data-widget-group="group1">
                             <div class="row">
                                 <div class="col-md-12">
-
                                     <div id="div_payable_list">
-
                                         <div class="panel-group panel-default" id="accordionA">
-
-
                                             <div class="panel panel-default" style="border-radius: 0px;border: 1px solid lightgrey;min-height: 800px;">
-                                                <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Cost of Goods Sold</b></div></a>
-
-
-                                                <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
+                                                    <h2 class="h2-panel-heading">Cost of Goods Sold</h2>
                                                         <div style="border: 1px solid #a0a4a5;padding: 8px;border-radius: 0px;padding-bottom: 10px;">
                                                             <div class="row">
-
                                                                 <div class="col-lg-6">
                                                                     Department * : <br />
                                                                     <select id="cbo_departments" class="form-control">
@@ -101,10 +79,7 @@
                                                                             <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
-
                                                                 </div>
-
-
                                                                 <div class="col-lg-3">
                                                                     Period Start * :<br />
                                                                     <div class="input-group">
@@ -114,7 +89,6 @@
                                                                          </span>
                                                                     </div>
                                                                 </div>
-
                                                                 <div class="col-lg-3">
                                                                     Period End * :<br />
                                                                     <div class="input-group">
@@ -124,38 +98,28 @@
                                                                          </span>
                                                                     </div>
                                                                 </div>
-
                                                             </div>
-
-
-
                                                         </div>
-
                                                         <div class="row" style="margin-bottom: 5px;margin-top: 5px;">
-                                                            <div class="col-lg-3">
-                                                                <button id="btn_print" class="btn btn-default col-lg-8" style="text-transform: none;"><i class="fa fa-print"></i> Print Report</button>
-
-                                                                <button id="btn_refresh" class="btn btn-default" style="text-transform: none;margin-left: 5px;"><i class="fa fa-refresh"></i> Refresh</button>
+                                                            <div class="col-lg-12">
+                                                                <button id="btn_print" class="btn btn-success" style="text-transform: none;"><i class="fa fa-print"></i> Print Report</button>
+                                                                <button id="btn_refresh" class="btn btn-success" style="text-transform: none;margin-left: 5px;"><i class="fa fa-refresh"></i> Refresh</button>
                                                             </div>
-
                                                         </div>
-
-                                                        <table id="tbl_account_subsidiary" class="custom-design table-striped" cellspacing="0" width="100%">
-
-
+                                                        <table id="tbl_account_subsidiary" class="table table-striped" cellspacing="0" width="100%">
                                                             <tbody>
                                                                 <tr>
-
-                                                                    <td width="80" align="left"><a href="#" style="font-size: 16px;font-weight: 600;">Merchandise Inventory - Beginning </a> <br />Beginning Inventory of Period <span class="period_start">02/01/2017</span> to <span class="period_end">02/02/2017</span></td>
-                                                                    <td width="20%" style="text-align: right;color:white;background-color: #3be00b"><span class="total_avg_cost" style="font-size: 16px;font-weight: 600;">1,500.00</span></td>
-
+                                                                    <td width="80%" align="left"><a href="#" style="font-size: 16px;font-weight: 600;">
+                                                                        Merchandise Inventory - Beginning </a> <br />
+                                                                        Beginning Inventory of Period <span class="period_start">02/01/2017</span> to <span class="period_end">02/02/2017</span>
+                                                                    </td>
+                                                                    <td width="20%" style="text-align: right;color:white;background-color: #626667">
+                                                                        <span class="total_avg_cost" style="font-size: 16px;font-weight: 600;">0.00</span>
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td style="padding:10px 10px 40px 10px;" colspan="1">
-
-
-                                                                        <table id="tbl_beginning_inventory" class="custom-design">
-
+                                                                    <td style="padding:10px 10px 40px 10px;" colspan="2">
+                                                                        <table id="tbl_beginning_inventory" class="table table-striped">
                                                                             <thead>
                                                                                 <tr>
                                                                                     <th width="70%">Product</th>
@@ -165,46 +129,29 @@
                                                                                 </tr>
                                                                             </thead>
                                                                            <tbody>
-                                                                               <tr>
-                                                                                   <td>Product 1</td>
-                                                                                   <td align="right">1</td>
-                                                                                   <td align="right">450.00</td>
-                                                                                   <td align="right">Total</td>
-                                                                               </tr>
                                                                            </tbody>
                                                                             <tfoot>
                                                                                 <tr>
                                                                                     <td colspan="2" align="right"><b>Merchandise Inventory - Beginning :</b></td>
                                                                                     <td colspan="2" align="right"><b class="total_avg_cost">0.00</b></td>
                                                                                 </tr>
-
                                                                             </tfoot>
-
                                                                         </table>
-
                                                                     </td>
-
                                                                 </tr>
-
                                                                 <tr>
-
                                                                     <td width="80" align="left">Add : <a href="#" style="font-size: 16px;font-weight: 600;">Purchases</a> <br />Purchase Invoice of period <span class="period_start">01/01/2017</span> to <span class="period_end">02/02/2017</span></td>
-                                                                    <td width="20%" style="text-align: right;color:white;background-color: #3be00b"><span class="total_purchases" style="font-size: 16px;font-weight: 600;">0.00</span></td>
-
+                                                                    <td width="20%" style="text-align: right;color:white;background-color: #626667"><span class="total_purchases" style="font-size: 16px;font-weight: 600;">0.00</span></td>
                                                                 </tr>
-
                                                                 <tr>
-                                                                    <td style="padding:10px 10px 40px 10px;" colspan="1">
-
-
-                                                                        <table id="tbl_purchases" class="custom-design">
-
+                                                                    <td style="padding:10px 10px 40px 10px;" colspan="2">
+                                                                        <table id="tbl_purchases" class="table table-striped">
                                                                             <thead>
                                                                                 <tr>
                                                                                     <th width="15%">Reference</th>
-                                                                                    <th width="10%">Date</th>
+                                                                                    <th width="15%">Date</th>
                                                                                     <th width="20%">Supplier</th>
-                                                                                    <th width="20%">Product</th>
+                                                                                    <th width="25%">Product</th>
                                                                                     <th width="5%" style="text-align: right">Qty</th>
                                                                                     <th width="10%" style="text-align: right">Cost</th>
                                                                                     <th width="10%" style="text-align: right">Total</th>
@@ -212,7 +159,6 @@
                                                                             </thead>
                                                                             <tbody>
                                                                             <tr>
-
                                                                             </tr>
                                                                             </tbody>
                                                                             <tfoot>
@@ -220,41 +166,25 @@
                                                                                 <td colspan="5" align="right"><b>Add : Purchases</b></td>
                                                                                 <td colspan="2" align="right"><b class="total_purchases">0.00</b></td>
                                                                             </tr>
-
                                                                             </tfoot>
-
                                                                         </table>
-
                                                                     </td>
-
                                                                 </tr>
-
                                                                 <tr>
-
                                                                     <td width="80" align="right"><a href="#" style="font-size: 16px;font-weight: 600;">
                                                                             Total Goods Available for Sale :</a> <br />
                                                                             ( Merchandise Inventory + Purchases )
-
                                                                     </td>
-                                                                    <td width="20%" style="text-align: right;color:white;background-color: #3be00b"><span class="total_available_goods" style="font-size: 20px;font-weight: 600;">1,500.00</span></td>
-
+                                                                    <td width="20%" style="text-align: right;color:white;background-color: #626667"><span class="total_available_goods" style="font-size: 20px;font-weight: 600;">1,500.00</span></td>
                                                                 </tr>
-
                                                                 <tr><td>&nbsp;</td></tr>
-
                                                                 <tr>
-
                                                                     <td width="80" align="left">Less : <a href="#" style="font-size: 16px;font-weight: 600;">Merchandise Inventory -End </a> <br />Inventory as of date 02/02/2017</td>
-                                                                    <td width="20%" style="text-align: right;color:white;background-color: #3be00b"><span class="total_avg_cost" style="font-size: 16px;font-weight: 600;">1,500.00</span></td>
-
+                                                                    <td width="20%" style="text-align: right;color:white;background-color: #626667"><span class="total_avg_cost" style="font-size: 16px;font-weight: 600;">1,500.00</span></td>
                                                                 </tr>
-
                                                                 <tr>
-                                                                    <td style="padding:10px 10px 40px 10px;" colspan="1">
-
-
-                                                                        <table id="tbl_ending_inventory" class="custom-design">
-
+                                                                    <td style="padding:10px 10px 40px 10px;" colspan="2">
+                                                                        <table id="tbl_ending_inventory" class="table table-striped">
                                                                             <thead>
                                                                             <tr>
                                                                                 <th width="70%">Product</th>
@@ -276,49 +206,28 @@
                                                                                 <td colspan="2" align="right"><b>Merchandise Inventory - Ending :</b></td>
                                                                                 <td colspan="2" align="right"><b class="total_avg_cost_ending">0.00</b></td>
                                                                             </tr>
-
                                                                             </tfoot>
-
                                                                         </table>
-
                                                                     </td>
-
                                                                 </tr>
-
                                                                 <tr>
-
                                                                     <td width="80" align="right"><a href="#" style="font-size: 16px;font-weight: 600;"> Cost of Goods Sold : </a> <br />Period <span class="period_start">01/01/2017</span> to <span class="period_end">02/02/2017</span></td>
                                                                     <td width="20%" style="text-align: right;color:white;background-color: #80b0fc;"><span class="total_cost_of_goods_sold" style="font-size: 25px;font-weight: 600;">1,500.00</span></td>
-
                                                                 </tr>
-
                                                             </tbody>
                                                         </table><br /><br /><br />
-
-
-
-
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                         </div>
-
                                     </div>
-
-
                                 </div>
-
-
-
                             </div>
                         </div>
                     </div>
                 </div> <!-- .container-fluid -->
             </div> <!-- #page-content -->
         </div>
-
         <footer role="contentinfo">
             <div class="clearfix">
                 <ul class="list-unstyled list-inline pull-left">

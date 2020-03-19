@@ -47,7 +47,9 @@ class Sales_invoice extends CORE_Controller
         $data['customers']=$this->Customers_model->get_list(
             array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE),
                 'customers.customer_id,
-                customers.customer_name'
+                customers.customer_name,
+                customers.term,
+                customers.address'
         );
 
         $data['refproducts']=$this->Refproduct_model->get_list(

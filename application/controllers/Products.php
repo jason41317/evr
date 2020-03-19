@@ -42,7 +42,7 @@ class Products extends CORE_Controller
         $data['categories'] = $this->Categories_model->get_list(array('categories.is_deleted'=>FALSE));
         $data['units'] = $this->Units_model->get_list(array('units.is_deleted'=>FALSE));
         $data['item_types'] = $this->Item_type_model->get_list(array('item_types.is_deleted'=>FALSE));
-        $data['accounts'] = $this->Account_title_model->get_list(null,'account_id,account_title');
+        $data['accounts'] = $this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE','account_id,account_title');
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
 
         $this->load->view('products_view', $data);
@@ -198,8 +198,8 @@ class Products extends CORE_Controller
 
                 $data['products']=$m_products->get_product_history($product_id,"2000-01-01"."1",date('Y-m-d')); //temp date only
                 $data['product_id']=$product_id;
-                $this->load->view('Template/product_history_menus',$data);
-                $this->load->view('Template/product_history',$data);
+                $this->load->view('template/product_history_menus',$data);
+                $this->load->view('template/product_history',$data);
                 break;
             case 'get-current-invoice-cost':
                 $m_inv=$this->Sales_invoice_model;
