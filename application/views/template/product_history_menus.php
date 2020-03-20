@@ -3,7 +3,7 @@
 <div class="row" id="div_product_history_menu" style="margin-left: 2px;">
 
 
-    <div class="col-lg-2">
+<!--     <div class="col-lg-2">
 
 
         <div class="input-group">
@@ -21,9 +21,12 @@
                                 </span>
         </div>
 
+    </div> -->
+    <div class="col-lg-9">
+        This module will show detailed transactions only from this month. <br>
+        Use the Stock Card report to show detailed transaction with your preferred date range.
     </div>
-
-    <div class="col-lg-3 col-lg-offset-5">
+    <div class="col-lg-3">
         <div class="title-action pull-right" style="margin-right: 1%;">
 
             <button class="btn-export btn btn-success" data-product-id="<?php echo $product_id; ?>"><i class="fa fa-file-excel-o"></i> Export Product History to Excel </button>

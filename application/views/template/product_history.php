@@ -20,11 +20,23 @@
 
            </thead>
            <tbody>
-                <?php if(count($products)==0){ ?>
+
+<!--                 <?php if(count($products)==0){ ?>
                     <tr>
                         <td colspan="9" style="border: 1px solid lightgrey;padding: 10px;" align="center">No transaction found.</td>
                     </tr>
-                <?php } ?>
+                <?php } ?> -->
+                <tr>
+                  <td style="border: 1px solid lightgrey;padding: 5px;font-weight: bold;"><?php echo date("M d, Y",strtotime(date('Y-m-01') . "-1 days")); ?></td>
+                  <td style="border: 1px solid lightgrey;padding: 5px;">Balance</td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;">System</td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;font-weight: bold;">System Generated Balance</td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;"></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;"></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;"></td>
+                   <td style="border: 1px solid lightgrey;padding: 5px;text-align: right;font-weight: bolder;"><?php echo number_format($balance_as_of->balance,0); ?></td>
+                </tr>
 
                 <?php foreach($products as $product){ ?>
                <tr>

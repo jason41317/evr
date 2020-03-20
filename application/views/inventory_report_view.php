@@ -128,7 +128,7 @@
 
                                     <div class="row">
                                         <div class="col-sm-12">
-                                        Report will products with quantities greater than zero.
+                                        Report will show products with quantities greater than zero.
                                             <input type="checkbox"  class="hidden" id="chk_show_all" value="1"><!-- Show Items with 0 Qty -->
                                         </div>
                                     </div>

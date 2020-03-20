@@ -34,11 +34,6 @@
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
         tr.group,
         tr.group:hover {
             background-color: #eaeaea !important;
@@ -97,9 +92,9 @@
 
                                         <div class="panel-group panel-default" id="accordionA">
                                             <div class="panel panel-default" style="border-radius: 6px;border: 1px solid #eeeeee;min-height: 670px;">
-                                                <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid #eeeeee;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Purchase Invoice Report</b></div></a>
                                                 <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
+                                                    <h2 class="h2-panel-heading">Purchase Invoice Report</h2>
                                                         <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
                                                             <div class="row">
                                                                  <!-- <div class="col-lg-4">
@@ -159,7 +154,7 @@
                                                                     <div id="summary" class="tab-pane fade in active">
                                                                         <button class="btn btn-primary pull-left" id="btn_print_summary" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;"><i class="fa fa-print"></i>&nbsp; Print Report</button>
                                                                         <button class="btn btn-success pull-left" id="btn_print_excel_summary" style="margin-right: 5px; margin-top: 0; margin-bottom: 10px;"><i class="fa fa-file-excel-o"></i>&nbsp; Export to Excel</button>
-                                                                        <table id="tbl_pi_summary" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                                                        <table id="tbl_pi_summary" class="table table-striped" cellspacing="0" width="100%">
                                                                             <thead class="">
                                                                             <tr>
                                                                                 <th>Supplier</th>

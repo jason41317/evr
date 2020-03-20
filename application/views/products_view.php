@@ -24,7 +24,7 @@
     <script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
-
+    <script src="assets/plugins/datapicker/bootstrap-datepicker.js"></script>
     <!-- Select2 -->
     <script src="assets/plugins/select2/select2.full.min.js"></script>
 

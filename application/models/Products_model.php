@@ -245,8 +245,8 @@ class Products_model extends CORE_Model {
 
 
 
-    function get_product_history($product_id,$start,$end){
-        $this->db->query("SET @nBalance:=0.00;");
+    function get_product_history($product_id,$start,$end,$balance){
+        $this->db->query("SET @nBalance:=$balance;");
         $sql="
 
 
@@ -260,6 +260,7 @@ class Products_model extends CORE_Model {
                 (SELECT
 
                 (ai.date_adjusted) as txn_date,
+                ai.date_created,
                 ai.adjustment_code as ref_no,
                 ('Adjustment In')as type,
                 '' as Description,
@@ -280,6 +281,7 @@ class Products_model extends CORE_Model {
                 SELECT
 
                 (ai.date_adjusted) as txn_date,
+                ai.date_created,
                 ai.adjustment_code as ref_no,
                 ('Adjustment Out')as type,
                 '' as Description,
@@ -302,6 +304,7 @@ class Products_model extends CORE_Model {
                 SELECT
 
                 di.date_delivered as txn_date,
+                di.date_created,
                 di.dr_invoice_no as ref_no,
                 ('Purchase Invoice') as type,
                 CONCAT(IFNULL(s.supplier_name,''),' (Supplier)') as Description,
@@ -323,6 +326,7 @@ class Products_model extends CORE_Model {
                 SELECT
 
                 si.date_invoice as txn_date,
+                si.date_created,
                 si.sales_inv_no as ref_no,
                 ('Sales Invoice') as type,
                 CONCAT(IFNULL(c.customer_name,''),' (Customer)') as Description,
@@ -345,6 +349,7 @@ class Products_model extends CORE_Model {
                 SELECT
 
                 ii.date_issued as txn_date,
+                ii.date_created,
                 ii.slip_no as ref_no,
                 'Issuance' as type,
                 ii.issued_to_person as Description,
@@ -363,7 +368,8 @@ class Products_model extends CORE_Model {
 
 
                 SELECT
-                si.`date_invoice` as txn_date,
+                si.date_invoice as txn_date,
+                si.date_created,
                 si.sales_inv_no as ref_no,
                 ('Other Sales Invoice') as type,
                 CONCAT(IFNULL(d.department_name,''),' (Branch)') as Description,
@@ -379,7 +385,83 @@ class Products_model extends CORE_Model {
 
                 AND si.date_invoice BETWEEN '$start' AND '$end'
 
-                ) as m ORDER BY m.txn_date ASC) as n  LEFT JOIN products as p ON n.product_id=p.product_id";
+                ) as m ORDER BY m.txn_date ASC, m.date_created ASC) as n  LEFT JOIN products as p ON n.product_id=p.product_id";
+
+        return $this->db->query($sql)->result();
+    }
+
+    function get_product_balance_as_of_date($product_id,$date){
+        $sql="SELECT main.product_id,
+        (IFNULL(adjin.adj_in,0) +
+        IFNULL(drin.dr_in,0) - 
+        IFNULL(adjout.adj_out,0) -
+        IFNULL(salout.sal_out,0) -
+        IFNULL(issout.iss_out,0) ) as balance 
+        FROM
+
+        products   as main
+        LEFT JOIN 
+        (SELECT
+        aii.product_id,
+        SUM(aii.adjust_qty) as adj_in
+
+        FROM adjustment_info as ai
+        INNER JOIN adjustment_items as aii ON aii.adjustment_id=ai.adjustment_id
+        WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+        AND aii.product_id = $product_id AND ai.date_adjusted < '$date'
+
+        GROUP BY aii.product_id) as adjin ON adjin.product_id = main.product_id
+
+        LEFT JOIN
+        (SELECT
+        dii.product_id,
+        SUM(dii.dr_qty)as dr_in
+
+        FROM delivery_invoice di
+        INNER JOIN delivery_invoice_items as dii
+        ON dii.dr_invoice_id=di.dr_invoice_id
+        WHERE di.is_active=TRUE AND di.is_deleted=FALSE
+        AND dii.product_id = $product_id AND di.date_delivered < '$date'
+        GROUP BY dii.product_id)  as drin ON drin.product_id = main.product_id 
+
+        LEFT JOIN
+        (SELECT
+        aii.product_id,
+        SUM(aii.adjust_qty)  as adj_out
+
+        FROM adjustment_info as ai
+        INNER JOIN adjustment_items as aii ON aii.adjustment_id=ai.adjustment_id
+        WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+        AND aii.product_id = $product_id AND ai.date_adjusted < '$date'
+        GROUP BY aii.product_id) as adjout ON adjout.product_id = main.product_id 
+
+
+        LEFT JOIN
+
+        (SELECT
+        sii.product_id,
+        SUM(sii.inv_qty) as sal_out
+
+        FROM sales_invoice as si
+        INNER JOIN sales_invoice_items as sii
+        ON sii.sales_invoice_id=si.sales_invoice_id
+        WHERE si.is_active=TRUE AND si.is_deleted=FALSE 
+        AND sii.product_id = $product_id AND si.date_invoice < '$date'
+        GROUP BY sii.product_id) as salout ON salout.product_id = main.product_id 
+
+        LEFT JOIN
+        (SELECT
+        iit.product_id,
+        SUM(issue_qty) as iss_out
+
+        FROM issuance_info as ii
+        INNER JOIN issuance_items as iit ON iit.issuance_id=ii.issuance_id
+        WHERE ii.is_active=TRUE AND ii.is_deleted=FALSE
+        AND iit.product_id=$product_id AND ii.date_issued < '$date'
+        GROUP BY iit.product_id) as issout ON issout.product_id = main.product_id
+
+        WHERE main.product_id = $product_id
+        ";
 
         return $this->db->query($sql)->result();
     }

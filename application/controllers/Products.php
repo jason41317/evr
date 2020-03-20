@@ -195,8 +195,10 @@ class Products extends CORE_Controller
             case 'product-history':
                 $product_id=$this->input->get('id');
                 $m_products=$this->Products_model;
-
-                $data['products']=$m_products->get_product_history($product_id,"2000-01-01"."1",date('Y-m-d')); //temp date only
+                
+                $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,date('Y-m-01'))[0]; 
+                $data['balance_as_of'] =$balance_as_of;
+                $data['products']=$m_products->get_product_history($product_id,date('Y-m-01'),date('Y-m-d'),$balance_as_of->balance);
                 $data['product_id']=$product_id;
                 $this->load->view('template/product_history_menus',$data);
                 $this->load->view('template/product_history',$data);
@@ -258,8 +260,8 @@ class Products extends CORE_Controller
             case 'export-product-history':
                 $excel=$this->excel;
                 $product_id=$this->input->get('id');
-                $start=date('Y-m-d',strtotime($this->input->get('start')));
-                $end=date('Y-m-d',strtotime($this->input->get('end')));
+                $start=date('Y-m-d',strtotime(date('Y-m-01')));
+                $end=date('Y-m-d',strtotime(date('Y-m-d')));
                 $m_products=$this->Products_model;
 
                 $product_info=$m_products->get_list($product_id);
@@ -272,7 +274,7 @@ class Products extends CORE_Controller
 
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A1',$product_info[0]->product_desc."  History")
-                    ->setCellValue('A2',"Period ".date('m/d/Y',strtotime($this->input->get('start')))." to ".date('m/d/Y',strtotime($this->input->get('end'))));
+                    ->setCellValue('A2',"Period ".date('m/d/Y',strtotime($start))." to ".date('m/d/Y',strtotime($end)));
 
                 //create headers
                 $excel->getActiveSheet()->getStyle('A4:I4')->getFont()->setBold(TRUE);
@@ -285,15 +287,19 @@ class Products extends CORE_Controller
                                         ->setCellValue('G4', 'In')
                                         ->setCellValue('H4', 'Out')
                                         ->setCellValue('I4', 'Balance');
+                $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,$start)[0]; 
+                $excel->getActiveSheet()->setCellValue('A5', date("M d, Y",strtotime(date('Y-m-01') . "-1 days")) )
+                                        ->setCellValue('B5', 'Balance')
+                                        ->setCellValue('C5', 'System')
+                                        ->setCellValue('D5', 'System Generated Balance')
+                                        ->setCellValue('I5', $balance_as_of->balance);
 
+                $transaction=$m_products->get_product_history($product_id,$start,$end,$balance_as_of->balance);
 
-
-
-                $transaction=$m_products->get_product_history($product_id,$start,$end);
                 $rows=array();
                 foreach($transaction as $x){
                     $rows[]=array(
-                        $x->txn_date,
+                        date("M d, Y",strtotime($x->txn_date)),
                         $x->ref_no,
                         $x->type,
                         $x->Description,
@@ -320,7 +326,7 @@ class Products extends CORE_Controller
 
                 $excel->getActiveSheet()->getStyle('A4:I4')->applyFromArray($styleArray);
 
-                $excel->getActiveSheet()->fromArray($rows,NULL,'A5');
+                $excel->getActiveSheet()->fromArray($rows,NULL,'A6');
                 //autofit column
                 foreach(range('A','I') as $columnID)
                 {

@@ -34,11 +34,6 @@
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
     <style>
-        body {
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
         .select2-container {
             min-width: 100%;
             z-index: 99999999;
