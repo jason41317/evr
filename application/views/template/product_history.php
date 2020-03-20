@@ -1,8 +1,4 @@
 
-
-<div style="padding:1%;">
-
-   <center>
        <table width="100%"  style="border-collapse: collapse;">
            <thead>
                 <tr>
@@ -21,13 +17,8 @@
            </thead>
            <tbody>
 
-<!--                 <?php if(count($products)==0){ ?>
-                    <tr>
-                        <td colspan="9" style="border: 1px solid lightgrey;padding: 10px;" align="center">No transaction found.</td>
-                    </tr>
-                <?php } ?> -->
                 <tr>
-                  <td style="border: 1px solid lightgrey;padding: 5px;font-weight: bold;"><?php echo date("M d, Y",strtotime(date('Y-m-01') . "-1 days")); ?></td>
+                  <td style="border: 1px solid lightgrey;padding: 5px;font-weight: bold;"><?php echo date("M d, Y",strtotime($as_of_date . "-1 days")); ?></td>
                   <td style="border: 1px solid lightgrey;padding: 5px;">Balance</td>
                    <td style="border: 1px solid lightgrey;padding: 5px;">System</td>
                    <td style="border: 1px solid lightgrey;padding: 5px;font-weight: bold;">System Generated Balance</td>
@@ -55,10 +46,6 @@
 
            </tbody>
        </table>
-       <br /><br />
-
-   </center>
-</div>
 
 
 

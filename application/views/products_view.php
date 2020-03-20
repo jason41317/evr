@@ -222,7 +222,7 @@ $(document).ready(function(){
             var start=_parent.find('.date-start').val();
             var end=_parent.find('.date-end').val();
 
-            window.open('Products/transaction/export-product-history?id='+id+'&start='+start+'&end='+end);
+            window.open('Products/transaction/export-product-history?id='+id+'&start=0&end=0');
 
 
         });

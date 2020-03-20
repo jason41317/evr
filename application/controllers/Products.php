@@ -50,6 +50,15 @@ class Products extends CORE_Controller
 
     function transaction($txn = null) {
         switch ($txn) {
+
+            case 'list-single':
+                $product_id=$this->input->get('id');
+                $m_products = $this->Products_model;
+                $response['data']=$this->response_rows($product_id);
+                echo json_encode($response);
+                break;
+
+
             case 'list':
                 $m_products = $this->Products_model;
                 $response['data']=$this->response_rows(array('products.is_deleted'=>FALSE));
@@ -200,6 +209,7 @@ class Products extends CORE_Controller
                 $data['balance_as_of'] =$balance_as_of;
                 $data['products']=$m_products->get_product_history($product_id,date('Y-m-01'),date('Y-m-d'),$balance_as_of->balance);
                 $data['product_id']=$product_id;
+                $data['as_of_date'] = date('Y-m-01');
                 $this->load->view('template/product_history_menus',$data);
                 $this->load->view('template/product_history',$data);
                 break;
@@ -260,8 +270,15 @@ class Products extends CORE_Controller
             case 'export-product-history':
                 $excel=$this->excel;
                 $product_id=$this->input->get('id');
-                $start=date('Y-m-d',strtotime(date('Y-m-01')));
-                $end=date('Y-m-d',strtotime(date('Y-m-d')));
+                $start=date('Y-m-d',strtotime($this->input->get('start')));
+                $end=date('Y-m-d',strtotime($this->input->get('end')));
+
+
+                if($this->input->get('start')== '0'){
+                    $start = date('Y-m-01');
+                    $end = date('Y-m-d');
+                }
+
                 $m_products=$this->Products_model;
 
                 $product_info=$m_products->get_list($product_id);
@@ -288,7 +305,7 @@ class Products extends CORE_Controller
                                         ->setCellValue('H4', 'Out')
                                         ->setCellValue('I4', 'Balance');
                 $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,$start)[0]; 
-                $excel->getActiveSheet()->setCellValue('A5', date("M d, Y",strtotime(date('Y-m-01') . "-1 days")) )
+                $excel->getActiveSheet()->setCellValue('A5', date("M d, Y",strtotime($start . "-1 days")) )
                                         ->setCellValue('B5', 'Balance')
                                         ->setCellValue('C5', 'System')
                                         ->setCellValue('D5', 'System Generated Balance')

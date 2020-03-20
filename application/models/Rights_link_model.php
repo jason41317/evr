@@ -60,7 +60,8 @@ class Rights_link_model extends CORE_Model{
                                           (43,'8','8-5','Cost of Goods Sold'),
                                           -- (44,'6','6-8','Create Recurring Journal Template'),
                                           (45,'9','9-10','Schedule of Expense'),
-                                          (46,'6','6-9','Backup Database')
+                                          (46,'6','6-9','Backup Database'),
+                                          (47,'8','8-6','Stock Card')
 
                                           ON DUPLICATE KEY UPDATE
 
