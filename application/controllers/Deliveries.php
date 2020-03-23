@@ -194,7 +194,7 @@ class Deliveries extends CORE_Controller
                 $batch_code= $this->input->post('batch_code',TRUE);
 
                 $m_products=$this->Products_model;
-
+                $m_product_cost = $this->Products_model;
                 for($i=0;$i<count($prod_id);$i++){
 
                     $m_dr_items->dr_invoice_id=$dr_invoice_id;
@@ -241,7 +241,8 @@ class Deliveries extends CORE_Controller
                     );
 
 
-
+                    $m_product_cost->purchase_cost=$this->get_numeric_value($dr_price[$i]);
+                    $m_product_cost->modify($this->get_numeric_value($prod_id[$i]));
 
                 }
 
@@ -326,7 +327,7 @@ class Deliveries extends CORE_Controller
 
 
                 $m_products=$this->Products_model;
-
+                $m_product_cost = $this->Products_model;
                 for($i=0;$i<count($prod_id);$i++){
 
                     $m_dr_items->dr_invoice_id=$dr_invoice_id;
@@ -370,10 +371,11 @@ class Deliveries extends CORE_Controller
                         )
                     );
 
+                    
+                    $m_product_cost->purchase_cost=$this->get_numeric_value($dr_price[$i]);
+                    $m_product_cost->modify($this->get_numeric_value($prod_id[$i]));
 
-
-
-                }
+                } // 
 
                 //update status of po
                 $m_po->order_status_id=$this->get_po_status($purchase_order_id);
