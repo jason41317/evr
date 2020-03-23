@@ -1283,6 +1283,8 @@ $(document).ready(function(){
             clearFields($('#frm_deliveries'));
             _cboSuppliers.select2('val',null);
             _cboTaxType.select2('val',null);
+            $('input[name="date_delivered"]').datepicker('setDate', 'today');
+            $('input[name="date_due"]').datepicker('setDate', 'today');
             $('.check-div').hide();
             showList(false);
         });

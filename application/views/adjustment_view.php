@@ -906,6 +906,7 @@ $(document).ready(function(){
             _txnMode="new";
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_adjustments'));
+            $('input[name="date_adjusted"]').datepicker('setDate', 'today');
             showList(false);
         });
 

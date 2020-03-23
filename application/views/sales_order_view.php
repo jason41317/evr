@@ -336,7 +336,7 @@
 
 
             <form id="frm_items">
-                <div class="table-responsive">
+                <div class="table-responsive" style="overflow-x: hidden;">
                     <div class="table-responsive"  style="min-height: 200px;">
                         <table id="tbl_items" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;">
 
@@ -1246,7 +1246,7 @@ $(document).ready(function(){
             $('#cbo_prodType').select2('val', 3);
             $('#cbo_salesperson').select2('val',null);
             clearFields($('#frm_sales_order'));
-
+            $('input[name="date_order"]').datepicker('setDate', 'today');
             ///$('.sales_order_title').html('New Sales Order');
             showList(false);
         });

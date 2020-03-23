@@ -277,7 +277,7 @@
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-2 col-sm-offset-4">
                                                             Due Date : <br />
                                                             <div class="input-group">
 
@@ -1139,6 +1139,9 @@
 
                 clearFields($('#div_sales_invoice_fields'));
                 $('#span_invoice_no').html('INV-XXXX');
+                $('input[name="date_invoice"]').datepicker('setDate', 'today');
+                $('input[name="date_due"]').datepicker('setDate', 'today');
+
                 showList(false);
 
             });

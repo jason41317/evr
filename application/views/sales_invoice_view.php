@@ -1457,6 +1457,8 @@ $(document).ready(function(){
             $('#cbo_prodType').select2('val', 3);
             $('#cboLookupPrice').select2('val', 1);
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
+            $('input[name="date_invoice"]').datepicker('setDate', 'today');
+            $('input[name="date_due"]').datepicker('setDate', 'today');
 
             $.ajax({
                 "dataType":"json",

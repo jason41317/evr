@@ -867,6 +867,7 @@
                 //$('.toggle-fullscreen').click();
                 var _parObj=$('#div_adjustment_fields');
                 clearFields(_parObj);
+                $('input[name="date_adjusted"]').datepicker('setDate', 'today');
                 showList(false);
 
                 reComputeTotal();
