@@ -1459,7 +1459,7 @@ $(document).ready(function(){
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
             $('input[name="date_invoice"]').datepicker('setDate', 'today');
             $('input[name="date_due"]').datepicker('setDate', 'today');
-
+            $('.typeahead').typeahead('val',''); 
             $.ajax({
                 "dataType":"json",
                 "type":"POST",

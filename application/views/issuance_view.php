@@ -1056,6 +1056,7 @@ $(document).ready(function(){
             clearFields($('#frm_issuances'));
             _cboCustomers.select2('val',null);
              $('input[name="date_issued"]').datepicker('setDate', 'today');
+             $('.typeahead').typeahead('val',''); 
             showList(false);
         });
 

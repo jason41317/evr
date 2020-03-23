@@ -1248,6 +1248,7 @@ $(document).ready(function(){
             clearFields($('#frm_sales_order'));
             $('input[name="date_order"]').datepicker('setDate', 'today');
             ///$('.sales_order_title').html('New Sales Order');
+            $('.typeahead').typeahead('val',''); 
             showList(false);
         });
 

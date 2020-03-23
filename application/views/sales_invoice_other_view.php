@@ -1141,7 +1141,7 @@
                 $('#span_invoice_no').html('INV-XXXX');
                 $('input[name="date_invoice"]').datepicker('setDate', 'today');
                 $('input[name="date_due"]').datepicker('setDate', 'today');
-
+                $('.typeahead').typeahead('val',''); 
                 showList(false);
 
             });

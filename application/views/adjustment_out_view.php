@@ -869,7 +869,7 @@
                 clearFields(_parObj);
                 $('input[name="date_adjusted"]').datepicker('setDate', 'today');
                 showList(false);
-
+                $('.typeahead').typeahead('val',''); 
                 reComputeTotal();
             });
 

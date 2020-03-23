@@ -442,7 +442,7 @@
 
         <label class="control-label" style="font-family: Tahoma;"><strong>Enter PLU or Search Item :</strong></label>
         <div id="custom-templates">
-            <input class="typeahead" type="text" placeholder="Enter PLU or Search Item">
+            <input class="typeahead" type="text" name="plu_search" placeholder="Enter PLU or Search Item">
         </div><br />
 
         <form id="frm_items">
@@ -1285,7 +1285,9 @@ $(document).ready(function(){
             _cboTaxType.select2('val',null);
             $('input[name="date_delivered"]').datepicker('setDate', 'today');
             $('input[name="date_due"]').datepicker('setDate', 'today');
+            $('input[name="plu_search"]').val('');
             $('.check-div').hide();
+            $('.typeahead').typeahead('val',''); 
             showList(false);
         });
 

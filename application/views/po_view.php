@@ -1109,6 +1109,7 @@ $(document).ready(function(){
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_purchases'));
             $('#cbo_prodType').select2('val',3);
+            $('.typeahead').typeahead('val',''); 
             showList(false);
         });
 

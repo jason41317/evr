@@ -75,10 +75,11 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
+	'hostname' => 'jdevoffice.com',
+	'username' => 'jdev',
 	'password' => 'jdev',
-	'database' => 'evr_db',
+	// 'database' => 'evr_db',
+	'database' => 'eoption_2020',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
