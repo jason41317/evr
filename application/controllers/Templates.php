@@ -398,7 +398,7 @@ class Templates extends CORE_Controller {
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
-                    echo $this->load->view('template/sales_invoice_content',$data,TRUE);
+                    echo $this->load->view('template/sales_invoice_content_vismin',$data,TRUE);
                     // echo $this->load->view('template/sales_invoice_content_menus',$data,TRUE);
                 }
 

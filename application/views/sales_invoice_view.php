@@ -1446,7 +1446,7 @@ $(document).ready(function(){
             _txnMode="new";
 
             clearFields($('#div_sales_invoice_fields'));
-            $('#span_invoice_no').html('<img src="assets/img/loader/facebook.gif">');
+            $('#span_invoice_no').html('INV-XXXX');
             showList(false);
             $('#btn_save').removeClass('disabled');
 
@@ -1458,22 +1458,22 @@ $(document).ready(function(){
             $('#cboLookupPrice').select2('val', 1);
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
             $('input[name="date_invoice"]').datepicker('setDate', 'today');
-            $('input[name="date_due"]').datepicker('setDate', 'today');
-            $('.typeahead').typeahead('val',''); 
-            $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Sales_invoice/transaction/current-invoice-no"
-            }).done(function(response){
-                if(response.stat=="error"){
-                    $('#span_invoice_no').html('<span style="color:red;font-family:tahoma;">Please set invoice number.</span>');
-                    showNotification(response);
-                }else{
-                    $('#span_invoice_no').html(response.invoice_no);
-                    $('#span_invoice_no').attr('contenteditable',false);
-                }
+            // $('input[name="date_due"]').datepicker('setDate', 'today');
+            // $('.typeahead').typeahead('val',''); 
+            // $.ajax({
+            //     "dataType":"json",
+            //     "type":"POST",
+            //     "url":"Sales_invoice/transaction/current-invoice-no"
+            // }).done(function(response){
+            //     if(response.stat=="error"){
+            //         $('#span_invoice_no').html('<span style="color:red;font-family:tahoma;">Please set invoice number.</span>');
+            //         showNotification(response);
+            //     }else{
+            //         $('#span_invoice_no').html(response.invoice_no);
+            //         $('#span_invoice_no').attr('contenteditable',false);
+            //     }
 
-            });
+            // });
 
 
         });
@@ -1574,7 +1574,7 @@ $(document).ready(function(){
             $('#btn_save').addClass('disabled');
 
             $('#span_invoice_no').html(data.sales_inv_no);
-            $('#span_invoice_no').attr('contenteditable',true);
+            // $('#span_invoice_no').attr('contenteditable',true);
 
             $('input').each(function(){
                 var _elem=$(this);
@@ -1896,7 +1896,7 @@ $(document).ready(function(){
         var _data=$('#frm_sales_invoice,#frm_items').serializeArray();
 
         var tbl_summary=$('#tbl_sales_invoice_summary');
-        _data.push({name : "sales_inv_no", value : $('#span_invoice_no').text()});
+        // _data.push({name : "sales_inv_no", value : $('#span_invoice_no').text()});
         _data.push({name : "remarks", value : $('textarea[name="remarks"]').val()});
         _data.push({name : "summary_discount", value : tbl_summary.find(oTableDetails.discount).text()});
         _data.push({name : "summary_before_discount", value :tbl_summary.find(oTableDetails.before_tax).text()});
