@@ -1612,7 +1612,7 @@
 
         var clearFields=function(f){
             $('input:not(.date-picker),textarea',f).val('');
-            $(f).find('input:first').focus();
+            // $(f).find('input:first').focus();
             $('#tbl_items > tbody',f).html('');
             $('#cbo_prodType').select2('val', 3);
         };
