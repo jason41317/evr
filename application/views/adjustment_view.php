@@ -111,6 +111,9 @@
         background-color: transparent!important; 
         } 
 
+        #tbl_inv_list_filter{
+            display: none;
+        }
 
 
     </style>
@@ -181,6 +184,8 @@
                 <tr>
                     <th width="3%"></th>
                     <th width="15%">Adjustment #</th>
+                    <th width="10%"> Type</th>
+                    <th>Invoice</th>
                     <th>Branch</th>
                     <th>Remarks</th>
                     <th width="10%" class="align-center">Adjustment</th>
@@ -232,10 +237,22 @@
                                 <?php } ?>
                             </select>
                         </div>
+                        <div class="col-sm-2">
+                            <br><input type="checkbox" name="accounting[]" value="is_adjustment" id="is_adjustment" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_adjustment" style="font-size: 12px!important;">Adjustment</label>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="checkhidden">
+                            Invoice # :<br />
+                            <div class="input-group">
+                                <input type="text" name="inv_no" id="inv_no" class="form-control" readonly required data-error-msg="Invoice is Required for the Sales Return.">
+                                <span class="input-group-addon">
+                                    <a href="#" id="link_browse_inv" style="text-decoration: none;color:black;"><b>...</b></a>
+                                </span>
+                            </div>
+                            </div>
+                        </div>
 
-
-
-                        <div class="col-sm-3 col-sm-offset-5">
+                        <div class="col-sm-3">
                             Reference # : <br />
                             <div class="input-group">
                                 <span class="input-group-addon">
@@ -256,10 +273,13 @@
                                 <option value="OUT">Adjustment OUT</option>
                             </select>
                         </div>
+                        <div class="col-sm-2">
+                            <br><input type="checkbox" name="accounting[]" value="is_returns" id="is_returns" class="css-checkbox" style="font-size: 12px!important;"><label class="css-label " for="is_returns" style="font-size: 12px!important;">Sales Return</label><br>
+                            <input type="hidden" name="adjustment_is_return" id="adjustment_is_return" class="form-control">
+                        </div>
 
 
-
-                        <div class="col-sm-3 col-sm-offset-5">
+                        <div class="col-sm-3 col-sm-offset-3">
                             Date Adjusted :<br />
                             <div class="input-group">
 
@@ -424,6 +444,66 @@
 </div> <!-- #page-content -->
 </div>
 
+<div id="modal_inv_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog" style="width: 80%;">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Invoices of <label style="font-weight: normal;" id="modal_customer_name"></label></h2>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3 col-ls-offset-3">
+                            From :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_start_date_details" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            To :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_end_date_details" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-6">
+                            Search :<br />
+                             <input type="text" id="searchbox_tbl_inv_list" class="form-control">
+                    </div>
+                </div><br>
+                <table id="tbl_inv_list" class="table table-striped" cellspacing="0" width="100%">
+                    <thead class="">
+                    <tr>
+                        <th></th>
+                        <th>Invoice #</th>
+                        <th>Invoice Date</th>
+                        <th>Customer</th>
+                        <th>Branch</th>
+                        <th>Remarks</th>
+                        <th><center>Action</center></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sales Order Content -->
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <div class="modal-footer">
+            <br>
+                <button id="cancel_modal" class="btn btn-default" data-dismiss="modal"  style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Close</button>
+            </div>
+        </div>
+    </div>
+<div class="clearfix"></div>
+</div><!---modal-->
+
+
 
 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
@@ -583,12 +663,47 @@ $(document).ready(function(){
 
 
     var initializeControls=function(){
+        dtInvoices=$('#tbl_inv_list').DataTable({
+            "dom": '<"toolbar">frtip',
+            "bLengthChange":false,
+            "order": [[ 1, "desc" ]],
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "Sales_invoice/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date_details').val(),
+                            "ted":$('#txt_end_date_details').val()
+
+                        });
+                    }
+            }, 
+            "columns": [
+                { visible:false,targets:[0],data: "sales_invoice_id" },
+                { targets:[1],data: "sales_inv_no" },
+                { targets:[2],data: "date_invoice" },
+                { targets:[3],data: "customer_name" },
+                { targets:[4],data: "department_name" },
+                { targets:[5],data: "remarks" },
+                {  targets:[6],
+                    render: function (data, type, full, meta){
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_inv"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> </button>';
+                        return '<center>'+btn_accept+'</center>';
+                    }
+                }
+            ]
+        });
+
 
         dt=$('#tbl_issuances').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 6, "desc" ]],
+            "order": [[ 8, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -613,11 +728,13 @@ $(document).ready(function(){
                     "defaultContent": ""
                 },
                 { targets:[1],data: "adjustment_code" },
-                { targets:[2],data: "department_name" },
-                { targets:[3],data: "remarks", render: $.fn.dataTable.render.ellipsis(120) },
-                { sClass: "align-center" ,targets:[4],data: "adjustment_type" },
+                { targets:[2],data: "trans_type" },
+                { targets:[3],data: "inv_no" },
+                { targets:[4],data: "department_name" },
+                { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(120) },
+                { visible:false, sClass: "Align-center" ,targets:[6],data: "adjustment_type" },
                 {
-                    targets:[5],
+                    targets:[7],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -625,7 +742,7 @@ $(document).ready(function(){
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 },
-                {visible:false, sClass: "align-center" ,targets:[6],data: "adjustment_id" },
+                {visible:false, sClass: "align-center" ,targets:[8],data: "adjustment_id" },
             ]
 
         });
@@ -779,6 +896,47 @@ $(document).ready(function(){
 
 
     var bindEventHandlers=(function(){
+            $('[id=is_returns]').click(function(event) {
+                if(this.checked == true) {
+                    $('input[id="is_adjustment"]').prop('checked', false);
+                    $('.checkhidden').show();
+                    $("#inv_no").prop('required',true);
+                    $('#adjustment_is_return').val('1');
+                }else{
+                     $('[id=is_adjustment]').trigger('click');
+                }
+            });
+
+            $('[id=is_adjustment]').click(function(event) {
+                if(this.checked == true) {
+                    $('input[id="is_returns"]').prop('checked', false);
+                    $('.checkhidden').hide();
+                    $("#inv_no").prop('required',false);
+                    $('#adjustment_is_return').val('0');
+                    $("input[name=inv_no]").val('');
+                }else{
+                    $('[id=is_returns]').trigger('click');
+                }
+            });
+
+
+            $('#link_browse_inv').click(function(){
+                    $('#tbl_inv_list tbody').html('<tr><td colspan="7"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+                    $('#tbl_inv_list').DataTable().ajax.reload();
+                    $('#modal_inv_list').modal('show');
+            });
+
+            $("#searchbox_tbl_inv_list").keyup(function(){         
+                dtInvoices
+                    .search(this.value)
+                    .draw();
+            });
+
+            $("#txt_start_date_details,#txt_end_date_details").on("change", function () {        
+                $('#tbl_inv_list').DataTable().ajax.reload()
+            });
+
+
         var detailRows = [];
 
         $('#tbl_issuances tbody').on( 'click', 'tr td.details-control', function () {
@@ -908,6 +1066,12 @@ $(document).ready(function(){
             clearFields($('#frm_adjustments'));
             $('input[name="date_adjusted"]').datepicker('setDate', 'today');
             $('.typeahead').typeahead('val',''); 
+            // REMOVE CHECKED ATTRIBUTE FOR BOTH
+            $('input[id="is_returns"]').prop('checked', false);
+            $('input[id="is_adjustment"]').prop('checked', false);
+            $('.checkhidden').hide();
+            // THEN ADD TO ADJUSTMENT CHECKBOX
+            $('input[id="is_adjustment"]').prop('checked', true);
             showList(false);
         });
 
@@ -924,6 +1088,59 @@ $(document).ready(function(){
 
 
 
+
+        $('#tbl_inv_list > tbody').on('click','button[name="accept_inv"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dtInvoices.row(_selectRowObj).data();
+            $("input[name=inv_no]").val(data.sales_inv_no);
+            $('#modal_inv_list').modal('hide');
+
+            $.ajax({
+                url : 'Sales_invoice/transaction/items-for-sales-return/'+data.sales_invoice_id,
+                type : "GET",
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                beforeSend : function(){
+                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success : function(response){
+                    var rows=response.data;
+                    $('#tbl_items > tbody').html('');
+                
+
+                    $.each(rows,function(i,value){
+
+                        $('#tbl_items > tbody').append(newRowItem({
+                            adjust_qty : value.inv_qty,
+                            product_code : value.product_code,
+                            unit_id : value.unit_id,
+                            unit_name : value.unit_name,
+                            product_id: value.product_id,
+                            product_desc : value.product_desc,
+                            adjust_line_total_discount : value.inv_line_total_discount,
+                            tax_exempt : false,
+                            adjust_tax_rate : value.inv_tax_rate,
+                            adjust_price : value.inv_price,
+                            adjust_discount : value.inv_discount,
+                            tax_type_id : null,
+                            adjust_line_total_price : value.inv_line_total_price,
+                            adjust_non_tax_amount: value.inv_non_tax_amount,
+                            adjust_tax_amount:value.inv_tax_amount,
+                            exp_date:value.expiration,
+                            batch_no:value.batch_no
+                        }));
+                    });
+
+                    reInitializeExpireDate();
+                    reComputeTotal();
+                }
+            });
+
+
+
+        });
 
 
         $('#tbl_issuances tbody').on('click','button[name="edit_info"]',function(){
@@ -946,6 +1163,16 @@ $(document).ready(function(){
             });
 
             $('#cbo_departments').select2('val',data.department_id);
+
+            $("#is_returns").prop('checked', false); 
+            $("#is_adjustment").prop('checked', false); 
+
+            if(data.adjustment_is_return == '1'){ // is return
+                $('input[id="is_returns"]').trigger('click');
+            }else if(data.adjustment_is_return == '0'){// is adjustment
+                $('input[id="is_adjustment"]').trigger('click');                
+            } 
+
 
             $.ajax({
                 url : 'Adjustments/transaction/items/'+data.adjustment_id,

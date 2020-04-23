@@ -204,6 +204,30 @@ class Sales_invoice extends CORE_Controller
                 break;
 
 
+            case 'items-for-sales-return': //items on the specific INVOICE, loads when Accept Invoice called on Adjustments Module
+                //check if this invoice is already posted
+                $m_invoice=$this->Sales_invoice_model;
+                $m_items=$this->Sales_invoice_item_model;
+                $response['data']=$m_items->get_list(
+                    array('sales_invoice_id'=>$id_filter),
+                    array(
+                        'sales_invoice_items.*',
+                        'products.product_code',
+                        'products.product_desc',
+                        'units.unit_id',
+                        'units.unit_name',
+                        'DATE_FORMAT(sales_invoice_items.exp_date,"%m/%d/%Y")as expiration'
+                    ),
+                    array(
+                        array('products','products.product_id=sales_invoice_items.product_id','left'),
+                        array('units','units.unit_id=sales_invoice_items.unit_id','left')
+                    ),
+                    'sales_invoice_items.sales_item_id DESC'
+                );
+
+                echo json_encode($response);
+                break;
+
             //***************************************create new Items************************************************
 
             
