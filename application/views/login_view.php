@@ -43,6 +43,9 @@
 						<div class="col-xs-12 text-center" style="margin-bottom: 20px;">
 							<img class="" src="assets/img/logo.png" style="max-width: 150px;">
 						</div>
+						<div class="col-xs-12 text-center" style="margin-bottom: 20px;font-weight: bolder;">
+							<?php echo $company_info->company_name ?>
+						</div>
 						<form action="#" class="form-horizontal" id="validate-form">
 							<div class="form-group mb-md">
 		                        <div class="col-xs-12">
