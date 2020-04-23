@@ -30,7 +30,7 @@ class Login extends CORE_Controller {
 
         $data['_def_css_files']=$this->load->view('template/assets/css_files','',TRUE);
         $data['_def_js_files']=$this->load->view('template/assets/js_files','',TRUE);
-
+        $data['company_info'] = $this->Company_model->get_list(1)[0];
         $this->load->view('login_view',$data);
 
     }
