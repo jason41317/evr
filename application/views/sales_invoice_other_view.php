@@ -1173,9 +1173,9 @@
 
                     });
 
-                    $('#cbo_customers').select2('val',data.customer_id);
+                    // $('#cbo_customers').select2('val',data.customer_id);
                     $('#cbo_departments').select2('val',data.department_id);
-                    $('#cbo_salesperson').select2('val',data.salesperson_id);
+                    // $('#cbo_salesperson').select2('val',data.salesperson_id);
 
                 });
 
