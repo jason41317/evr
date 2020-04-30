@@ -672,7 +672,7 @@ $(document).ready(function(){
             },
             processing : true,
             "ajax" : {
-                "url" : "Sales_invoice/transaction/list",
+                "url" : "Sales_invoice/transaction/list-for-returns",
                 "bDestroy": true,            
                 "data": function ( d ) {
                         return $.extend( {}, d, {

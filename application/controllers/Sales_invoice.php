@@ -165,6 +165,16 @@ class Sales_invoice extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'list-for-returns':  //this returns JSON of Issuance to be rendered on Datatable
+                $m_invoice=$this->Sales_invoice_model;
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $response['data']=$this->response_rows(
+                    "sales_invoice.is_active=TRUE  AND sales_invoice.sales_invoice_id AND DATE(sales_invoice.date_invoice) BETWEEN '$tsd' AND '$ted' AND sales_invoice.is_deleted=FALSE ".($id_filter==null?"":"AND sales_invoice.sales_invoice_id=".$id_filter)
+                );
+                echo json_encode($response);
+                break;
+
             ////****************************************items/products of selected Items***********************************************
             case 'items': //items on the specific PO, loads when edit button is called
                 //check if this invoice is already posted
