@@ -370,6 +370,7 @@ class Sales_order extends CORE_Controller
                 'sales_order.so_no',
                 'sales_order.remarks',
                 'sales_order.date_created',
+                ' DATE_FORMAT(sales_order.date_created,"%h:%i %p") as time_created',
                 'sales_order.customer_id',
                 'sales_order.salesperson_id',
                 'DATE_FORMAT(sales_order.date_order,"%m/%d/%Y") as date_order',
