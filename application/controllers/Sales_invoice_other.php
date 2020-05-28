@@ -188,6 +188,7 @@ class Sales_invoice_other extends CORE_Controller
 
                     $m_customers->is_active=1;
                     $m_customers->is_deleted=0;
+                    $m_customers->link_department_id=$link_department[0]->department_id;
                     $m_customers->customer_name=$link_department[0]->department_name;
                     $m_customers->modify(array('link_department_id'=>$issue_department));
 
@@ -197,6 +198,7 @@ class Sales_invoice_other extends CORE_Controller
                     $m_departments=$this->Departments_model;
                     $link_department=$m_departments->get_list(array('department_id'=>$issue_department));
 
+                    $m_customers->link_department_id=$link_department[0]->department_id;
                     $m_customers->customer_name=$link_department[0]->department_name;
                     $m_customers->save();
 
