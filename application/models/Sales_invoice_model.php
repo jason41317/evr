@@ -62,7 +62,7 @@ class Sales_invoice_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
-    function get_sales_summary($start=null,$end=null){
+    function get_sales_summary($start=null,$end=null){ // ORIGINAL SALES SUMMARY  05-28-2020 -> SEARCH FOR get_sales_summary_2020 for the revised one. Sales return module was added there.
         $sql="SELECT mQ.*,DATE_FORMAT(mQ.date_invoice,'%m/%d/%Y') as inv_date,(mQ.sales-mQ.cost_of_sales) as net_profit
                 FROM
                 (
@@ -114,6 +114,87 @@ class Sales_invoice_model extends CORE_Model
                   sii.cost_upon_invoice
                 ))as nQ) mQ
                 ";
+
+            return $this->db->query($sql)->result();
+    }
+
+
+    function get_sales_summary_2020($start=null,$end=null){// REVISED SALES SUMMARY  05-28-2020 -> SEARCH FOR get_sales_summary for the original one. Sales return module was added here.
+        $sql="SELECT mQ.*,DATE_FORMAT(mQ.date_invoice,'%m/%d/%Y') as inv_date,(mQ.sales-mQ.cost_of_sales) as net_profit
+                FROM
+                (
+
+                SELECT nQ.*,
+                (
+
+                    IF(
+                        nQ.inv_price=0,
+                        nQ.purchase_cost*nQ.fg, /**change @ 3/8/2017 even if it is free, show the cost when it was invoice**/
+                        nQ.purchase_cost*nQ.inv_qty
+                    )
+
+                )as cost_of_sales
+
+                FROM
+                (SELECT si.sales_inv_no,si.date_invoice,sii.inv_price, CONCAT(sp.firstname, ' ', sp.lastname, ' - ', sp.acr_name) AS salesperson_name,
+                '' as dr_si,'' as vr,c.customer_name,
+                IF(sii.inv_price=0,CONCAT(pr.product_desc,' (Free)'),pr.product_desc)as product_desc,
+                refp.product_type,
+                IF(sii.inv_price=0,0,SUM(sii.inv_qty) - IFNULL(returns.return_qty,0) )as inv_qty,
+                IF(IFNULL(returns.return_qty,0) =0, '', 'Yes') as with_returns,
+                returns.return_invoices,
+                IF(sii.inv_price=0,SUM(sii.inv_qty) - IFNULL(returns.return_qty,0) ,0) as fg, /**this free item**/
+
+                pr.size,
+                s.supplier_name,sii.inv_price as srp,
+                IFNULL(SUM(sii.inv_line_total_price) - IFNULL(returns.return_line_total_price,0) ,0) as sales,
+                IFNULL(SUM(sii.inv_tax_amount) - IFNULL(returns.return_tax_amount,0) ,0) as tax_amount,
+                IFNULL(SUM(sii.inv_non_tax_amount) - IFNULL(returns.return_non_tax_amount,0) ,0) as non_tax_amount,
+
+                IF(sii.inv_price=0,
+                  sii.cost_upon_invoice, /**change @ 3/8/2017 even if it is free, show the cost when it was invoice**/
+                  sii.cost_upon_invoice
+                )as purchase_cost /**GET THE COST OF THE PRODUCT WHEN IT WAS INVOICED**/
+
+
+
+                FROM sales_invoice as si
+
+                LEFT JOIN customers as c ON si.customer_id=c.customer_id
+                INNER JOIN sales_invoice_items as sii ON si.sales_invoice_id=sii.sales_invoice_id
+                LEFT JOIN (products as pr  LEFT JOIN refproduct as refp ON refp.refproduct_id=pr.refproduct_id)ON sii.product_id=pr.product_id
+                LEFT JOIN suppliers as s ON pr.supplier_id=s.supplier_id
+                LEFT JOIN salesperson as sp ON sp.salesperson_id=si.salesperson_id
+                LEFT JOIN (
+                SELECT 
+                    ai.inv_no,
+                    group_concat(ai.adjustment_code) as return_invoices,
+                    aii.product_id, 
+                    SUM(aii.adjust_qty) as return_qty,
+                    SUM(aii.adjust_line_total_price) return_line_total_price,
+                    SUM(aii.adjust_tax_amount) return_tax_amount,
+                    SUM(aii.adjust_non_tax_amount) return_non_tax_amount
+
+                    FROM adjustment_items aii 
+                    LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id  
+
+                    WHERE ai.date_adjusted BETWEEN '$start' AND '$end'
+                    AND ai.is_deleted = FALSE AND ai.is_active = TRUE
+                    GROUP BY ai.inv_no, aii.product_id
+                
+                ) as returns ON returns.inv_no = si.sales_inv_no AND returns.product_id = sii.product_id
+                
+                
+                WHERE si.date_invoice BETWEEN '$start' AND '$end' AND si.is_active=TRUE AND si.is_deleted=FALSE
+
+                GROUP BY si.sales_inv_no,sii.product_id,sii.inv_price,IF(sii.inv_price=0,
+                  0,
+                  sii.cost_upon_invoice
+                ))as nQ) mQ
+
+
+
+            ";
 
             return $this->db->query($sql)->result();
     }

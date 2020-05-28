@@ -47,7 +47,7 @@ class Sales_order extends CORE_Controller
         );
 
         $data['refproducts']=$this->Refproduct_model->get_list(
-            'is_deleted=FALSE'
+            'is_deleted=FALSE AND refproduct_id < 3'
         );
 
         // $data['products']=$this->Products_model->get_current_item_list();

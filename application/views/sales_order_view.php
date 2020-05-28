@@ -299,7 +299,7 @@
 
         <div class="row">
             <div class="col-lg-9">
-                <label style="font-family: Tahoma;">Please select product type first :</label>
+                <label style="font-family: Tahoma;">Please Select Product Type first:</label>
                 <div style="padding: 0%;">
                     <select name="producttype" id="cbo_prodType" data-error-msg="Product Type is required." required>
                         <?php foreach($refproducts as $refproduct){ ?>
@@ -307,17 +307,14 @@
                         <?php } ?>
                     </select>
                 </div>
+                <small><i>(Only one product type can be used for a Sales Order.)</i></small>
             </div>
             <div class="col-lg-3">
                 <label style="font-family: Tahoma;">Please select Default Lookup Price :</label>
                 <div style="padding: 0%;">
                     <select name="lookup_price" id="cboLookupPrice">
                         <option value="1">SRP (Recommended)</option>
-                        <option value="2">Distributor Price</option>
                         <option value="3">Dealer Price</option>
-                        <option value="4">Public Price</option>
-                        <option value="5">Discounted Price</option>
-                        <option value="6">Purchase Cost</option>
                     </select>
                 </div>
             </div>
@@ -1004,7 +1001,7 @@ $(document).ready(function(){
 
     _objTypeHead.typeahead({minLength:1,hint:true}, {
         name: 'products',
-        display: 'product_code',
+        display: 'product_desc',
         limit : 10000,
         source: products,
         templates: {
@@ -1022,9 +1019,15 @@ $(document).ready(function(){
                 //$('.tt-suggestion:first').click();
                 _objTypeHead.typeahead('close');
                 _objTypeHead.typeahead('val');
+                _objTypeHead.typeahead('val','');  
             }
     }).bind('typeahead:select', function(ev, suggestion) {
 
+            if($('#tbl_items > tbody tr').length == '10'){
+
+                showNotification({title:"Invalid",stat:"error",msg:"Maximum of 10 Items per Order"});
+
+            }else{
 
             var tax_rate=suggestion.tax_rate; // tax rate is based the tax type set to selected product
             var _defLookUp=_lookUpPrice.select2('val');
@@ -1087,6 +1090,9 @@ $(document).ready(function(){
 
             reInitializeNumeric();
             reComputeTotal();
+
+            }
+            
 
 
     });
@@ -1176,6 +1182,14 @@ $(document).ready(function(){
             }
 
         });
+
+        _productType.on("select2:select", function (e) {
+            if($('#tbl_items > tbody tr').length > 0){
+                $('#tbl_items > tbody').html('');
+                reComputeTotal();
+                showNotification({title:"Success",stat:"info",msg:"Items Reset Successfully."});
+            }
+        });        
 
         _cboCustomers.on("select2:select", function (e) {
 
@@ -1612,7 +1626,7 @@ $(document).ready(function(){
         $('#tbl_items > tbody').html('');
         $('#cbo_departments').select2('val', null);
         $('#cbo_customers').select2('val', null);
-        $('#cbo_prodType').select2('val', 3);
+        $('#cbo_prodType').select2('val', 1);
         $('#img_user').attr('src','assets/img/anonymous-icon.png');
     };
 
