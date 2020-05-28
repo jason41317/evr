@@ -89,7 +89,11 @@ class Sales_summary extends CORE_Controller
                                             ->setCellValue('M1', 'Sales')
                                             ->setCellValue('N1', 'Unit Cost')
                                             ->setCellValue('O1', 'Cost of Sales')
-                                            ->setCellValue('P1', 'Net Profit');
+                                            ->setCellValue('P1', 'Net Profit')
+                                            ->setCellValue('Q1', 'Tax Amount')
+                                            ->setCellValue('R1', 'Non Tax Amount')
+                                            ->setCellValue('S1', 'With Returns?')
+                                            ->setCellValue('T1', 'References');
 
                     //change the font size
 
@@ -97,7 +101,8 @@ class Sales_summary extends CORE_Controller
                     $end=date("Y-m-d",strtotime($this->input->get('end',TRUE)));
 
 
-                    $invoices=$this->Sales_invoice_model->get_sales_summary($start,$end);
+                    // $invoices=$this->Sales_invoice_model->get_sales_summary($start,$end); // 05-28-2020 Original
+                    $invoices=$this->Sales_invoice_model->get_sales_summary_2020($start,$end); // 05-28-2020 Revised, now with sales return
                     $rows=array();
                     foreach($invoices as $x){
                         $rows[]=array(
@@ -116,13 +121,19 @@ class Sales_summary extends CORE_Controller
                             $x->sales,
                             $x->purchase_cost,
                             $x->cost_of_sales,
-                            $x->net_profit
+                            $x->net_profit,
+                            $x->tax_amount,
+                            $x->non_tax_amount,
+                            $x->with_returns,
+                            $x->return_invoices
+
+
                         );
                     }
 
 
 
-                    $excel->getActiveSheet()->getStyle('A1:P1')->getFill()
+                    $excel->getActiveSheet()->getStyle('A1:T1')->getFill()
                         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                         ->getStartColor()->setARGB('4caf50');
 
@@ -143,18 +154,18 @@ class Sales_summary extends CORE_Controller
                             'name'  => 'Tahoma'
                         ));
 
-                    $excel->getActiveSheet()->getStyle('A1:P1')->applyFromArray($styleArray);
+                    $excel->getActiveSheet()->getStyle('A1:T1')->applyFromArray($styleArray);
 
                     //format columns with number data
                     $highestRow = $excel->getActiveSheet()->getHighestRow();
                     for($i=2;$i<=$highestRow;$i++){
-                        $excel->getActiveSheet()->getStyle('L'.$i.':P'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+                        $excel->getActiveSheet()->getStyle('L'.$i.':T'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
                     }
 
 
 
                     //autofit column
-                    foreach(range('A','O') as $columnID)
+                    foreach(range('A','T') as $columnID)
                     {
                         $excel->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(TRUE);
                     }
