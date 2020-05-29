@@ -351,6 +351,25 @@ class Sales_order extends CORE_Controller
 
                 break;
 
+            case 'close':
+                $m_sales_order=$this->Sales_order_model;
+                $sales_order_id=$this->input->post('sales_order_id',TRUE);
+
+                $m_sales_order->set('date_closed','NOW()'); //treat NOW() as function and not string
+                $m_sales_order->closed_by_user=$this->session->user_id;//user that closed the record
+                $m_sales_order->is_closed=1;//mark as closed
+                $m_sales_order->order_status_id=4;//mark as closed
+                $m_sales_order->modify($sales_order_id);
+
+
+                $response['title']='Success!';
+                $response['stat']='success';
+                $response['msg']='Record successfully marked as closed.';
+                $response['row_updated']=$this->response_rows($sales_order_id);
+                echo json_encode($response);
+
+                break;
+
             //***************************************************************************************
         }
 
@@ -377,6 +396,7 @@ class Sales_order extends CORE_Controller
                 'departments.department_id',
                 'departments.department_name',
                 'customers.customer_name',
+                'sales_order.order_status_id',
                 'order_status.order_status'
             ),
 
