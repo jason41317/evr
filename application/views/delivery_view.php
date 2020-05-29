@@ -561,7 +561,7 @@
 
 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Deletion</h4>
@@ -573,13 +573,13 @@
                 <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
 <div id="modal_po_list" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog" style="width: 80%;">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Purchase Order</h4>
@@ -587,7 +587,7 @@
             </div>
 
             <div class="modal-body">
-                <table id="tbl_po_list" class="custom-design table-striped" cellspacing="0" width="100%">
+                <table id="tbl_po_list" class="custom-design table table-striped table-bordered" cellspacing="0" width="100%">
                     <thead class="">
                     <tr>
                         <th></th>
@@ -597,21 +597,19 @@
                         <th>Deliver to</th>
                         <th>Status</th>
                         <th><center>Action</center></th>
+                        <th>ID</th>
                     </tr>
                     </thead>
                     <tbody>
-
-
-
                     </tbody>
                 </table>
             </div>
 
             <div class="modal-footer">
-                <button id="btn_accept" type="button" class="btn btn-primary" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button>
+                <!-- <button id="btn_accept" type="button" class="btn btn-primary" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
                 <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
@@ -882,6 +880,7 @@ $(document).ready(function(){
 
         dt_po=$('#tbl_po_list').DataTable({
             "bLengthChange":false,
+            "order": [[ 7, "desc" ]],
             "ajax" : "Purchases/transaction/open",
             "columns": [
                 {
@@ -894,15 +893,16 @@ $(document).ready(function(){
                 { targets:[1],data: "po_no" },
                 { targets:[2],data: "supplier_name" },
                 { targets:[3],data: "term_description" },
-                { targets:[5],data: "deliver_to_address" },
-                { targets:[6],data: "order_status" },
+                { targets:[4],data: "deliver_to_address" },
+                { targets:[5],data: "order_status" },
                 {
-                    targets:[7],
+                    targets:[6],
                     render: function (data, type, full, meta){
-                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_po"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Receive this PO"><i class="fa fa-check"></i> Accept PO</button>';
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_po"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Receive this PO"><i class="fa fa-check"></i></button>';
                         return '<center>'+btn_accept+'</center>';
                     }
-                }
+                },
+                {visible:false, targets:[7],data: "purchase_order_id" },
             ]
         });
 

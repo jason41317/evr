@@ -102,6 +102,7 @@ class Sales_order extends CORE_Controller
                     array(
                         'sales_order.*',
                         'DATE_FORMAT(sales_order.date_order,"%m/%d/%Y") as date_order',
+                       ' DATE_FORMAT(sales_order.date_created,"%h:%i %p") as time_created',
                         'customers.customer_name',
                         'order_status.order_status',
                         'departments.department_name'

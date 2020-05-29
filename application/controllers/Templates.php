@@ -304,7 +304,11 @@ class Templates extends CORE_Controller {
 
                 $info=$m_adjustment->get_list(
                     $filter_value,
-                    'adjustment_info.*,departments.department_name',
+                    'adjustment_info.*,departments.department_name,
+                        (SELECT COALESCE(customers.customer_name,"N/A") FROM sales_invoice 
+                        LEFT JOIN customers ON customers.customer_id = sales_invoice.customer_id
+                        WHERE sales_inv_no = adjustment_info.inv_no) as customer_name
+                    ',
                     array(
                         array('departments','departments.department_id=adjustment_info.department_id','left')
                     )

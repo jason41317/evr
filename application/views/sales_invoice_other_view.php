@@ -538,8 +538,10 @@
                             <th>Customer</th>
                             <th>Remarks</th>
                             <th>Order</th>
+                            <th>Time</th>
                             <th>Status</th>
                             <th><center>Action</center></th>
+                            <th>ID</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -549,7 +551,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button>
+                    <!-- <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
                     <button id="cancel_modal" class="btn btn-default" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
                 </div>
             </div><!---content---->
@@ -764,6 +766,7 @@
 
             dt_so=$('#tbl_so_list').DataTable({
                 "bLengthChange":false,
+                "order": [[ 8, "desc" ]],
                 "ajax" : "Sales_order/transaction/open",
                 "columns": [
                     {
@@ -777,14 +780,16 @@
                     { targets:[2],data: "customer_name" },
                     { targets:[3],data: "remarks" },
                     { targets:[4],data: "date_order" },
-                    { targets:[5],data: "order_status" },
+                    { targets:[5],data: "time_created" },
+                    { targets:[6],data: "order_status" },
                     {
-                        targets:[6],
+                        targets:[7],
                         render: function (data, type, full, meta){
-                            var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i> Accept SO</button>';
+                            var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i></button>';
                             return '<center>'+btn_accept+'</center>';
                         }
-                    }
+                    },
+                    {visible:false, targets:[8],data: "sales_order_id" },
 
                 ]
 

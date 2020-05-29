@@ -223,15 +223,15 @@
                         </div>
 
 
-                        <div class="container-fluid mt-n">
+<!--                         <div class="container-fluid mt-n">
                         <div data-widget-group="group1">
                             <div class="row">
                                 <div class="col-md-12">
 
-                                    <div class="panel panel-default <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
-                                        <!-- <div class="panel-heading">
+                                    <div class="panel panel-default <?php //echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
+                                        <div class="panel-heading">
                                             <h2>Purchase Order for Approval</h2>
-                                        </div> -->
+                                        </div>
 
 
                                         <div class="panel-body table-responsive" style="border-top: 3px solid #2196f3;">
@@ -263,7 +263,7 @@
                             </div>
                         </div>
                     </div>
-
+ -->
                     </div> <!-- #page-content -->
             </div>
 
@@ -486,45 +486,45 @@
     $(document).ready(function(){
         var dt; var _selectedID; var _selectRowObj;
 
-        var initializeControls=(function(){
-            dt=$('#tbl_po_list').DataTable({
-                "dom": '<"toolbar">frtip',
-                "bLengthChange":false,
-                "ajax" : "Purchases/transaction/po-for-approved",
-                "columns": [
-                    {
-                        "targets": [0],
-                        "class":          "details-control",
-                        "orderable":      false,
-                        "data":           null,
-                        "defaultContent": ""
-                    },
-                    { targets:[1],data: "po_no" },
-                    { targets:[2],data: "supplier_name" },
-                    { targets:[3],data: "term_description" },
-                    { targets:[4],data: "posted_by" },
-                    {
-                        targets:[5],data: "attachment",
-                        render: function (data, type, full, meta){
+        // var initializeControls=(function(){
+        //     dt=$('#tbl_po_list').DataTable({
+        //         "dom": '<"toolbar">frtip',
+        //         "bLengthChange":false,
+        //         "ajax" : "Purchases/transaction/po-for-approved",
+        //         "columns": [
+        //             {
+        //                 "targets": [0],
+        //                 "class":          "details-control",
+        //                 "orderable":      false,
+        //                 "data":           null,
+        //                 "defaultContent": ""
+        //             },
+        //             { targets:[1],data: "po_no" },
+        //             { targets:[2],data: "supplier_name" },
+        //             { targets:[3],data: "term_description" },
+        //             { targets:[4],data: "posted_by" },
+        //             {
+        //                 targets:[5],data: "attachment",
+        //                 render: function (data, type, full, meta){
 
-                            return '<center>'+ data +' <i class="fa fa-paperclip"></i></center>';
-                        }
+        //                     return '<center>'+ data +' <i class="fa fa-paperclip"></i></center>';
+        //                 }
 
-                    },
-                    {
-                        targets:[6],
-                        render: function (data, type, full, meta){
-                            //alert(full.purchase_order_id);
+        //             },
+        //             {
+        //                 targets:[6],
+        //                 render: function (data, type, full, meta){
+        //                     //alert(full.purchase_order_id);
 
-                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approved this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
-                            var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
+        //                     var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approved this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
+        //                     var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
 
-                            return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'</center>';
-                        }
-                    }
-                ]
-            });
-        })();
+        //                     return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'</center>';
+        //                 }
+        //             }
+        //         ]
+        //     });
+        // })();
 
 
         var bindEventHandlers=(function(){
@@ -532,76 +532,76 @@
 
             var detailRows = [];
 
-            $('#tbl_po_list tbody').on( 'click', 'tr td.details-control', function () {
-                var tr = $(this).closest('tr');
-                var row = dt.row( tr );
-                var idx = $.inArray( tr.attr('id'), detailRows );
+            // $('#tbl_po_list tbody').on( 'click', 'tr td.details-control', function () {
+            //     var tr = $(this).closest('tr');
+            //     var row = dt.row( tr );
+            //     var idx = $.inArray( tr.attr('id'), detailRows );
 
-                if ( row.child.isShown() ) {
-                    tr.removeClass( 'details' );
-                    row.child.hide();
+            //     if ( row.child.isShown() ) {
+            //         tr.removeClass( 'details' );
+            //         row.child.hide();
 
-                    // Remove from the 'open' array
-                    detailRows.splice( idx, 1 );
-                }
-                else {
-                    tr.addClass( 'details' );
-                    //console.log(row.data());
-                    var d=row.data();
+            //         // Remove from the 'open' array
+            //         detailRows.splice( idx, 1 );
+            //     }
+            //     else {
+            //         tr.addClass( 'details' );
+            //         //console.log(row.data());
+            //         var d=row.data();
 
-                    $.ajax({
-                        "dataType":"html",
-                        "type":"POST",
-                        "url":"Templates/layout/po/"+ d.purchase_order_id+'?type=approval',
-                        "beforeSend" : function(){
-                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
-                        }
-                    }).done(function(response){
-                        row.child( response ).show();
-                        // Add to the 'open' array
-                        if ( idx === -1 ) {
-                            detailRows.push( tr.attr('id') );
-                        }
-                    });
-
-
+            //         $.ajax({
+            //             "dataType":"html",
+            //             "type":"POST",
+            //             "url":"Templates/layout/po/"+ d.purchase_order_id+'?type=approval',
+            //             "beforeSend" : function(){
+            //                 row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+            //             }
+            //         }).done(function(response){
+            //             row.child( response ).show();
+            //             // Add to the 'open' array
+            //             if ( idx === -1 ) {
+            //                 detailRows.push( tr.attr('id') );
+            //             }
+            //         });
 
 
-                }
-            } );
+
+
+            //     }
+            // } );
 
 
             //*****************************************************************************************
-            $('#tbl_po_list > tbody').on('click','button[name="approve_po"]',function(){
-                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+            // $('#tbl_po_list > tbody').on('click','button[name="approve_po"]',function(){
+            //     _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
 
-                var data=dt.row(_selectRowObj).data();
-                _selectedID=data.purchase_order_id;
+            //     var data=dt.row(_selectRowObj).data();
+            //     _selectedID=data.purchase_order_id;
 
-                 approvePurchaseOrder().done(function(response){
-                    showNotification(response);
-                    if(response.stat=="success"){
-                        dt.row(_selectRowObj).remove().draw();
-                    }
+            //      approvePurchaseOrder().done(function(response){
+            //         showNotification(response);
+            //         if(response.stat=="success"){
+            //             dt.row(_selectRowObj).remove().draw();
+            //         }
 
-                });
-            });
-
-
-            //****************************************************************************************
-            $('#tbl_po_list > tbody').on('click','button[name="mark_as_approved"]',function(){
-                _selectRowObj=$(this).parents('tr').prev();
-                _selectRowObj.find('button[name="approve_po"]').click();
-                showSpinningProgress($(this));
-            });
+            //     });
+            // });
 
 
             //****************************************************************************************
-            $('#tbl_po_list > tbody').on('click','button[name="external_link_conversation"]',function(){
-                _selectRowObj=$(this).parents('tr').prev();
-                _selectRowObj.find('#link_conversation').trigger("click");
-                //alert(_selectRowObj.find('a[id="link_conversation"]').length);
-            });
+            // $('#tbl_po_list > tbody').on('click','button[name="mark_as_approved"]',function(){
+            //     _selectRowObj=$(this).parents('tr').prev();
+            //     _selectRowObj.find('button[name="approve_po"]').click();
+            //     showSpinningProgress($(this));
+            // });
+
+
+            //****************************************************************************************
+            // $('#tbl_po_list > tbody').on('click','button[name="external_link_conversation"]',function(){
+            //     _selectRowObj=$(this).parents('tr').prev();
+            //     _selectRowObj.find('#link_conversation').trigger("click");
+            //     //alert(_selectRowObj.find('a[id="link_conversation"]').length);
+            // });
 
 
 
@@ -614,15 +614,15 @@
 
 
         //functions called on bindEventHandlers
-        var approvePurchaseOrder=function(){
-            return $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Purchases/transaction/mark-approved",
-                "data":{purchase_order_id : _selectedID}
+        // var approvePurchaseOrder=function(){
+        //     return $.ajax({
+        //         "dataType":"json",
+        //         "type":"POST",
+        //         "url":"Purchases/transaction/mark-approved",
+        //         "data":{purchase_order_id : _selectedID}
 
-            });
-        };
+        //     });
+        // };
 
         var showNotification=function(obj){
             PNotify.removeAll(); //remove all notifications

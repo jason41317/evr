@@ -583,7 +583,7 @@
 
 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content"><!---content-->
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Confirm Deletion</h4>
@@ -598,7 +598,7 @@
                 <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
@@ -620,8 +620,10 @@
                         <th>Customer</th>
                         <th>Remarks</th>
                         <th>Order</th>
+                        <th>Time</th>
                         <th>Status</th>
                         <th><center>Action</center></th>
+                        <th>ID</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -631,10 +633,10 @@
             </div>
 
             <div class="modal-footer">
-                <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button>
+                <!-- <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
                 <button id="cancel_modal" class="btn btn-default" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
@@ -947,7 +949,6 @@ $(document).ready(function(){
             processing : true,
             "ajax" : {
                 "url" : "Sales_invoice/transaction/list",
-                
                 "bDestroy": true,            
                 "data": function ( d ) {
                         return $.extend( {}, d, {
@@ -989,6 +990,7 @@ $(document).ready(function(){
 
         dt_so=$('#tbl_so_list').DataTable({
             "bLengthChange":false,
+            "order": [[ 8, "desc" ]],
             "ajax" : "Sales_order/transaction/open",
             "columns": [
                 {
@@ -1002,14 +1004,16 @@ $(document).ready(function(){
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "remarks" },
                 { targets:[4],data: "date_order" },
-                { targets:[5],data: "order_status" },
+                { targets:[5],data: "time_created" },
+                { targets:[6],data: "order_status" },
                 {
-                    targets:[6],
+                    targets:[7],
                     render: function (data, type, full, meta){
-                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i> Accept SO</button>';
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i></button>';
                         return '<center>'+btn_accept+'</center>';
                     }
-                }
+                },
+                {visible:false, targets:[8],data: "sales_order_id" },
 
             ]
 

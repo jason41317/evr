@@ -809,7 +809,7 @@ $(document).ready(function(){
                 { targets:[1],data: "po_no" },
                 { targets:[2],data: "supplier_name" },
                 { targets:[3],data: "term_description" },
-                { sClass:"align-center", targets:[4],data: "approval_status" },
+                { visible:false,sClass:"align-center", targets:[4],data: "approval_status" },
                 { sClass:"align-center", targets:[5],data: "order_status" },
                 { sClass:"align-center",
                     targets:[6],data: null,
