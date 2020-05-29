@@ -201,7 +201,7 @@
                     <th>Customer</th>
                     <th width="25%">Remarks</th>
                     <th width="10%">Status</th>
-                    <th><center>Action</center></th>
+                    <th style="text-align: left;">Action</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -492,7 +492,26 @@
     </div>
 </div><!---modal-->
 
+<div id="modal_confirmation_close" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Closing of Sales Order</h4>
 
+            </div>
+
+            <div class="modal-body">
+                <p id="modal-body-message">Are you sure ?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_yes_close" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="modal_new_customer" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-lg">
@@ -872,12 +891,17 @@ $(document).ready(function(){
                 { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(60) },
                 { targets:[6],data: "order_status" },
                 {
-                    targets:[7],
+                    targets:[7],data: null,
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:0px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-
-                        return '<center>'+btn_edit+"&nbsp;"+btn_trash+'</center>';
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+                        var btn_mark_as_closed='<button class="btn btn-warning btn-sm" name="mark_as_closed" title="Mark as Closed"><i class="fa fa-times"></i> </button>';
+                        if(data.order_status_id == 1  || data.order_status_id == 3){
+                           return btn_edit+"&nbsp;"+btn_trash+'&nbsp'+btn_mark_as_closed; 
+                        }else{
+                            return btn_edit+"&nbsp;"+btn_trash; 
+                        }
+                        
                     }
                 },
                 { visible:false, targets:[8],data: "sales_order_id" },
@@ -1274,6 +1298,12 @@ $(document).ready(function(){
             //$('.sales_order_title').html('Edit Sales Order');
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
+
+            if(data.order_status_id != '1' ){
+                showNotification({title:"Invalid",stat:"error",msg:"Only Open Sales can be Edited."});
+            }else {
+
+
             _selectedID=data.sales_order_id;
 
             $('textarea[name="remarks"]').val(data.remarks);
@@ -1337,16 +1367,33 @@ $(document).ready(function(){
 
 
 
-            showList(false);
+            showList(false); 
+
+
+        } // END OF IF ELSE 
 
         });
 
         $('#tbl_sales_order tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
+
+            if(data.order_status_id != '1' ){
+                showNotification({title:"Invalid",stat:"error",msg:"Only Open Sales can be Deleted."});
+            }else {
+
             _selectedID=data.sales_order_id;
 
             $('#modal_confirmation').modal('show');
+            }
+        });
+
+        $('#tbl_sales_order tbody').on('click','button[name="mark_as_closed"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.sales_order_id;
+
+            $('#modal_confirmation_close').modal('show');
         });
 
 
@@ -1405,6 +1452,16 @@ $(document).ready(function(){
             //}
         });
 
+
+        $('#btn_yes_close').click(function(){
+            MarkRecordAsClosed().done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                }
+
+            });
+        });
 
 
         $('#btn_cancel').click(function(){
@@ -1595,6 +1652,16 @@ $(document).ready(function(){
             "data":{sales_order_id : _selectedID}
         });
     };
+
+    var MarkRecordAsClosed=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Sales_order/transaction/close",
+            "data":{sales_order_id : _selectedID}
+        });
+    };
+
 
     var showList=function(b){
         if(b){

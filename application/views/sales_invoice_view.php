@@ -1564,11 +1564,16 @@ $(document).ready(function(){
 
         $('#tbl_sales_invoice tbody').on('click','button[name="edit_info"]',function(){
 
+
             _txnMode="edit";
 
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.sales_invoice_id;
+
+            if(data.order_status_id == 4){
+                showNotification({title:"Sales Order Already Marked As Closed",stat:"warning",msg:"Editing this invoice will reopen the Sales Order."});
+            }
 
             //make sure save button is disabled
             $('#btn_save').addClass('disabled');

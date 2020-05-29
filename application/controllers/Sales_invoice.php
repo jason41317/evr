@@ -592,7 +592,8 @@ class Sales_invoice extends CORE_Controller
                 'customers.customer_name',
                 'sales_invoice.salesperson_id',
                 'sales_invoice.address',
-                'sales_order.so_no'
+                'sales_order.so_no',
+                'sales_order.order_status_id'
             ),
             array(
                 array('departments','departments.department_id=sales_invoice.department_id','left'),

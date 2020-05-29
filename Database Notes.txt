@@ -1,0 +1,12 @@
+05292020
+Added on Adjustment Info
+is_returns BIT False
+inv_no VARCHAR 145 ''
+
+Added on Sales Order
+ADD COLUMN `is_closed` BIT(1) NULL DEFAULT b'0' AFTER `salesperson_id`,
+ADD COLUMN `closed_by_user` INT(11) NULL DEFAULT '0' AFTER `is_closed`,
+ADD COLUMN `date_closed` DATETIME NULL DEFAULT '0000-00-00 00:00:00' AFTER `closed_by_user`;
+
+ADDED on Order Status 
+4 Closed by User
