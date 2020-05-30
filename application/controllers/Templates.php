@@ -301,6 +301,7 @@ class Templates extends CORE_Controller {
                 $m_adjustment_items=$this->Adjustment_item_model;
                 $m_company=$this->Company_model;
                 $type=$this->input->get('type',TRUE);
+                $print=$this->input->get('print',TRUE);
 
                 $info=$m_adjustment->get_list(
                     $filter_value,
@@ -326,8 +327,7 @@ class Templates extends CORE_Controller {
                         array('units','units.unit_id=adjustment_items.unit_id','left')
                     )
                 );
-
-
+                $data['print']=$print;
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
@@ -346,8 +346,8 @@ class Templates extends CORE_Controller {
                     $file_name=$info[0]->adjustment_code;
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                    $content=$this->load->view('template/adjustment_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    $content=$this->load->view('template/adjustment_content_print',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output($pdfFilePath,"D");
@@ -359,8 +359,8 @@ class Templates extends CORE_Controller {
                     $file_name=$info[0]->slip_no;
                     $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                    $content=$this->load->view('template/adjustment_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
+                    $content=$this->load->view('template/adjustment_content_print',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
                     $pdf->Output();
