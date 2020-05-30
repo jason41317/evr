@@ -2,8 +2,14 @@
 Added on Adjustment Info
 is_returns BIT False
 inv_no VARCHAR 145 ''
+ALTER TABLE `eoption_062020`.`adjustment_info` 
+ADD COLUMN `is_returns` BIT(1) NULL DEFAULT b'0' AFTER `is_deleted`,
+ADD COLUMN `inv_no` VARCHAR(145) NULL DEFAULT '' AFTER `is_returns`;
+
+
 
 Added on Sales Order
+ALTER TABLE `eoption_062020`.`sales_order` 
 ADD COLUMN `is_closed` BIT(1) NULL DEFAULT b'0' AFTER `salesperson_id`,
 ADD COLUMN `closed_by_user` INT(11) NULL DEFAULT '0' AFTER `is_closed`,
 ADD COLUMN `date_closed` DATETIME NULL DEFAULT '0000-00-00 00:00:00' AFTER `closed_by_user`;
