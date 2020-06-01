@@ -109,7 +109,8 @@
                                 <li class="<?php echo (in_array('8-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cogs">Cost of Goods Sold</a></li>
                                 <li class="<?php echo (in_array('8-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_detailed_summary">Sales Report</a></li>
                                 <li class="<?php echo (in_array('8-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_returns_report">Sales Returns</a></li>
-                                <li class="<?php echo (in_array('8-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Inventory">Inventory</a></li>
+                                <li class="<?php echo (in_array('8-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Product_list">Product Inventory Report</a></li>
+                                <li class="<?php echo (in_array('8-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Inventory">Batch Inventory Report</a></li>
                                 <li class="<?php echo (in_array('8-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Stock_card">Stock Card</a></li>
                                 <li class="<?php echo (in_array('8-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_summary">Sales Summary</a></li>
                                 <li class="<?php echo (in_array('8-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchase_Invoice_Report">Purchase Invoice Report</a></li>
