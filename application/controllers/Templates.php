@@ -420,6 +420,10 @@ class Templates extends CORE_Controller {
                     echo $this->load->view('template/sales_invoice_content_dr',$data,TRUE);
                 }
 
+                if($type=='dropdown'){
+                    echo $this->load->view('template/sales_invoice_content_dropdown',$data,TRUE);
+                }
+
                 if($type=='drview'){
                     echo $this->load->view('template/sales_invoice_content_dr_view',$data,TRUE);
                     echo $this->load->view('template/delivery_receipt_menus',$data,TRUE);
