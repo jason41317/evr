@@ -155,8 +155,8 @@
                                                                 <td style="width: 15%;" class="class-title">Unit of Measurement</td>
                                                                 <td style="width: 35%;" id="unit_of_measurement"></td>
 
-                                                                <td  style="width: 15%;" class="class-title"></td>
-                                                                <td  style="width: 35%;" id=""></td>
+                                                                <td  style="width: 15%;" class="class-title">Current Inventory Stock</td>
+                                                                <td  style="width: 35%;" id="current_inventory_stock"></td>
                                                             </tr>
                                                         </table>
                                                         </div>
@@ -280,10 +280,11 @@
             }).done(function(response){
                 var data = response.data[0];
                 $('#product_desc').html(data.product_desc);
-                $('#unit_of_measurement').html(data.unit);
+                $('#unit_of_measurement').html(data.unit_name);
                 $('#purchase_cost').html(accounting.formatNumber(data.purchase_cost,2));
                 $('#sale_price').html(accounting.formatNumber(data.sale_price,2));
                 $('#product_code').html(data.product_code);
+                $('#current_inventory_stock').html(accounting.formatNumber(response.onhand.balance,2));
             });
 
             $.ajax({

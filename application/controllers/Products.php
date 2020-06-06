@@ -54,6 +54,8 @@ class Products extends CORE_Controller
             case 'list-single':
                 $product_id=$this->input->get('id');
                 $m_products = $this->Products_model;
+                $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,date('Y-m-d'))[0]; 
+                $response['onhand']=$balance_as_of;
                 $response['data']=$this->response_rows($product_id);
                 echo json_encode($response);
                 break;
