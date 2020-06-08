@@ -64,7 +64,8 @@ class Rights_link_model extends CORE_Model{
                                           (47,'8','8-6','Stock Card'),
                                           (48,'8','8-7','Sales Return Report'),
                                           (49,'3','3-4','Other Sales Invoice'),
-                                          (50,'8','8-8','Product Inventory Report')
+                                          (50,'8','8-8','Product Inventory Report'),
+                                          (51,'8','8-9','Open Purchases Report')
 
 
                                           ON DUPLICATE KEY UPDATE
