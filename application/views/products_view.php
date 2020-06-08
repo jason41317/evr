@@ -192,6 +192,7 @@ $(document).ready(function(){
                 "beforeSend": showSpinningProgress($('#btn_update_cost'))
             }).done(function(response){
                 showNotification(response);
+                $('#modal_update_cost').modal('hide');
             });
         });
 
@@ -1348,7 +1349,7 @@ $(document).ready(function(){
 
                         <div class="modal-footer">
                             <button id="btn_update_cost" type="button" class="btn" style="background-color:#2ecc71;color:white;">Update</button>
-                            <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal" style="padding: 2px 7px!important;">Cancel</button>
                         </div>
                     </div><!---content---->
                 </div>

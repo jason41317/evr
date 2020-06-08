@@ -27,7 +27,7 @@
 	        $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', true);
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
 	        $data['products']= $this->Products_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE ),'product_id,product_desc');
-	        $data['title'] = 'Purchase Invoice Report';
+	        $data['title'] = 'Stock Card Report';
 
 	        $this->load->view('stock_card_view',$data);
 		}

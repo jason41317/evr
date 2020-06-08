@@ -63,9 +63,9 @@
         .class-title{
             font-weight: bold;
         }
-        a {
+/*        a {
             color:#333333;
-        }
+        }*/
     </style>
 
 </head>
@@ -184,6 +184,34 @@
             </div> <!-- #page-content -->
         </div>
 
+        <div id="modal_update_cost" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+            <div class="modal-dialog" style="width: 30%;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:#2ecc71;">
+                        <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                        <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_ref_no"> </span></h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group" style="margin-bottom:0px;">
+                            <label class="">Update the Cost of this Product :</label>
+                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <i class="fa fa-file-code-o"></i>
+                                                </span>
+                                <input type="text" id="txt_cost_upon_invoice" name="cost_upon_invoice" class="form-control" value="" data-error-msg="PLU is required." required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="btn_update_cost" type="button" class="btn" style="background-color:#2ecc71;color:white;"><span></span> Update</button>
+                        <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal" style="padding: 2px 7px!important;">Cancel</button>
+                    </div>
+                </div><!---content---->
+            </div>
+        </div><!---modal-->
+
         <footer role="contentinfo">
             <div class="clearfix">
                 <ul class="list-unstyled list-inline pull-left">
@@ -231,6 +259,62 @@
         var _date_from = $('input[name="date_from"]');
         var _date_to = $('input[name="date_to"]');
 
+        var pid="";
+        var refno="";
+        var expdate="";
+        var bid="";
+
+        $(document).on('click','a.force_adjust_cost',function(e){
+            e.preventDefault();
+
+
+            pid=$(this).attr('data-prod-id');
+            refno=$(this).attr('data-ref-no');
+            expdate=$(this).attr('data-exp-date');
+            bid=$(this).attr('data-batch-id');
+
+            var _data=[];
+            _data.push({name:"pid",value:pid});
+            _data.push({name:"refno",value:refno});
+            _data.push({name:"expdate",value:expdate});
+            _data.push({name:"bid",value:bid});
+            _data.push({name:"cost",value:$('#txt_cost_upon_invoice').val()});
+
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Products/transaction/get-current-invoice-cost",
+                "data":_data
+            }).done(function(response){
+                $('#txt_cost_upon_invoice').val(response.cost);
+                $('#modal_ref_no').html(refno);
+                $('#modal_update_cost').modal('show');
+            });
+
+        });
+
+        $('#btn_update_cost').click(function(){
+            var _data=[];
+            _data.push({name:"pid",value:pid});
+            _data.push({name:"refno",value:refno});
+            _data.push({name:"expdate",value:expdate});
+            _data.push({name:"bid",value:bid});
+            _data.push({name:"cost",value:$('#txt_cost_upon_invoice').val()});
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Products/transaction/update-cost",
+                "data":_data,
+                "beforeSend": showSpinningProgress($('#btn_update_cost'))
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_update_cost').modal('hide');
+            });
+        });
+
+
          var initializeControls=function() {
             $('.date-picker').datepicker({
                 todayBtn: "linked",
@@ -268,6 +352,18 @@
             });
         }();
 
+        var showSpinningProgress=function(e){
+            $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
+        };
+
+        var showNotification=function(obj){
+            PNotify.removeAll();
+            new PNotify({
+                title:  obj.title,
+                text:  obj.msg,
+                type:  obj.stat
+            });
+        };
        
         function initializeDataTable(){
             $.ajax({

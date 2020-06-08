@@ -186,7 +186,7 @@
                     <th width="15%">Adjustment #</th>
                     <th width="10%"> Type</th>
                     <th>Invoice</th>
-                    <th>Branch</th>
+                    <th width="15%">Branch</th>
                     <th>Remarks</th>
                     <th width="10%" class="align-center">Adjustment</th>
                     <th width="10%"><center>Action</center></th>
@@ -731,7 +731,7 @@ $(document).ready(function(){
                 { targets:[2],data: "trans_type" },
                 { targets:[3],data: "inv_no" },
                 { targets:[4],data: "department_name" },
-                { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(120) },
+                { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(160) },
                 { visible:false, sClass: "Align-center" ,targets:[6],data: "adjustment_type" },
                 {
                     targets:[7],
