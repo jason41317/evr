@@ -91,6 +91,34 @@ class Sales_order extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+
+                case 'product-lookup':
+                    $m_products=$this->Products_model;
+                    $type_id=$this->input->get('type');
+                    $description=$this->input->get('description');
+
+                    //not 3 means show all product type
+                    echo json_encode(
+                        $m_products->get_list(
+                                "(products.product_code LIKE '".$description."%' OR products.product_desc LIKE '%".$description."%') AND products.is_deleted=FALSE ".($type_id==1||$type_id==2?" AND products.refproduct_id=".$type_id:""),
+
+                            array(
+                                'products.*',
+                                'IFNULL(tax_types.tax_rate,0) as tax_rate',
+                                'units.unit_name'
+                            ),
+
+                            array(
+                                array('tax_types','tax_types.tax_type_id=products.tax_type_id','left'),
+                                array('units','units.unit_id=products.unit_id','left')
+                            )
+                        )
+                    );
+                    break;
+
+
+
+
             //***********************************************************************************************************
             case 'open':  //this returns PO that are already approved
                 $m_sales_order=$this->Sales_order_model;
@@ -215,8 +243,8 @@ class Sales_order extends CORE_Controller
                     $m_sales_order_items->so_tax_amount=$this->get_numeric_value($so_tax_amount[$i]);
                     $m_sales_order_items->so_non_tax_amount=$this->get_numeric_value($so_non_tax_amount[$i]);
 
-                    $m_sales_order_items->batch_no=$batch_no[$i];
-                    $m_sales_order_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    // $m_sales_order_items->batch_no=$batch_no[$i];
+                    // $m_sales_order_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
 
                     $m_sales_order_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
                     $m_sales_order_items->save();
@@ -307,8 +335,8 @@ class Sales_order extends CORE_Controller
                     $m_sales_order_items->so_tax_amount=$this->get_numeric_value($so_tax_amount[$i]);
                     $m_sales_order_items->so_non_tax_amount=$this->get_numeric_value($so_non_tax_amount[$i]);
 
-                    $m_sales_order_items->batch_no=$batch_no[$i];
-                    $m_sales_order_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
+                    // $m_sales_order_items->batch_no=$batch_no[$i];
+                    // $m_sales_order_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
 
                     $m_sales_order_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
                     $m_sales_order_items->save();

@@ -1013,7 +1013,7 @@ $(document).ready(function(){
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
                 cache: false,
-                url: 'Sales_invoice/transaction/current-items/',
+                url: 'Sales_order/transaction/product-lookup/',
 
                 replace: function(url, uriEncodedQuery) {
                     var prod_type=$('#cbo_prodType').select2('val');
@@ -1032,10 +1032,10 @@ $(document).ready(function(){
         source: products,
         templates: {
             header: [
-                '<table width="100%"><tr><td width=7%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="7%" align="left"><b>Batch #</b></td><td width="7%" align="left"><b>Expiration</b></td><td width="7%" style="text-align: right;padding-right:1%;"><b>On hand</b></td><td width="7%" align="right" style="padding-right: 2%;"><b>SRP</b></td><td width="7%" align="right" style="padding-right: 0%;"><b>Dealer</b></td></tr></table>'
+                '<table width="100%"><tr><td width=7%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="7%" style="text-align: right;padding-right:1%;"><b>On hand</b></td><td width="7%" align="right" style="padding-right: 2%;"><b>SRP</b></td><td width="7%" align="right" style="padding-right: 0%;"><b>Dealer</b></td></tr></table>'
             ].join('\n'),
 
-            suggestion: Handlebars.compile('<table width="100%"><tr><td width="7%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="7%" align="left">{{batch_no}}</td><td width="7%" align="left">{{exp_date}}</td><td width="7%" style="padding-right:1%;" align="right">{{on_hand_per_batch}}</td><td width="7%" align="right" style="padding-right: 2%;">{{srp}}</td><td width="7%" align="right" style="padding-right: 0%;">{{srp_dealer}}</td></tr></table>')
+            suggestion: Handlebars.compile('<table width="100%"><tr><td width="7%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="7%" style="padding-right:1%;" align="right">{{on_hand}}</td><td width="7%" align="right" style="padding-right: 2%;">{{sale_price}}</td><td width="7%" align="right" style="padding-right: 0%;">{{dealer_price}}</td></tr></table>')
 
         }
     }).on('keyup', this, function (event) {
@@ -1106,8 +1106,8 @@ $(document).ready(function(){
                 so_line_total_price : total,
                 so_non_tax_amount: net_vat,
                 so_tax_amount:vat_input,
-                batch_no : suggestion.batch_no,
-                exp_date : suggestion.exp_date
+                batch_no : '',
+                exp_date : ''
             }));
 
 

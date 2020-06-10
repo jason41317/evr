@@ -120,6 +120,15 @@ class Sales_invoice extends CORE_Controller
                 echo json_encode($this->Products_model->get_current_item_list($description,$type));
                 break;
 
+
+            case 'current-items-search':
+                $type=$this->input->get('type');
+                $description=$this->input->get('description');
+                $response['data'] = $this->Products_model->get_current_item_list($description,$type);
+
+                echo json_encode($response);
+                break;
+
             case 'print':
                 $m_sales_invoice=$this->Sales_invoice_model;
                 $m_sales_invoice_items=$this->Sales_invoice_item_model;

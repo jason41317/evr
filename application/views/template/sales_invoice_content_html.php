@@ -62,7 +62,7 @@
                     <td class="table-cellpadding "><!-- DATE : -->&nbsp;</td>
                     <td class="" colspan="3" style="font-size: 12px; color: transparent;font-family: 'Times New Roman', serif; font-weight: 200;" style="padding-left: 80px;" width="16%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo  date_format(new DateTime($sales_info->date_invoice),"m/d/Y"); ?></td>
                     <span style="position: absolute; margin-top: 30px; margin-left: 465px;font-size: 12px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo  date_format(new DateTime($sales_info->date_invoice),"m/d/Y"); ?></span>
-                    <span style="position: absolute; margin-top: 30px; margin-left: 60px;font-size: 12px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo $sales_info->address; ?></span>
+                    <span style="position: absolute; margin-top: 25px; margin-left: 60px;font-size: 12px;font-family: 'Times New Roman', serif; font-weight: 200; width: 180px;"><?php echo $sales_info->address; ?></span>
                 </tr>
                 <tr>
                     <td class="table-cellpadding "><!-- BUSINESS STYLE : -->&nbsp;</td>
