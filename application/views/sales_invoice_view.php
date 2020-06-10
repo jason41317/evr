@@ -898,7 +898,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#499bea', end
             </div>
             <div class="modal-footer">
                 <!-- <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
-                <button id="cancel_modal" class="btn btn-default" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+                <button id="cancel_modal" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
         </div><!---content-->
     </div>

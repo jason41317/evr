@@ -313,8 +313,8 @@
 
                                             <div class="row">
                                                 <div class="col-sm-5">
-                                                    Deliver to Address * : <br />
-                                                    <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required></textarea>
+                                                    <input type="checkbox" id="cb_deliver_address" style=""> Deliver to Address * : <br />
+                                                    <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required readonly></textarea>
 
                                                 </div>
 
@@ -1024,13 +1024,16 @@ $(document).ready(function(){
 
     }();
 
-
-
-
-
-
     var bindEventHandlers=(function(){
         var detailRows = [];
+
+        $('#cb_deliver_address').change(function(){
+            if($(this).prop("checked") == true){
+                $('textarea[name="deliver_to_address"]').attr("readonly", false); 
+            }else{
+                $('textarea[name="deliver_to_address"]').attr("readonly", true);
+            }
+        });
 
         $('#tbl_purchases tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
@@ -1482,7 +1485,8 @@ $(document).ready(function(){
         $('#tbl_items > tbody').html('');
         $('#cbo_tax_type').select2('val',null);
         $('#cbo_suppliers').select2('val',null);
-
+        $('#cb_deliver_address').prop("checked", false);
+        $('textarea[name="deliver_to_address"]').attr("readonly", true); 
     };
 
 
