@@ -1,5 +1,5 @@
 <?php
-ini_set('memory_limit', '-1');
+ini_set('memory_limit', '4096M');
 ini_set('max_execution_time', 0);
 defined('BASEPATH') OR exit('No direct script access allowed');
 
@@ -105,32 +105,29 @@ class Sales_summary extends CORE_Controller
 
                     // $invoices=$this->Sales_invoice_model->get_sales_summary($start,$end); // 05-28-2020 Original
                     $invoices=$this->Sales_invoice_model->get_sales_summary_2020($start,$end); // 05-28-2020 Revised, now with sales return
-                    $rows=array();
+                    $i = 2;
                     foreach($invoices as $x){
-                        $rows[]=array(
-                            $x->sales_inv_no,
-                            $x->inv_date,
-                            $x->salesperson_name,
-                            $x->vr,
-                            $x->customer_name,
-                            $x->product_desc,
-                            $x->product_type,
-                            $x->inv_qty,
-                            $x->fg,
-                            $x->size,
-                            $x->supplier_name,
-                            $x->srp,
-                            $x->sales,
-                            $x->purchase_cost,
-                            $x->cost_of_sales,
-                            $x->net_profit,
-                            $x->tax_amount,
-                            $x->non_tax_amount,
-                            $x->with_returns,
-                            $x->return_invoices
-
-
-                        );
+                        $excel->getActiveSheet()->setCellValue('A'.$i,$x->sales_inv_no)
+                                                ->setCellValue('B'.$i,$x->inv_date)
+                                                ->setCellValue('C'.$i,$x->salesperson_name)
+                                                ->setCellValue('D'.$i,$x->vr)
+                                                ->setCellValue('E'.$i,$x->customer_name)
+                                                ->setCellValue('F'.$i,$x->product_desc)
+                                                ->setCellValue('G'.$i,$x->product_type)
+                                                ->setCellValue('H'.$i,$x->inv_qty)
+                                                ->setCellValue('I'.$i,$x->fg)
+                                                ->setCellValue('J'.$i,$x->size)
+                                                ->setCellValue('K'.$i,$x->supplier_name)
+                                                ->setCellValue('L'.$i,$x->srp)
+                                                ->setCellValue('M'.$i,$x->sales)
+                                                ->setCellValue('N'.$i,$x->purchase_cost)
+                                                ->setCellValue('O'.$i,$x->cost_of_sales)
+                                                ->setCellValue('P'.$i,$x->net_profit)
+                                                ->setCellValue('Q'.$i,$x->tax_amount)
+                                                ->setCellValue('R'.$i,$x->non_tax_amount)
+                                                ->setCellValue('S'.$i,$x->with_returns)
+                                                ->setCellValue('T'.$i,$x->return_invoices);
+                                                $i++;
                     }
 
 
@@ -138,13 +135,6 @@ class Sales_summary extends CORE_Controller
                     $excel->getActiveSheet()->getStyle('A1:T1')->getFill()
                         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                         ->getStartColor()->setARGB('4caf50');
-
-
-
-                    $excel->getActiveSheet()->fromArray($rows,NULL,'A2');
-
-
-
 
 
 
