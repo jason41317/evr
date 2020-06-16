@@ -149,7 +149,7 @@ class Purchases extends CORE_Controller
                     //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
                     $response['data']= $m_purchases->get_list(
 
-                        'purchase_order.is_deleted=FALSE AND purchase_order.is_active=TRUE AND (purchase_order.order_status_id=1 OR purchase_order.order_status_id=3)',
+                        'purchase_order.is_deleted=FALSE  AND purchase_order.approval_id = 1 AND purchase_order.is_active=TRUE AND (purchase_order.order_status_id=1 OR purchase_order.order_status_id=3)',
 
                         array(
                             'purchase_order.*',
@@ -225,7 +225,7 @@ class Purchases extends CORE_Controller
                     $m_purchases->department_id=$this->input->post('department',TRUE);
                     $m_purchases->remarks=$this->input->post('remarks',TRUE);
                     $m_purchases->tax_type_id=$this->input->post('tax_type',TRUE);
-                    $m_purchases->approval_id=1;
+                    $m_purchases->approval_id=2;
                     $m_purchases->posted_by_user=$this->session->user_id;
                     $m_purchases->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_purchases->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));

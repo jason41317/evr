@@ -161,7 +161,7 @@ class Sales_invoice extends CORE_Controller
                 $data['_def_css_files'] = $this->load->view('template/assets/css_files', '', TRUE);
                 $data['_def_js_files'] = $this->load->view('template/assets/js_files', '', TRUE);
 
-                $this->load->view('template/sales_invoice_content_html',$data);
+                $this->load->view('template/sales_invoice_content_html_vismin',$data);
             break;
 
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
