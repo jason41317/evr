@@ -135,7 +135,7 @@
                                        <h2 class="h2-panel-heading">Adjustments (Out)</h2><hr>
                                             <div class="row">
                                                 <div class="col-lg-3"><br>
-                                                        <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Adjustment</button>
+                                                        <button class="btn btn-primary <?php echo (in_array('24-1',$this->session->user_rights)?'':'hidden'); ?>" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Adjustment</button>
                                                 </div>
                                                 <div class="col-lg-3">
                                                         From :<br />
@@ -499,6 +499,7 @@
 
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
+<?php echo $_rights; ?>
 
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
@@ -601,10 +602,7 @@
                     {
                         targets:[5],
                         render: function (data, type, full, meta){
-                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                            var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-
-                            return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                            return '<center>'+adjout_btn_edit+'&nbsp;'+adjout_btn_trash+'</center>';
                         }
                     },
                     { visible:false, targets:[6],data: "adjustment_id" },
@@ -785,7 +783,7 @@
                     $.ajax({
                         "dataType":"html",
                         "type":"POST",
-                        "url":"Templates/layout/Adjustment_out/"+ d.adjustment_id,
+                        "url":"Templates/layout/adjustments/"+ d.adjustment_id,
                         "beforeSend" : function(){
                             row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                         }

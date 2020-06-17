@@ -199,7 +199,7 @@
 
                             <div class="row">
                                 <div class="col-lg-3"><br>
-                                        <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Purchase Order</button>
+                                        <button class="btn btn-primary <?php echo (in_array('20-1',$this->session->user_rights)?'':'hidden'); ?>"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Purchase Order</button>
                                 </div>
                                 <div class="col-lg-3">
                                         From :<br />
@@ -313,7 +313,7 @@
 
                                             <div class="row">
                                                 <div class="col-sm-5">
-                                                    <input type="checkbox" id="cb_deliver_address" style=""> Deliver to Address * : <br />
+                                                    <input type="checkbox" id="cb_deliver_address" style=""> <label for="cb_deliver_address" style="font-weight: normal!important;">Deliver to Address</label> * : <br />
                                                     <textarea name="deliver_to_address" class="form-control" placeholder="Deliver to Address" data-error-msg="Deliver address is required!" required readonly></textarea>
 
                                                 </div>
@@ -708,6 +708,7 @@
 
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
+<?php echo $_rights; ?>
 
 
 
@@ -809,7 +810,7 @@ $(document).ready(function(){
                 { targets:[1],data: "po_no" },
                 { targets:[2],data: "supplier_name" },
                 { targets:[3],data: "term_description" },
-                { visible:false,sClass:"align-center", targets:[4],data: "approval_status" },
+                { sClass:"align-center", targets:[4],data: "approval_status" },
                 { sClass:"align-center", targets:[5],data: "order_status" },
                 { sClass:"align-center",
                     targets:[6],data: null,
@@ -829,11 +830,9 @@ $(document).ready(function(){
                 { sClass:"align-center",
                     targets:[7],
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-                        var btn_message='<a href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
+                        var po_btn_message='<a href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm <?php echo (in_array('20-4',$this->session->user_rights)?'':'hidden'); ?>" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
 
-                        return '<center>'+btn_edit+'&nbsp;'+btn_message+'&nbsp;'+btn_trash+'</center>';
+                        return '<center>'+po_btn_edit+'&nbsp;'+po_btn_message+'&nbsp;'+po_btn_trash+'</center>';
                     }
                 },
                 { visible:false, targets:[8],data: "purchase_order_id" },
