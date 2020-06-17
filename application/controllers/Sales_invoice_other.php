@@ -28,7 +28,7 @@ class Sales_invoice_other extends CORE_Controller
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
-
+        $data['_rights'] = $this->load->view('template/elements/rights', '', TRUE);
 
         //data required by active view
         $data['departments']=$this->Departments_model->get_list(

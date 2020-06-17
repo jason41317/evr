@@ -29,7 +29,7 @@ class Purchases extends CORE_Controller
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
-
+        $data['_rights'] = $this->load->view('template/elements/rights', '', TRUE);
 
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE'
@@ -102,7 +102,7 @@ class Purchases extends CORE_Controller
                     //not 3 means show all product type
                     echo json_encode(
                         $m_products->get_list(
-                                "(products.product_code LIKE '".$description."%' OR products.product_desc LIKE '%".$description."%') AND products.is_deleted=FALSE ".($supplier_id>0?" AND products.supplier_id=".$supplier_id:"").($type_id==1||$type_id==2?" AND products.refproduct_id=".$type_id:""),
+                                "(products.product_code LIKE '".$description."%' OR products.product_desc LIKE '%".$description."%' OR products.product_desc1 LIKE '%".$description."%') AND products.is_deleted=FALSE ".($supplier_id>0?" AND products.supplier_id=".$supplier_id:"").($type_id==1||$type_id==2?" AND products.refproduct_id=".$type_id:""),
 
                             array(
                                 'products.*',
