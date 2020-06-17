@@ -40,7 +40,7 @@ class Rights_link_model extends CORE_Model{
                                           (23,'6','6-4','Setup User Group'),
                                           (24,'6','6-5','Create User Account'),
                                           (25,'6','6-6','Setup Company Info'),
-                                          (26,'7','7-1','Purchase Order for Approval'),
+                                          -- (26,'7','7-1','Purchase Order for Approval'),
                                           -- (27,'9','9-1','Balance Sheet Report'),
                                           -- (28,'9','9-2','Income Statement'),
                                           (29,'4','4-4','Product Types'),
@@ -65,8 +65,49 @@ class Rights_link_model extends CORE_Model{
                                           (48,'8','8-7','Sales Return Report'),
                                           (49,'3','3-4','Other Sales Invoice'),
                                           (50,'8','8-8','Product Inventory Report'),
-                                          (51,'8','8-9','Open Purchases Report')
+                                          (51,'8','8-9','Open Purchases Report'),
 
+                                          -- Purchase Order Buttons
+                                          (52,'20','20-1','Purchase Order Add'),
+                                          (53,'20','20-2','Purchase Order Edit'),
+                                          (54,'20','20-3','Purchase Order Delete'),
+                                          (55,'20','20-4','Purchase Order Message'),
+
+                                          -- Purchase Invoice Buttons
+                                          (56,'21','21-1','Purchase Invoice Add'),
+                                          (57,'21','21-2','Purchase Invoice Edit'),
+                                          (58,'21','21-3','Purchase Invoice Delete'),
+
+                                          -- Item Issuance Buttons
+                                          (59,'22','22-1','Item Issuance Add'),
+                                          (60,'22','22-2','Item Issuance Edit'),
+                                          (61,'22','22-3','Item Issuance Delete'),
+
+                                          -- Item Adjsutment Buttons
+                                          (62,'23','23-1','Item Adjustment Add'),
+                                          (63,'23','23-2','Item Adjustment Edit'),
+                                          (64,'23','23-3','Item Adjustment Delete'),
+
+                                          -- Item Adjsutment Out Buttons
+                                          (65,'24','24-1','Item Adjustment Out Add'),
+                                          (66,'24','24-2','Item Adjustment Out Edit'),
+                                          (67,'24','24-3','Item Adjustment Out Delete'),
+
+                                          -- Sales Order Buttons
+                                          (68,'25','25-1','Sales Order Add'),
+                                          (69,'25','25-2','Sales Order Edit'),
+                                          (70,'25','25-3','Sales Order Delete'),
+                                          (71,'25','25-4','Sales Order Cancel'),
+
+                                          -- Sales Invoice Buttons
+                                          (72,'26','26-1','Sales Invoice Add'),
+                                          (73,'26','26-2','Sales Invoice Edit'),
+                                          (74,'26','26-3','Sales Invoice Delete'),
+
+                                          -- Other Sales Invoice Buttons
+                                          (75,'27','27-1','Other Sales Invoice Add'),
+                                          (76,'27','27-2','Other Sales Invoice Edit'),
+                                          (77,'27','27-3','Other Sales Invoice Delete')
 
                                           ON DUPLICATE KEY UPDATE
 

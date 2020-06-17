@@ -166,7 +166,7 @@
         <h2 class="h2-panel-heading">Sales Order</h2><hr>
         <div class="row">
             <div class="col-lg-3"><br>
-                <button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" ><i class="fa fa-plus-circle"></i> New Sales Order</button>
+                <button class="btn btn-primary <?php echo (in_array('25-1',$this->session->user_rights)?'':'hidden'); ?>"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" ><i class="fa fa-plus-circle"></i> New Sales Order</button>
             </div>
             <div class="col-lg-3">
                     From :<br />
@@ -788,6 +788,7 @@
 
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
+<?php echo $_rights; ?>
 
 <script src="assets/plugins/spinner/dist/spin.min.js"></script>
 <script src="assets/plugins/spinner/dist/ladda.min.js"></script>
@@ -893,13 +894,10 @@ $(document).ready(function(){
                 {
                     targets:[7],data: null,
                     render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
-                        var btn_mark_as_closed='<button class="btn btn-warning btn-sm" name="mark_as_closed" title="Mark as Closed"><i class="fa fa-times"></i> </button>';
                         if(data.order_status_id == 1  || data.order_status_id == 3){
-                           return btn_edit+"&nbsp;"+btn_trash+'&nbsp'+btn_mark_as_closed; 
+                           return so_btn_edit+"&nbsp;"+so_btn_trash+'&nbsp'+so_btn_mark_as_closed; 
                         }else{
-                            return btn_edit+"&nbsp;"+btn_trash; 
+                            return so_btn_edit+"&nbsp;"+so_btn_trash; 
                         }
                         
                     }
