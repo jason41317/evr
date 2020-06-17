@@ -68,7 +68,7 @@
 									</div>
 		                        </div>
 							</div>
-							<div class="form-group mb-n">
+<!-- 							<div class="form-group mb-n">
 								<div class="col-xs-12">
 									<a href="#" class="pull-left">Forgot?</a>
 									<div class="checkbox-inline icheck pull-right p-n">
@@ -78,7 +78,7 @@
 										</label>
 									</div>
 								</div>
-							</div>
+							</div> -->
 						</form>
 							<br>
 					</div>
@@ -86,10 +86,10 @@
 						<div class="clearfix">
 							<div class="row">
 								<div class="container-fluid">
-									<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
+<!-- 									<div class="col-xs-12 col-sm-6" style="margin-bottom: 10px;">
 										<button id="btn_register" class="btn btn-info btn-block">Register</button>
-									</div>									
-									<div class="col-xs-12 col-sm-6">
+									</div>	 -->								
+									<div class="col-xs-12">
 										<button id="btn_login" class="btn btn-success btn-block ladda-button" data-style="expand-left" data-spinner-color="white" data-size="l">
 										<span class=""></span> Login
 										</button>

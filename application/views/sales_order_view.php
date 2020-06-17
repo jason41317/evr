@@ -1025,8 +1025,8 @@ $(document).ready(function(){
 
     _objTypeHead.typeahead({minLength:1,hint:true}, {
         name: 'products',
-        display: 'product_desc',
-        limit : 10,
+        display: 'product_code',
+        limit : 20,
         source: products,
         templates: {
             header: [
