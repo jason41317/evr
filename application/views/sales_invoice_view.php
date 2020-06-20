@@ -256,6 +256,7 @@
                     <th width="7%">Due Date</th>
                     <th>Customer</th>
                     <th>Branch</th>
+                    <th>Sales order #</th>
                     <th width="20%">Remarks</th>
                     <th width="10%"><center>Action</center></th>
                     <th>ID</th>
@@ -637,6 +638,7 @@
                         <th>SO#</th>
                         <th>Customer</th>
                         <th>Remarks</th>
+                        <th>Salesperson</th>
                         <th>Order</th>
                         <th>Time</th>
                         <th>Status</th>
@@ -1009,7 +1011,7 @@ $(document).ready(function(){
         dt=$('#tbl_sales_invoice').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "pageLength":15,
             // "ajax" : "Sales_invoice/transaction/list",
             oLanguage: {
@@ -1040,14 +1042,15 @@ $(document).ready(function(){
                 { targets:[3],data: "date_due" },
                 { targets:[4],data: "customer_name" },
                 { targets:[5],data: "department_name" },
-                { targets:[6],data: "remarks" , render: $.fn.dataTable.render.ellipsis(60) },
+                { targets:[6],data: "so_no" },
+                { targets:[7],data: "remarks" , render: $.fn.dataTable.render.ellipsis(60) },
                 {
-                    targets:[7],
+                    targets:[8],
                     render: function (data, type, full, meta){
                         return '<center> '+si_btn_edit+"&nbsp;"+si_btn_trash+' </center>';
                     }
                 },
-                {visible:false, targets:[8],data: "sales_invoice_id" },
+                {visible:false, targets:[9],data: "sales_invoice_id" },
             ]
 
         });
@@ -1056,7 +1059,7 @@ $(document).ready(function(){
 
         dt_so=$('#tbl_so_list').DataTable({
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "ajax" : "Sales_order/transaction/open",
             "columns": [
                 {
@@ -1069,17 +1072,18 @@ $(document).ready(function(){
                 { targets:[1],data: "so_no" },
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "remarks" },
-                { targets:[4],data: "date_order" },
-                { targets:[5],data: "time_created" },
-                { targets:[6],data: "order_status" },
+                { targets:[4],data: "salesperson" },
+                { targets:[5],data: "date_order" },
+                { targets:[6],data: "time_created" },
+                { targets:[7],data: "order_status" },
                 {
-                    targets:[7],
+                    targets:[8],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i></button>';
                         return '<center>'+btn_accept+'</center>';
                     }
                 },
-                {visible:false, targets:[8],data: "sales_order_id" },
+                {visible:false, targets:[9],data: "sales_order_id" },
 
             ]
 
@@ -1571,6 +1575,7 @@ $(document).ready(function(){
                 $('#cbo_customers').select2('val',data.customer_id);
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_salesperson').select2('val',data.salesperson_id);
+                $('#txt_address').val(data.address);
 
             });
 
@@ -1667,6 +1672,7 @@ $(document).ready(function(){
             $('#cbo_customers').select2('val',data.customer_id);
             $('#cbo_salesperson').select2('val',data.salesperson_id);
             $('textarea[name="remarks"]').val(data.remarks);
+            $('#txt_address').val(data.address);
             //$('input[name="so_no"]').val(data.so_no);
             $('#txt_terms').val(data.terms);
             $('#cboLookupPrice').select2('val', 1);

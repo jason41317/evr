@@ -117,6 +117,7 @@
                                 <li class="<?php echo (in_array('8-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_summary">Sales Summary</a></li>
                                 <li class="<?php echo (in_array('8-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchase_Invoice_Report">Purchase Invoice Report</a></li>
                                 <li class="<?php echo (in_array('8-9',$this->session->user_rights)?'':'hidden'); ?>"><a href="Open_purchases">Open Purchases Report</a></li>
+                                <li class="<?php echo (in_array('8-10',$this->session->user_rights)?'':'hidden'); ?>"><a href="Open_sales">Open Sales Report</a></li>
                             </ul>
                         </li>
 

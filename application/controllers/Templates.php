@@ -465,9 +465,10 @@ class Templates extends CORE_Controller {
 
                 $info=$m_sales_order->get_list(
                     $filter_value,
-                    'sales_order.*,departments.department_name,customers.customer_name',
+                    'sales_order.*,departments.department_name,customers.customer_name,CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson',
                     array(
                         array('departments','departments.department_id=sales_order.department_id','left'),
+                        array('salesperson','salesperson.salesperson_id=sales_order.salesperson_id','left'),
                         array('customers','customers.customer_id=sales_order.customer_id','left')
                     )
                 );
