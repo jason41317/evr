@@ -21,7 +21,10 @@
                     <p>Sales Order No.</p><br />
                     <h4 class="text-navy"><?php echo $sales_order->so_no; ?></h4><br />
 
+                    <br>
 
+                    <span>Salesperson :</span><br />
+                    <strong><?php echo $sales_order->salesperson; ?></strong>
 
 
                 </td>

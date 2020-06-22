@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="assets/css/style-blessed3ef7a.css">
+<!-- <link rel="stylesheet" type="text/css" href="assets/css/style-blessed3ef7a.css"> -->
 <style type="text/css">
     html {
         font-family: 'Calibri', sans-serif;
