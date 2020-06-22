@@ -213,16 +213,16 @@
         <div class="panel-body table-responsive" style="overflow-x: hidden;">
             <h2 style="margin-bottom: 0;" class="h2-panel-heading"> Open Sales Report</h2><hr>
             <div class="row">
-                <div class="col-lg-3">&nbsp; <br>
+                <div class="col-lg-6">&nbsp; <br>
                 <button class="btn btn-primary pull-left"  id="btn_print" title="Print">
                     <i class="fa fa-print"></i> Print Report
                 </button>
-                &nbsp;
+                &nbsp;&nbsp;&nbsp;
                 <button class="btn btn-success pull-left" id="btn_export" title="Export" style="margin-left: 5px;">
                     <i class="fa fa-file-excel-o"></i> Export Report
                 </button>
                 </div>
-                <div class="col-lg-6 col-lg-offset-3">
+                <div class="col-lg-6">
                         Search :<br />
                          <input type="text" id="searchbox_tbl_delivery_invoice" class="form-control">
                 </div>
