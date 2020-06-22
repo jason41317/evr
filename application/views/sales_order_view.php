@@ -195,11 +195,12 @@
                 <thead class="">
                 <tr>
                     <th>&nbsp;&nbsp;</th>
-                    <th width="15%">SO #</th>
+                    <th width="10%">SO #</th>
                     <th>Order Date</th>
                     <th>Time</th>
                     <th>Customer</th>
                     <th width="25%">Remarks</th>
+                    <th>Salesperson</th>
                     <th width="10%">Status</th>
                     <th style="text-align: left;">Action</th>
                     <th></th>
@@ -262,7 +263,7 @@
                         <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
                             <option value="0">[ Create New Customer ]</option>
                             <?php foreach($customers as $customer){ ?>
-                                <option value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
+                                <option data-address="<?php echo $customer->address; ?>" value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
                             <?php } ?>
                         </select>
                     </div>
@@ -285,6 +286,10 @@
                                      <i class="fa fa-calendar"></i>
                                 </span>
                         </div>
+                    </div>
+                    <div class="col-sm-9">
+                        Address :<br>
+                        <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
                     </div>
                 </div>
 
@@ -859,7 +864,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             // "ajax" : "Sales_order/transaction/list",
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
@@ -890,9 +895,10 @@ $(document).ready(function(){
                 { targets:[3],data: "time_created" },
                 { targets:[4],data: "customer_name" },
                 { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(60) },
-                { targets:[6],data: "order_status" },
+                { targets:[6],data: "salesperson" },
+                { targets:[7],data: "order_status" },
                 {
-                    targets:[7],data: null,
+                    targets:[8],data: null,
                     render: function (data, type, full, meta){
                         if(data.order_status_id == 1  || data.order_status_id == 3){
                            return so_btn_edit+"&nbsp;"+so_btn_trash+'&nbsp'+so_btn_mark_as_closed; 
@@ -902,7 +908,7 @@ $(document).ready(function(){
                         
                     }
                 },
-                { visible:false, targets:[8],data: "sales_order_id" },
+                { visible:false, targets:[9],data: "sales_order_id" },
             ]
 
         }); 
@@ -1226,6 +1232,13 @@ $(document).ready(function(){
 
         });
 
+
+        _cboCustomers.on('change',function(e){
+            var i=$(this).select2('val');
+            var obj_customers=$('#cbo_customers').find('option[value="' + i + '"]');
+            $('#txt_address').val(obj_customers.data('address'));
+        });
+
         //create new department
         $('#btn_create_department').click(function(){
             var btn=$(this);
@@ -1318,6 +1331,7 @@ $(document).ready(function(){
             $('#cbo_departments').select2('val',data.department_id);
             $('#cbo_customers').select2('val',data.customer_id);
             $('#cbo_salesperson').select2('val',data.salesperson_id);
+            $('#txt_address').val(data.address);
 
             $.ajax({
                 url : 'Sales_order/transaction/items/'+data.sales_order_id,
