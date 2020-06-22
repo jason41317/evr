@@ -556,6 +556,7 @@
                             <th>SO#</th>
                             <th>Customer</th>
                             <th>Remarks</th>
+                            <th>Salesperson</th>
                             <th>Order</th>
                             <th>Time</th>
                             <th>Status</th>
@@ -832,7 +833,7 @@
 
             dt_so=$('#tbl_so_list').DataTable({
                 "bLengthChange":false,
-                "order": [[ 8, "desc" ]],
+                "order": [[ 9, "desc" ]],
                 "ajax" : "Sales_order/transaction/open",
                 "columns": [
                     {
@@ -845,17 +846,18 @@
                     { targets:[1],data: "so_no" },
                     { targets:[2],data: "customer_name" },
                     { targets:[3],data: "remarks" },
-                    { targets:[4],data: "date_order" },
-                    { targets:[5],data: "time_created" },
-                    { targets:[6],data: "order_status" },
+                    { targets:[4],data: "salesperson" }, 
+                    { targets:[5],data: "date_order" },
+                    { targets:[6],data: "time_created" },
+                    { targets:[7],data: "order_status" },
                     {
-                        targets:[7],
+                        targets:[8],
                         render: function (data, type, full, meta){
                             var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i></button>';
                             return '<center>'+btn_accept+'</center>';
                         }
                     },
-                    {visible:false, targets:[8],data: "sales_order_id" },
+                    {visible:false, targets:[9],data: "sales_order_id" },
 
                 ]
 
@@ -1296,7 +1298,7 @@
 
                 //alert(d.sales_order_id);
 
-                $('input,textarea').each(function(){
+                $('input,textarea').not('[name=address]').each(function(){
                     var _elem=$(this);
                     $.each(data,function(name,value){
                         if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
