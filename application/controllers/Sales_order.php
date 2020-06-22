@@ -43,7 +43,8 @@ class Sales_order extends CORE_Controller
         $data['customers']=$this->Customers_model->get_list(
             array('customers.is_active'=>TRUE,'customers.is_deleted'=>FALSE),
                 'customers.customer_id,
-                customers.customer_name'
+                customers.customer_name,
+                customers.address'
         );
 
         $data['refproducts']=$this->Refproduct_model->get_list(
@@ -123,21 +124,23 @@ class Sales_order extends CORE_Controller
             case 'open':  //this returns PO that are already approved
                 $m_sales_order=$this->Sales_order_model;
                 //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
-                $response['data']= $m_sales_order->get_list(
+                $response['data'] = $m_sales_order->get_list(
 
                     'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3)',
 
                     array(
                         'sales_order.*',
                         'DATE_FORMAT(sales_order.date_order,"%m/%d/%Y") as date_order',
-                       ' DATE_FORMAT(sales_order.date_created,"%h:%i %p") as time_created',
+                        'DATE_FORMAT(sales_order.date_created,"%h:%i %p") as time_created',
                         'customers.customer_name',
                         'order_status.order_status',
-                        'departments.department_name'
+                        'departments.department_name',
+                        'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson'
                     ),
                     array(
                         array('customers','customers.customer_id=sales_order.customer_id','left'),
                         array('departments','departments.department_id=sales_order.department_id','left'),
+                        array('salesperson','salesperson.salesperson_id=sales_order.salesperson_id','left'),
                         array('order_status','order_status.order_status_id=sales_order.order_status_id','left')
                     )
 
@@ -202,6 +205,7 @@ class Sales_order extends CORE_Controller
 
                 $m_sales_order->department_id=$this->input->post('department',TRUE);
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);
+                $m_sales_order->address=$this->input->post('address',TRUE);
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
                 $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
@@ -294,6 +298,7 @@ class Sales_order extends CORE_Controller
                 $m_sales_order->department_id=$this->input->post('department',TRUE);
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);
+                $m_sales_order->address=$this->input->post('address',TRUE);
                 $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
 
@@ -421,16 +426,19 @@ class Sales_order extends CORE_Controller
                 ' DATE_FORMAT(sales_order.date_created,"%h:%i %p") as time_created',
                 'sales_order.customer_id',
                 'sales_order.salesperson_id',
+                'sales_order.address',
                 'DATE_FORMAT(sales_order.date_order,"%m/%d/%Y") as date_order',
                 'departments.department_id',
                 'departments.department_name',
                 'customers.customer_name',
                 'sales_order.order_status_id',
-                'order_status.order_status'
+                'order_status.order_status',
+                'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson'
             ),
 
             array(
                 array('departments','departments.department_id=sales_order.department_id','left'),
+                array('salesperson','salesperson.salesperson_id=sales_order.salesperson_id','left'),
                 array('customers','customers.customer_id=sales_order.customer_id','left'),
                 array('order_status','order_status.order_status_id=sales_order.order_status_id','left')
             )
