@@ -1297,8 +1297,8 @@
                 var data=dt_so.row(_selectRowObj).data();
 
                 //alert(d.sales_order_id);
-
-                $('input,textarea').each(function(){
+                
+                $('input,textarea').not('[name=address]').each(function(){ 
                     var _elem=$(this);
                     $.each(data,function(name,value){
                         if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
