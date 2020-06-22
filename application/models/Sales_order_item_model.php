@@ -92,7 +92,7 @@ class Sales_order_item_model extends CORE_Model
                     SELECT so.sales_order_id,so.so_no,'' as date_invoice,soi.product_id,soi.so_price as price,SUM(soi.so_qty) as SoQty,0 as InvQty
                     FROM sales_order as so
                     INNER JOIN sales_order_items as soi ON so.sales_order_id=soi.sales_order_id
-                    WHERE  so.is_active=TRUE AND so.is_deleted=FALSE
+                    WHERE  so.is_active=TRUE AND so.is_deleted=FALSE AND (so.order_status_id=1 OR so.order_status_id=3) AND so.is_closed = FALSE
                     GROUP BY so.so_no,soi.product_id,soi.so_price
 
                     UNION ALL
@@ -146,7 +146,7 @@ class Sales_order_item_model extends CORE_Model
                     SELECT so.sales_order_id,so.so_no,soi.product_id,soi.so_price as price,SUM(soi.so_qty) as SoQty,0 as InvQty
                     FROM sales_order as so
                     INNER JOIN sales_order_items as soi ON so.sales_order_id=soi.sales_order_id
-                    WHERE  so.is_active=TRUE AND so.is_deleted=FALSE
+                    WHERE  so.is_active=TRUE AND so.is_deleted=FALSE AND (so.order_status_id=1 OR so.order_status_id=3) AND so.is_closed = FALSE
                     GROUP BY so.so_no,soi.product_id,soi.so_price
 
 
