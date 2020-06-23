@@ -1928,15 +1928,18 @@ $(document).ready(function(){
         $('#tbl_items > tbody').on('click','button[name="search_item"]',function(){
             _selectRowTblItems=$(this).closest('tr');
             global_item_desc=_selectRowTblItems.find(oTableItems.item_desc).text();
-            
+            var _data=[];
+            _data.push({name : "type", value :$('#cbo_prodType').select2('val') });
+            _data.push({name : "description", value : global_item_desc });
+
 
             $.ajax({
-                url : 'Sales_invoice/transaction/current-items-search?type='+$('#cbo_prodType').select2('val')+'&description='+global_item_desc,
-                type : "GET",
+                url : 'Sales_invoice/transaction/current-items-search',
+                "dataType":"json",
+                "type":"POST",
                 cache : false,
                 dataType : 'json',
-                processData : false,
-                contentType : false,
+                "data":_data,
                 beforeSend : function(){
                     $('#tbl_search_list > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
