@@ -1006,6 +1006,7 @@
                         batch_no:suggestion.batch_no,
                         exp_date:suggestion.exp_date,
                         max_qty:suggestion.on_hand_per_batch,
+                        orig_so_price: 0,
                         cost_upon_invoice:suggestion.purchase_cost
 
                     }));
@@ -1358,6 +1359,7 @@
                                 inv_tax_amount:value.tax_amount,
                                 batch_no : '',
                                 exp_date : '',
+                                orig_so_price : value.so_price,
                                 cost_upon_invoice : value.purchase_cost
                             }));
                         });
@@ -1439,6 +1441,7 @@
                                 inv_tax_amount:value.inv_tax_amount,
                                 batch_no:value.batch_no,
                                 exp_date:value.exp_date,
+                                orig_so_price:value.orig_so_price,
                                 cost_upon_invoice:value.cost_upon_invoice
 
                             }));
@@ -1784,6 +1787,7 @@
                 '<td><input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no+'" readonly></td>'+
                 '<td style="display: none;"><input name="max_qty[]" type="text" class="form-control" value="'+ d.max_qty+'" readonly></td>'+
                 '<td><input name="exp_date[]" type="text" class="form-control" value="'+ d.exp_date+'" readonly></td>'+
+                '<td style=""><input name="orig_so_price[]" type="text" class="form-control" value="'+ d.orig_so_price+'" readonly></td>'+
                 '<td style="display:none;"><input name="cost_upon_invoice[]" type="text" class="form-control" value="'+ d.cost_upon_invoice+'" readonly></td>'+
                 '<td align="center"><button type="button" name="search_item" class="btn btn-warning"><i class="fa fa-search"></i></button><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
                 '</tr>';
