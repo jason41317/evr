@@ -135,6 +135,7 @@ class Sales_order extends CORE_Controller
                         'customers.customer_name',
                         'order_status.order_status',
                         'departments.department_name',
+                        'IFNULL(sales_order.address,customers.address) as address',
                         'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson'
                 
                     ),
