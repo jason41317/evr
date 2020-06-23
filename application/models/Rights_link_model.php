@@ -108,8 +108,12 @@ class Rights_link_model extends CORE_Model{
                                           -- Other Sales Invoice Buttons
                                           (76,'27','27-1','Other Sales Invoice Add'),
                                           (77,'27','27-2','Other Sales Invoice Edit'),
-                                          (78,'27','27-3','Other Sales Invoice Delete')
+                                          (78,'27','27-3','Other Sales Invoice Delete'),
 
+                                          -- Invoice History
+                                          (79,'2','2-7','Purchase Invoice History'),
+                                          (80,'3','3-5','Sales Invoice History')
+                                          
                                           ON DUPLICATE KEY UPDATE
 
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

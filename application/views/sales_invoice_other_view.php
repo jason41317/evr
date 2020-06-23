@@ -549,18 +549,18 @@
                 </div>
 
                 <div class="modal-body">
-                    <table id="tbl_so_list" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <table id="tbl_so_list" class="table table-striped" cellspacing="0" width="100%">
                         <thead class="">
                         <tr>
                             <th></th>
-                            <th>SO#</th>
+                            <th width="10%">SO#</th>
                             <th>Customer</th>
-                            <th>Remarks</th>
+                            <th width="15%">Remarks</th>
                             <th>Salesperson</th>
                             <th>Order</th>
                             <th>Time</th>
                             <th>Status</th>
-                            <th><center>Action</center></th>
+                            <th width="5%"><center>Action</center></th>
                             <th>ID</th>
                         </tr>
                         </thead>
@@ -834,7 +834,8 @@
             dt_so=$('#tbl_so_list').DataTable({
                 "bLengthChange":false,
                 "order": [[ 9, "desc" ]],
-                "ajax" : "Sales_order/transaction/open",
+                "autoWidth": false, 
+                "ajax" : "Sales_order/transaction/open_others",
                 "columns": [
                     {
                         "targets": [0],
@@ -845,7 +846,7 @@
                     },
                     { targets:[1],data: "so_no" },
                     { targets:[2],data: "customer_name" },
-                    { targets:[3],data: "remarks" },
+                    { targets:[3],data: "remarks" , render: $.fn.dataTable.render.ellipsis(60) },
                     { targets:[4],data: "salesperson" },
                     { targets:[5],data: "date_order" },
                     { targets:[6],data: "time_created" },
@@ -853,7 +854,7 @@
                     {
                         targets:[8],
                         render: function (data, type, full, meta){
-                            var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i></button>';
+                            var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i> <span class=""></span></button>';
                             return '<center>'+btn_accept+'</center>';
                         }
                     },
@@ -1299,10 +1300,11 @@
             $('#tbl_so_list > tbody').on('click','button[name="accept_so"]',function(){
                 _selectRowObj=$(this).closest('tr');
                 var data=dt_so.row(_selectRowObj).data();
+                btn = $(this);
 
                 //alert(d.sales_order_id);
                 
-                $('input,textarea').not('[name=address]').each(function(){ 
+                $('input,textarea').each(function(){ 
                     var _elem=$(this);
                     $.each(data,function(name,value){
                         if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
@@ -1312,13 +1314,10 @@
                     });
 
                     // $('#cbo_customers').select2('val',data.customer_id);
-                    $('#cbo_departments').select2('val',data.department_id);
-                    // $('#cbo_salesperson').select2('val',data.salesperson_id);
+                    $('#cbo_issue_departments').select2('val',data.department_id);
 
                 });
 
-
-                $('#modal_so_list').modal('hide');
                 resetSummary();
 
 
@@ -1331,6 +1330,7 @@
                     contentType : false,
                     beforeSend : function(){
                         $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                        showSpinningProgress(btn);
                     },
                     success : function(response){
                         var rows=response.data;
@@ -1365,11 +1365,11 @@
                         });
 
                         reComputeTotal();
+                        showSpinningProgress(btn);
                     }
                 });
 
-
-
+                $('#modal_so_list').modal('hide');
             });
 
 
@@ -1787,7 +1787,7 @@
                 '<td><input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no+'" readonly></td>'+
                 '<td style="display: none;"><input name="max_qty[]" type="text" class="form-control" value="'+ d.max_qty+'" readonly></td>'+
                 '<td><input name="exp_date[]" type="text" class="form-control" value="'+ d.exp_date+'" readonly></td>'+
-                '<td style=""><input name="orig_so_price[]" type="text" class="form-control" value="'+ d.orig_so_price+'" readonly></td>'+
+                '<td style="display:none;"><input name="orig_so_price[]" type="text" class="form-control" value="'+ d.orig_so_price+'" readonly></td>'+
                 '<td style="display:none;"><input name="cost_upon_invoice[]" type="text" class="form-control" value="'+ d.cost_upon_invoice+'" readonly></td>'+
                 '<td align="center"><button type="button" name="search_item" class="btn btn-warning"><i class="fa fa-search"></i></button><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
                 '</tr>';
