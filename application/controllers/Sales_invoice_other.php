@@ -241,6 +241,7 @@ class Sales_invoice_other extends CORE_Controller
                 $dr_invoice_id=$this->input->post('dr_invoice_id',TRUE);
                 $exp_date=$this->input->post('exp_date',TRUE);
                 $batch_no=$this->input->post('batch_no',TRUE);
+                $orig_so_price=$this->input->post('orig_so_price',TRUE);
                 $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
 
                 $m_products=$this->Products_model;
@@ -260,6 +261,7 @@ class Sales_invoice_other extends CORE_Controller
                     //$m_invoice_items->dr_invoice_id=$dr_invoice_id[$i];
                     $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
                     $m_invoice_items->batch_no=$batch_no[$i];
+                    $m_invoice_items->orig_so_price=$this->get_numeric_value($orig_so_price[$i]);
                     $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
@@ -391,6 +393,7 @@ class Sales_invoice_other extends CORE_Controller
                 $dr_invoice_id=$this->input->post('dr_invoice_id',TRUE);
                 $exp_date=$this->input->post('exp_date',TRUE);
                 $batch_no=$this->input->post('batch_no',TRUE);
+                $orig_so_price=$this->input->post('orig_so_price',TRUE);
                 $cost_upon_invoice=$this->input->post('cost_upon_invoice',TRUE);
 
                 $m_products=$this->Products_model;
@@ -410,6 +413,7 @@ class Sales_invoice_other extends CORE_Controller
                     //$m_invoice_items->dr_invoice_id=$dr_invoice_id[$i];
                     $m_invoice_items->exp_date=date('Y-m-d', strtotime($exp_date[$i]));
                     $m_invoice_items->batch_no=$batch_no[$i];
+                    $m_invoice_items->orig_so_price=$this->get_numeric_value($orig_so_price[$i]);
                     $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
@@ -540,11 +544,13 @@ class Sales_invoice_other extends CORE_Controller
                 'departments.department_id',
                 'departments.department_name',
                 'customers.customer_name',
+                'sales_order.so_no',
                 'dd.department_name as issued_department'
             ),
             array(
                 array('departments','departments.department_id=sales_invoice.department_id','left'),
                 array('customers','customers.customer_id=sales_invoice.customer_id','left'),
+                array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
                 array('departments as dd','dd.department_id=sales_invoice.issue_to_department','left')
             ),null,'sales_invoice.sales_invoice_id'
         );
