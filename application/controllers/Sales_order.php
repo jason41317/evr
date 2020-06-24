@@ -135,7 +135,37 @@ class Sales_order extends CORE_Controller
                         'customers.customer_name',
                         'order_status.order_status',
                         'departments.department_name',
+                        'IFNULL(sales_order.address,customers.address) as address',
                         'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson'
+                    ),
+                    array(
+                        array('customers','customers.customer_id=sales_order.customer_id','left'),
+                        array('departments','departments.department_id=sales_order.department_id','left'),
+                        array('salesperson','salesperson.salesperson_id=sales_order.salesperson_id','left'),
+                        array('order_status','order_status.order_status_id=sales_order.order_status_id','left')
+                    )
+
+                );
+                echo json_encode($response);
+                break;
+
+            case 'open_others':  //this returns PO that are already approved
+                $m_sales_order=$this->Sales_order_model;
+                //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
+                $response['data']= $m_sales_order->get_list(
+
+                    'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3)',
+
+                    array(
+                        'sales_order.*',
+                        'DATE_FORMAT(sales_order.date_order,"%m/%d/%Y") as date_order',
+                       ' DATE_FORMAT(sales_order.date_created,"%h:%i %p") as time_created',
+                        'customers.customer_name',
+                        'order_status.order_status',
+                        'departments.department_name',
+                        'departments.delivery_address as address',
+                        'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson'
+                
                     ),
                     array(
                         array('customers','customers.customer_id=sales_order.customer_id','left'),

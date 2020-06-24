@@ -1070,6 +1070,7 @@ $(document).ready(function(){
             $('.checkhidden').hide();
             // THEN ADD TO ADJUSTMENT CHECKBOX
             $('input[id="is_adjustment"]').prop('checked', true);
+            $("#inv_no").prop('required',false);
             showList(false);
         });
 
