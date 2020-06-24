@@ -49,8 +49,8 @@ class Login extends CORE_Controller {
         $m_product_type->create_default_product_type();
 
         //create default user group : the Super User
-        $m_user_groups=$this->User_groups_model;
-        $m_user_groups->create_default_user_group();
+        // $m_user_groups=$this->User_groups_model;
+        // $m_user_groups->create_default_user_group();
 
         //create default tax types : Non-vat , Vatted(12%)
         $m_tax_types=$this->Tax_types_model;
