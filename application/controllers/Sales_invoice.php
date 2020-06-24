@@ -123,7 +123,7 @@ class Sales_invoice extends CORE_Controller
 
             case 'current-items-search':
                 $type=$this->input->post('type');
-                $description=$this->input->post('description');
+                $description=trim($this->input->post('description'));
                 $response['data'] = $this->Products_model->get_current_item_list($description,$type);
 
                 echo json_encode($response);
