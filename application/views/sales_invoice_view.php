@@ -631,18 +631,18 @@
             </div>
 
             <div class="modal-body">
-                <table id="tbl_so_list" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <table id="tbl_so_list" class="table table-striped" cellspacing="0" width="100%">
                     <thead class="">
                     <tr>
                         <th></th>
-                        <th>SO#</th>
+                        <th width="10%">SO#</th>
                         <th>Customer</th>
-                        <th>Remarks</th>
+                        <th width="15%">Remarks</th>
                         <th>Salesperson</th>
                         <th>Order</th>
                         <th>Time</th>
                         <th>Status</th>
-                        <th><center>Action</center></th>
+                        <th width="5%"><center>Action</center></th>
                         <th>ID</th>
                     </tr>
                     </thead>
@@ -1060,6 +1060,7 @@ $(document).ready(function(){
         dt_so=$('#tbl_so_list').DataTable({
             "bLengthChange":false,
             "order": [[ 9, "desc" ]],
+            "autoWidth": false, 
             "ajax" : "Sales_order/transaction/open",
             "columns": [
                 {
@@ -1071,7 +1072,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "so_no" },
                 { targets:[2],data: "customer_name" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks" , render: $.fn.dataTable.render.ellipsis(60) },
                 { targets:[4],data: "salesperson" },
                 { targets:[5],data: "date_order" },
                 { targets:[6],data: "time_created" },
@@ -1079,7 +1080,7 @@ $(document).ready(function(){
                 {
                     targets:[8],
                     render: function (data, type, full, meta){
-                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i></button>';
+                        var btn_accept='<button class="btn btn-success btn-sm" name="accept_so"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check"></i> <span class=""></span></button>';
                         return '<center>'+btn_accept+'</center>';
                     }
                 },
@@ -1560,6 +1561,7 @@ $(document).ready(function(){
         $('#tbl_so_list > tbody').on('click','button[name="accept_so"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt_so.row(_selectRowObj).data();
+            btn = $(this);
 
             //alert(d.sales_order_id);
 
@@ -1575,12 +1577,10 @@ $(document).ready(function(){
                 $('#cbo_customers').select2('val',data.customer_id);
                 $('#cbo_departments').select2('val',data.department_id);
                 $('#cbo_salesperson').select2('val',data.salesperson_id);
-                 $('#txt_address').val(data.address);
+                $('#txt_address').val(data.address);
 
             });
 
-
-            $('#modal_so_list').modal('hide');
             resetSummary();
 
 
@@ -1593,6 +1593,7 @@ $(document).ready(function(){
                 contentType : false,
                 beforeSend : function(){
                     $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                    showSpinningProgress(btn);
                 },
                 success : function(response){
                     var rows=response.data;
@@ -1626,10 +1627,11 @@ $(document).ready(function(){
                     });
 
                   reComputeTotal();
+                  showSpinningProgress(btn);
                 }
             });
 
-
+            $('#modal_so_list').modal('hide');
 
         });
 
@@ -1928,15 +1930,18 @@ $(document).ready(function(){
         $('#tbl_items > tbody').on('click','button[name="search_item"]',function(){
             _selectRowTblItems=$(this).closest('tr');
             global_item_desc=_selectRowTblItems.find(oTableItems.item_desc).text();
-            
+            var _data=[]; 
+            _data.push({name : "type", value :$('#cbo_prodType').select2('val') }); 
+            _data.push({name : "description", value : global_item_desc }); 
+
 
             $.ajax({
-                url : 'Sales_invoice/transaction/current-items-search?type='+$('#cbo_prodType').select2('val')+'&description='+global_item_desc,
-                type : "GET",
+                url : 'Sales_invoice/transaction/current-items-search',
+                "dataType":"json",
+                "type":"POST",
                 cache : false,
                 dataType : 'json',
-                processData : false,
-                contentType : false,
+                "data":_data,
                 beforeSend : function(){
                     $('#tbl_search_list > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
                 },
