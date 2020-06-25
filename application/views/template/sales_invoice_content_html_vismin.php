@@ -77,7 +77,7 @@
     </div>
 </div><br>
 <!-- <span style="position: absolute; top: 165px;">______________________________________________</span> -->
-<div class="row" style="margin-top: -12px;">
+<div class="row" style="margin-top: -22px;">
     <div class="container-fluid">
         <table width="100%" cellspacing="0">
             <thead>
@@ -108,7 +108,7 @@
                     </td>
                     <td width="3%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($item->inv_qty,0); ?></td>
                     <td width="3%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo $item->size; ?></td>
-                    <td width="20%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><span style="float: left;"><?php echo date('M-d',strtotime($item->exp_date)); ?></span>  <span style="float: right;"><?php echo number_format($item->inv_price,2); ?></span></td>
+                    <td width="20%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><span style="float: left;"><?php echo date('M-Y',strtotime($item->exp_date)); ?></span>  <span style="float: right;"><?php echo number_format($item->inv_price,2); ?></span></td>
                     <td width="20%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($item->inv_line_total_price,2); ?></td>
                 </tr>
                 <?php 
