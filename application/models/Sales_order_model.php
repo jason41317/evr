@@ -39,7 +39,10 @@ class Sales_order_model extends CORE_Model
         WHERE so.sales_order_id=$id AND si.is_active=TRUE AND si.is_deleted=FALSE
         GROUP BY so.so_no,sii.product_id)as
 
-        m GROUP BY m.so_no,m.product_id) as x";
+        m GROUP BY m.so_no,m.product_id) as x
+
+
+        WHERE x.soQty != 0";
 
         return $this->db->query($sql)->result();
     }
