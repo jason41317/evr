@@ -77,7 +77,7 @@
                     <td width="30%" class=" tbl-border-si" style="padding: 5px;"><?php echo $item->product_desc; ?></td>
                     <td width="10%" class="table-cellpadding tbl-border-si tbl-center"><?php echo number_format($item->inv_qty,0); ?></td>
                     <td width="10%" class="table-cellpadding tbl-border-si tbl-center"><?php echo $item->size; ?></td>
-                    <td width="20%" class="table-cellpadding tbl-border-si tbl-center"><span style="float: left;"><?php echo date('M-d',strtotime($item->exp_date)); ?></span>  <span style="float: right;"><?php echo number_format($item->inv_price,2); ?></span></td>
+                    <td width="20%" class="table-cellpadding tbl-border-si tbl-center"><span style="float: left;"><?php echo date('M-Y',strtotime($item->exp_date)); ?></span>  <span style="float: right;"><?php echo number_format($item->inv_price,2); ?></span></td>
                     <td width="30%" class="table-cellpadding tbl-border-si tbl-center"><?php echo number_format($item->inv_line_total_price,2); ?></td>
                 </tr>
                 <?php
