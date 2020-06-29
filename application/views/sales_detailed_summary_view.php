@@ -131,7 +131,7 @@
                                                                             <option value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
-                                                                    <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_customer_report" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
+                                                                    <button class="btn btn-primary pull-left hidden" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_customer_report" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
                                                                     <i class="fa fa-print"></i> Print Report</button>
                                                                     <button class="btn btn-success pull-left" id="btn_refresh" style="text-transform: none; font-family: Tahoma, Georgia, Serif; margin-top: 10px; margin-bottom: 10px;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Reload" >
                                                                     <i class="fa fa-refresh"></i></button>
