@@ -200,32 +200,76 @@ class Sales_invoice_model extends CORE_Model
     }
 
     function get_customers_sales_summary($start=null,$end=null,$customer_id=null){
-        $sql="SELECT n.* FROM(SELECT si.sales_invoice_id,
+        $sql="SELECT n.* FROM(          
+            SELECT main_sales.sales_invoice_id,
+            main_sales.sales_inv_no,main_sales.customer_id,main_sales.customer_name,'SI' as type,main_sales.address,main_sales.contact_no,main_sales.email_address, 
+            (IFNULL(main_sales.inv_line_total_price,0) - IFNULL(returns_sales.return_line_total_price,0)) as total_amount_invoice FROM 
+            
+            (SELECT si.sales_invoice_id,
             si.sales_inv_no,si.customer_id,c.customer_name,'SI' as type,c.address,c.contact_no,c.email_address,
-            SUM(sii.inv_line_total_price)as total_amount_invoice
+            SUM(sii.inv_line_total_price)as inv_line_total_price
 
             FROM (sales_invoice as si
             LEFT JOIN customers as c ON c.customer_id=si.customer_id)
             INNER JOIN sales_invoice_items as sii ON si.sales_invoice_id=sii.sales_invoice_id
             WHERE si.is_active=TRUE AND si.is_deleted=FALSE
             AND si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type=1
-            GROUP BY si.customer_id
+            GROUP BY si.customer_id) main_sales
+            
+            LEFT JOIN 
+
+            (SELECT si.customer_id,
+            SUM(aii.adjust_line_total_price) as return_line_total_price 
+            FROM  adjustment_items aii 
+                LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
+                LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
+                WHERE ai.date_adjusted BETWEEN '$start' AND '$end' 
+                AND ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
+                AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
+                si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type=1
+                GROUP BY si.customer_id
+            ) as returns_sales ON main_sales.customer_id= returns_sales.customer_id
+           
 
 
             UNION ALL
 
 
-			SELECT si.sales_invoice_id,
+
+            SELECT 
+            main_sales_other.sales_invoice_id,
+            main_sales_other.sales_inv_no,main_sales_other.customer_id,
+            main_sales_other.customer_name, 'DR' as type,'' as address,'' as contact_no,'' as email_address,
+            (IFNULL(main_sales_other.inv_line_total_price,0) - IFNULL(returns_sales_other.return_line_total_price,0)) as total_amount_invoice
+            
+            FROM (SELECT si.sales_invoice_id,
             si.sales_inv_no,d.department_id as customer_id,
             CONCAT(d.department_name,' (DR)') as customer_name,'DR' as type,'' as address,'' as contact_no,'' as email_address,
-            SUM(sii.inv_line_total_price)as total_amount_invoice
+            SUM(sii.inv_line_total_price)as inv_line_total_price
 
             FROM (sales_invoice as si
             LEFT JOIN departments as d ON d.department_id=si.issue_to_department)
             INNER JOIN sales_invoice_items as sii ON si.sales_invoice_id=sii.sales_invoice_id
             WHERE si.is_active=TRUE AND si.is_deleted=FALSE
             AND si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type=2
-            GROUP BY si.department_id) as n ".($customer_id == 'all' || $customer_id == null ? 'ORDER By n.customer_name' : 'WHERE n.customer_id='."'".$customer_id."'");
+            GROUP BY si.issue_to_department) as main_sales_other
+            
+            LEFT JOIN
+       
+            (SELECT si.issue_to_department as customer_id,
+            SUM(aii.adjust_line_total_price) as return_line_total_price 
+            FROM  adjustment_items aii 
+                LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
+                LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
+                WHERE ai.date_adjusted BETWEEN '$start' AND '$end'
+                AND ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
+                AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
+                si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type=2
+                GROUP BY si.issue_to_department
+            ) as returns_sales_other ON returns_sales_other.customer_id= main_sales_other.customer_id
+
+
+            ) as n ".($customer_id == 'all' || $customer_id == null ? 'ORDER By n.customer_name' : 'WHERE n.customer_id='."'".$customer_id."'");
         return $this->db->query($sql)->result();
     }
 
@@ -290,7 +334,7 @@ class Sales_invoice_model extends CORE_Model
             si.sales_invoice_id,
             si.sales_inv_no,
             CONCAT(sp.firstname, ' ', sp.lastname) AS salesperson_name,
-            si.date_invoice,
+            si.date_invoice as date_invoice,
             si.remarks,
             sii.inv_line_total_price AS total_amount_invoice
         FROM
@@ -302,18 +346,44 @@ class Sales_invoice_model extends CORE_Model
             si.is_active = TRUE
                 AND si.is_deleted = FALSE
                 AND si.date_invoice BETWEEN '$start' AND '$end' ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND sp.salesperson_id='."'".$salesperson_id."'")."
-         ORDER BY si.salesperson_id";
+                
+                
+        UNION ALL
+        
+        SELECT si.salesperson_id,
+            si.sales_invoice_id,
+            CONCAT(ai.adjustment_code, ' (', si.sales_inv_no,')') as sales_inv_no,
+            CONCAT(sp.firstname, ' ', sp.lastname) AS salesperson_name,
+            ai.date_adjusted as date_invoice,
+            si.remarks,
+            (aii.adjust_line_total_price * -1) as total_amount_invoice 
+            FROM  adjustment_items aii 
+                LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
+                LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
+                LEFT JOIN salesperson AS sp ON sp.salesperson_id = si.salesperson_id
+                WHERE ai.date_adjusted BETWEEN'$start' AND '$end' 
+                AND ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
+                AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
+                si.date_invoice BETWEEN '$start' AND '$end'  AND si.inv_type = 1   ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND sp.salesperson_id='."'".$salesperson_id."'")."     
+        
+
+         ORDER BY salesperson_id";
 
         return $this->db->query($sql)->result();
     }
 
     function get_salesperson_sales_summary($start=null,$end=null,$salesperson_id){
-        $sql="SELECT 
+        $sql="SELECT
+            main_sales.salesperson_id,
+            main_sales.sales_invoice_id,
+            main_sales.sales_inv_no,
+            main_sales.salesperson_name,
+            IFNULL(main_sales.inv_line_total_price,0) - IFNULL(main_returns.return_line_total_price,0) as total_amount_invoice FROM (SELECT 
             si.salesperson_id,
             si.sales_invoice_id,
             si.sales_inv_no,
             CONCAT(sp.firstname, ' ', sp.lastname) AS salesperson_name,
-            SUM(sii.inv_line_total_price) AS total_amount_invoice
+            SUM(sii.inv_line_total_price) AS inv_line_total_price
         FROM
             (sales_invoice AS si
             INNER JOIN salesperson AS sp ON sp.salesperson_id = si.salesperson_id)
@@ -323,7 +393,21 @@ class Sales_invoice_model extends CORE_Model
             si.is_active = TRUE
                 AND si.is_deleted = FALSE
                 AND si.date_invoice BETWEEN '$start' AND '$end' ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND sp.salesperson_id='."'".$salesperson_id."'")."
-         GROUP BY si.salesperson_id";
+        GROUP BY si.salesperson_id) as main_sales
+        
+        LEFT JOIN 
+        (SELECT si.salesperson_id,
+            SUM(aii.adjust_line_total_price) as return_line_total_price 
+            FROM  adjustment_items aii 
+                LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
+                LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
+                WHERE ai.date_adjusted BETWEEN '$start' AND '$end'
+                AND ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
+                AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
+                si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type = 1 ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND si.salesperson_id='."'".$salesperson_id."'")."
+                GROUP BY si.salesperson_id) as main_returns on main_returns.salesperson_id = main_sales.salesperson_id
+
+         ";
         return $this->db->query($sql)->result();
     }
 

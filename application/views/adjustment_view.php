@@ -249,6 +249,7 @@
                                     <a href="#" id="link_browse_inv" style="text-decoration: none;color:black;"><b>...</b></a>
                                 </span>
                             </div>
+                            <i ><font style="color:red;">Please Create a Sales Return within the same month of the Original Invoice.</font></i>
                             </div>
                         </div>
 
@@ -456,7 +457,7 @@
                     <div class="col-lg-3 col-ls-offset-3">
                             From :<br />
                             <div class="input-group">
-                                <input type="text" id="txt_start_date_details" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                <input type="text" id="txt_start_date_details" name="" class="form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>" readonly>
                                  <span class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                  </span>
@@ -465,7 +466,7 @@
                     <div class="col-lg-3">
                             To :<br />
                             <div class="input-group">
-                                <input type="text" id="txt_end_date_details" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                <input type="text" id="txt_end_date_details" name="" class=" form-control" value="<?php echo date("m/t/Y"); ?>" readonly>
                                  <span class="input-group-addon">
                                         <i class="fa fa-calendar"></i>
                                  </span>
