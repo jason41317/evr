@@ -76,7 +76,7 @@
                             <td style="text-align: left;"><?php echo $summary->sales_inv_no; ?></td>
                             <td style="text-align: left;"><?php echo $summary->date_invoice; ?></td>
                             <td style="text-align: left;"><?php echo $summary->remarks; ?></td>
-                            <td><?php echo number_format($summary->total_amount_invoice,4); ?></td>
+    <td><?php echo  ($summary->total_amount_invoice < 0 ? "(".number_format(abs($summary->total_amount_invoice),4).")" :number_format($summary->total_amount_invoice,4))   ?></td>
                         </tr>
                     <?php
                     $sum+=$summary->total_amount_invoice; 
