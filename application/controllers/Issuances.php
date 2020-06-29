@@ -47,9 +47,10 @@ class Issuances extends CORE_Controller
 
 
         $data['title'] = 'Issuance';
-        $this->load->view('issuance_view', $data);
 
-
+        (in_array('2-4',$this->session->user_rights)? 
+        $this->load->view('issuance_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
 
