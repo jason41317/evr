@@ -92,7 +92,10 @@ class Sales_invoice_other extends CORE_Controller
 
 
         $data['title'] = 'Other Sales Invoice';
-        $this->load->view('sales_invoice_other_view', $data);
+        
+        (in_array('3-4',$this->session->user_rights)? 
+        $this->load->view('sales_invoice_other_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

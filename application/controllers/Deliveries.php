@@ -74,8 +74,10 @@ class Deliveries extends CORE_Controller
         );
 
         $data['title'] = 'Delivery Invoice';
-        $this->load->view('delivery_view', $data);
 
+        (in_array('2-2',$this->session->user_rights)? 
+        $this->load->view('delivery_view', $data)
+        :redirect(base_url('dashboard')));        
 
     }
 
