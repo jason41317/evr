@@ -62,8 +62,10 @@ class Adjustment_out extends CORE_Controller
         );
 
         $data['title'] = 'Inventory Adjustment';
-        $this->load->view('adjustment_out_view', $data);
 
+        (in_array('2-6',$this->session->user_rights)? 
+        $this->load->view('adjustment_out_view', $data)
+        :redirect(base_url('dashboard')));
 
     }
 
