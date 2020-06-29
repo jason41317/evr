@@ -31,8 +31,10 @@ class Purchase_invoice_history extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
         $data['title'] = 'Purchase Invoice History';
-        $this->load->view('purchase_invoice_history_view', $data);
 
+        (in_array('2-7',$this->session->user_rights)? 
+        $this->load->view('purchase_invoice_history_view', $data)
+        :redirect(base_url('dashboard')));
 
     }
 
