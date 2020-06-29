@@ -76,8 +76,10 @@ class Purchases extends CORE_Controller
             );
 
         $data['title'] = 'Purchase Order';
-        $this->load->view('po_view', $data);
 
+        (in_array('2-1',$this->session->user_rights)? 
+        $this->load->view('po_view', $data)
+        :redirect(base_url('dashboard')));
 
     }
 

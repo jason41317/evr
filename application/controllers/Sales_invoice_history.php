@@ -99,7 +99,10 @@ class Sales_invoice_history extends CORE_Controller
 
         $data['invoice_counter']=$this->Invoice_counter_model->get_list(array('user_id'=>$this->session->user_id));
         $data['title'] = 'Sales Invoice History';
-        $this->load->view('sales_invoice_history_view', $data);
+
+        (in_array('3-5',$this->session->user_rights)? 
+        $this->load->view('sales_invoice_history_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

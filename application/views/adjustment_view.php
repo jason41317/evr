@@ -690,7 +690,7 @@ $(document).ready(function(){
                 { targets:[2],data: "date_invoice" },
                 { targets:[3],data: "customer_name" },
                 { targets:[4],data: "department_name" },
-                { targets:[5],data: "remarks" },
+                { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(60) },
                 {  targets:[6],
                     render: function (data, type, full, meta){
                         var btn_accept='<button class="btn btn-success btn-sm" name="accept_inv"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Accept"><i class="fa fa-check"></i> </button>';

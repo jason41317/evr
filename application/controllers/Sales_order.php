@@ -53,8 +53,10 @@ class Sales_order extends CORE_Controller
 
         // $data['products']=$this->Products_model->get_current_item_list();
         $data['title'] = 'Sales Order';
-        $this->load->view('sales_order_view', $data);
 
+        (in_array('3-1',$this->session->user_rights)? 
+        $this->load->view('sales_order_view', $data)
+        :redirect(base_url('dashboard')));
 
     }
 
