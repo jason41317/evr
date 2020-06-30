@@ -34,10 +34,6 @@
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
 
         .alert {
             border-width: 0;
@@ -66,12 +62,7 @@
 
         #tbl_entries td,#tbl_entries tr,#tbl_entries th{
             table-layout: fixed;
-            border: 1px solid gray;
             border-collapse: collapse;
-        }
-
-        #tbl_check_list td:nth-child(6),#tbl_check_list th:nth-child(6){
-            text-align: center;
         }
 
         body {
@@ -193,81 +184,67 @@
                                 <div class="col-md-12">
 
                                     <div id="div_payable_list">
-
                                         <div class="panel-group panel-default" id="accordionA">
-
-
                                             <div class="panel panel-default" style="border-radius:6px;">
-                                                <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Review Expense (Pending)</b></div></a>
+                                                <div class="panel-body">
+                                                    <h2 class="h2-panel-heading">Review Expense (Pending)</h2><hr />
+                                                    <div style="">
+                                                        <table id="tbl_expense_for_review" class="table table-striped" cellspacing="0" width="100%">
+                                                            <thead class="">
+                                                            <tr>
+                                                                <th></th>
+                                                                <th>Receipt #</th>
+                                                                <th>Supplier</th>
+                                                                <th>Remarks</th>
+                                                                <th>Payment</th>
+                                                                <th>Notice</th>
+                                                                <th>Amount</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
 
-                                                <div id="collapseTwo" class="collapse in">
-                                                    <div class="panel-body">
-
-                                                        <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
-                                                            <table id="tbl_expense_for_review" class="custom-design table-striped" cellspacing="0" width="100%">
-                                                                <thead class="">
-                                                                <tr>
-                                                                    <th></th>
-                                                                    <th>Receipt #</th>
-                                                                    <th>Supplier</th>
-                                                                    <th>Remarks</th>
-                                                                    <th>Payment</th>
-                                                                    <th>Notice</th>
-                                                                    <th>Amount</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-
-
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
 
 
-
+                                            <br>
                                             <div class="panel panel-default" style="border-radius:6px;">
-                                                <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Cash Disbursement Journal</b></div></a>
-                                                <div id="collapseOne" class="collapse in">
-                                                    <div class="panel-body" style="min-height: 400px;">
+                                                <div class="panel-body" style="min-height: 400px;">
+                                                    <h2 class="h2-panel-heading">Cash Disbursement Journal</h2><hr />
+                                                    <div style="">
+                                                        <table id="tbl_cash_disbursement_list" class="table table-striped" cellspacing="0" width="100%">
+                                                            <thead class="">
+                                                            <tr>
+                                                                <th></th>
+                                                                <th width="15%">Txn #</th>
+                                                                <th>Voucher #</th>
+                                                                <th width="20%">Particular</th>
+                                                                <th>Method</th>
+                                                                <th>Txn Date</th>
+                                                                <th width="15%">Remarks</th>
+                                                                <th>Status</th>
+                                                                <th width="10%"><center>Action</center></th>
+                                                                <th></th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
 
-                                                        <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 5%;">
-                                                            <table id="tbl_cash_disbursement_list" class="custom-design table-striped" cellspacing="0" width="100%">
-                                                                <thead class="">
-                                                                <tr>
-                                                                    <th></th>
-                                                                    <th>Txn #</th>
-                                                                    <th>Voucher #</th>
-                                                                    <th>Particular</th>
-                                                                    <th>Method</th>
-                                                                    <th>Txn Date</th>
-                                                                    <th>Remarks</th>
-                                                                    <th>Status</th>
-                                                                    <th><center>Action</center></th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
-
                                             </div>
 
 
                                             <div class="panel panel-default" style="border-radius:6px;">
-                                                <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Check Summary</b></div></a>
-                                                <div id="collapseOne" class="collapse in">
                                                     <div class="panel-body" style="min-height: 400px;">
+                                                        <h2 class="h2-panel-heading">Check Summary</h2><hr />
+                                                        <div>
 
-                                                        <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 5%;">
-
-                                                            <table id="tbl_check_list" class="custom-design table-striped" cellspacing="0" width="100%">
+                                                            <table id="tbl_check_list" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead style="display:none;">
                                                                 <tr>
 
@@ -277,9 +254,9 @@
                                                                     <th>Check Date</th>
                                                                     <th>Voucher #</th>
                                                                     <th>Particular</th>
-                                                                    <th>Remarks</th>
+                                                                    <th width="15%">Remarks</th>
                                                                     <th>Issued</th>
-                                                                    <th><center>Action</center></th>
+                                                                    <th width="5%"><center>Action</center></th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -290,7 +267,6 @@
                                                             </table>
                                                         </div>
                                                     </div>
-                                                </div>
 
                                             </div>
 
@@ -306,26 +282,26 @@
                                         <div class="row">
                                             <div class="col-lg-12">
 
-                                                <div class="panel panel-default" style="border: 4px solid #2980b9;border-radius: 8px;padding: 1%;margin: 1%;">
-
-                                                    <b><i class="fa fa-bars"></i> Cash Disbursement Journal</b><hr />
-                                                    <button id="btn_browse_recurring" class="btn btn-green" style="margin-bottom: 15px; text-transform: capitalize;"><i class="fa fa-folder-open-o"></i> Browse Recurring Template</button>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-body">
+                                                    <h2 class="h2-panel-heading">Cash Disbursement Journal</h2><hr />
+                                                    <button id="btn_browse_recurring" class="btn btn-success" style="text-transform: capitalize;"><i class="fa fa-folder-open-o"></i> Browse Recurring Template</button>
                                                     <form id="frm_journal" role="form" class="form-horizontal">
 
-                                                        <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;">
+                                                        <div style="">
 
                                                             <div class="row">
                                                                 <div class="col-lg-3">
-                                                                    Txn # * :<br />
+                                                                    <label>  Txn # </label>
                                                                     <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-code"></i>
-                            </span>
+                                                                        <span class="input-group-addon">
+                                                                            <i class="fa fa-code"></i>
+                                                                        </span>
                                                                         <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
-                                                                    Date * :<br />
+                                                                    <label><b class="required">* </b>  Date:</label>
                                                                     <div class="input-group">
                                                                         <span class="input-group-addon">
                                                                             <i class="fa fa-calendar"></i>
@@ -336,7 +312,7 @@
 
 
                                                                 <div class="col-lg-4 col-lg-offset-2">
-                                                                    Method of Payment * :<br />
+                                                                     <label><b class="required">* </b> Method of Payment:</label>
                                                                     <select id="cbo_pay_type" name="payment_method" class="form-control" data-error-msg="Payment method is required." required>
                                                                         <?php foreach($payment_methods as $payment_method){ ?>
                                                                             <option value='<?php echo $payment_method->payment_method_id; ?>'><?php echo $payment_method->payment_method; ?></option>
@@ -349,27 +325,27 @@
 
                                                             <div class="row">
                                                                 <div class="col-lg-3">
-                                                                    Reference type * :<br />
+                                                                     <label><b class="required">* </b> Reference type:</label>
                                                                     <select id="cbo_refType" class="form-control" name="ref_type" data-error-msg="Reference type is required." required>
                                                                         <option value="CV" selected>CV</option>
                                                                         <option value="JV">JV</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-lg-3">
-                                                                    Reference # * :<br />
+                                                                     <label><b class="required">* </b> Reference #:</label>
                                                                     <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-code"></i>
-                            </span>
+                                                                        <span class="input-group-addon">
+                                                                            <i class="fa fa-code"></i>
+                                                                        </span>
                                                                         <input type="text" name="ref_no" maxlength="15" class="form-control"  data-error-msg="Reference # is required." required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-4 col-lg-offset-2">
-                                                                    Bank :<br />
+                                                                     <label>Bank:</label>
                                                                     <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-credit-card"></i>
-                            </span>
+                                                                        <span class="input-group-addon">
+                                                                            <i class="fa fa-credit-card"></i>
+                                                                        </span>
                                                                         <input type="text" name="bank"  class="form-control">
                                                                     </div>
                                                                 </div>
@@ -377,7 +353,7 @@
 
                                                             <div class="row">
                                                                 <div class="col-lg-6">
-                                                                    Supplier * :<br />
+                                                                     <label><b class="required">* </b> Supplier:</label>
                                                                     <select id="cbo_suppliers" name="supplier_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Supplier name is required." required>
                                                                         <option value="0">[ Create New Supplier ]</option>
                                                                         <?php foreach($suppliers as $supplier){ ?>
@@ -387,21 +363,21 @@
                                                                 </div>
 
                                                                 <div class="col-lg-2 col-lg-offset-2">
-                                                                    Check Date :<br />
+                                                                     <label>Check Date:</label>
                                                                     <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </span>
+                                                                        <span class="input-group-addon">
+                                                                            <i class="fa fa-calendar"></i>
+                                                                        </span>
                                                                         <input type="text" name="check_date" class="date-picker form-control">
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="col-lg-2">
-                                                                    Check # :<br />
+                                                                     <label>Check #:</label>
                                                                     <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="fa fa-list-alt"></i>
-                            </span>
+                                                                        <span class="input-group-addon">
+                                                                            <i class="fa fa-list-alt"></i>
+                                                                        </span>
                                                                         <input type="text" name="check_no" maxlength="15" class="form-control">
                                                                     </div>
                                                                 </div>
@@ -410,7 +386,7 @@
 
                                                             <div class="row">
                                                                 <div class="col-lg-6">
-                                                                    Department * :<br />
+                                                                     <label><b class="required">* </b>  Department:</label>
                                                                     <select id="cbo_branch" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Branch is required." required>
                                                                         <option value="0">[ Create New Department ]</option>
                                                                         <?php foreach($departments as $department){ ?>
@@ -420,7 +396,7 @@
                                                                 </div>
 
                                                                 <div class="col-lg-4 col-lg-offset-2">
-                                                                    Amount * :<br />
+                                                                     <label>  Amount:</label>
                                                                     <input class="form-control text-center numeric" id="cash_amount" type="text" maxlength="12" value="0.00" name="amount">
                                                                 </div>
                                                             </div>
@@ -430,12 +406,12 @@
 
                                                         <br />
 
-                                                        <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;">
+                                                        <div style="">
                                                             <span><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
                                                             <hr />
 
                                                             <div style="width: 100%;">
-                                                                <table id="tbl_entries" class="custom-design table-striped">
+                                                                <table id="tbl_entries" class="table table-striped">
                                                                     <thead class="">
                                                                     <tr>
                                                                         <th style="width: 30%;">Account</th>
@@ -481,9 +457,7 @@
                                                                             <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
                                                                         </td>
                                                                     </tr>
-
                                                                     </tbody>
-
                                                                     <tfoot>
                                                                     <tr>
                                                                         <td colspan="2" align="right"><strong>Total</strong></td>
@@ -492,44 +466,25 @@
                                                                         <td></td>
                                                                     </tr>
                                                                     </tfoot>
-
-
                                                                 </table>
-
-
-
                                                             </div>
-
-
-
                                                         </div>
-
-
-
-                                                        <br />
                                                         <label>Remarks :</label><br />
-                                                        <textarea name="remarks" class="col-lg-12"></textarea>
-                                                        <br /><br />
-
-
+                                                        <textarea name="remarks" class="col-lg-12 form-control"></textarea>
                                                     </form>
-                                                    <div id="div_check">
-                                                        <input type="checkbox" name="chk_save">&nbsp;&nbsp;<label for="chk_save"><strong>Save as Template</strong></label>
+                                                    <div id="div_check" class="hidden">
+                                                        <input type="checkbox" name="chk_save" id="chk_save">&nbsp;&nbsp;<label for="chk_save"><strong>Save as Template</strong></label>
                                                     </div>
-                                                    <div id="div_no_check">
-                                                        <br>
-                                                        <br>
+                                                    <div id="div_no_check" class="hidden">
                                                     </div>
-
-                                                    <br />
                                                     <div class="row">
-                                                        <div class="col-sm-12">
+                                                        <div class="col-sm-12"><hr>
                                                             <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Save Changes</button>
                                                             <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                                </div>
                                                 <table id="table_hidden" class="hidden">
                                                     <tr>
                                                         <td width="30%">
@@ -590,7 +545,7 @@
                 <h4 class="modal-title" style="color: white;"><i class="fa fa-folder-open-o"></i>  Browse Recurring Templates</h4>
             </div>
             <div class="modal-body">
-                <table id="tbl_recurring" class="table-striped custom-design" width="100%">
+                <table id="tbl_recurring" class="table table-striped" width="100%">
                     <thead>
                     <th>Template Code</th>
                     <th>Template Description</th>
@@ -610,7 +565,7 @@
 
 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content">
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Confirm Cancellation</h4>
@@ -625,14 +580,14 @@
                 <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
             </div>
-        </div><!---content---->
+        </div>
     </div>
 </div><!---modal-->
 
 
 <div id="modal_print_check_list_option" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content">
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Print Options - Check List</h4>
@@ -669,7 +624,7 @@
                 <button id="btn_print_list" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"> <i class="fa fa-print"></i> Print List </button>
                 <button id="" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div>
     </div>
 </div><!---modal-->
 
@@ -677,7 +632,7 @@
 
 <div id="modal_new_department" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content">
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>New Department</h4>
@@ -711,7 +666,7 @@
                 <button id="btn_create_department" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
                 <button id="btn_close_close_department" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div>
     </div>
 </div><!---modal-->
 
@@ -934,6 +889,7 @@
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrap-select.min.js"></script>-->
@@ -1003,6 +959,7 @@
             dt=$('#tbl_cash_disbursement_list').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
+                "order": [[ 9, "desc" ]],
                 "ajax" : "Cash_disbursement/transaction/list",
                 "columns": [
                     {
@@ -1014,10 +971,10 @@
                     },
                     { targets:[1],data: "txn_no" },
                     { targets:[2],data: "ref_no" },
-                    { targets:[3],data: "particular" },
+                    { targets:[3],data: "particular", render: $.fn.dataTable.render.ellipsis(60)  },
                     { targets:[4],data: "payment_method" },
                     { targets:[5],data: "date_txn" },
-                    { targets:[6],data: "remarks" },
+                    { targets:[6],data: "remarks", render: $.fn.dataTable.render.ellipsis(40) },
                     {
                         targets:[7],data: null,
                         render: function (data, type, full, meta){
@@ -1039,18 +996,19 @@
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
-                            var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i> Print Check</button>';
+                            var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i></button>';
 
 
                             return '<center>'+btn_edit+"&nbsp;"+btn_check_print+"&nbsp;"+btn_cancel+'</center>';
                         }
-                    }
+                    },
+                    { targets:[9],data: "journal_id", visible:false },
                 ]
             });
 
 
             dtReview=$('#tbl_expense_for_review').DataTable({
-                "bLengthChange":true,
+                "bLengthChange":false,
                 "ajax" : "Payable_payments/transaction/expense-for-review",
                 "columns": [
                     {
@@ -1062,7 +1020,7 @@
                     },
                     { targets:[1],data: "receipt_no" },
                     { targets:[2],data: "supplier_name" },
-                    { targets:[3],data: "remarks" },
+                    { targets:[3],data: "remarks"  },
                     { targets:[4],data: "date_paid" },
                     {
                         targets:[5],
@@ -1100,7 +1058,7 @@
                     { targets:[3],data: "check_date" },
                     { targets:[4],data: "ref_no" },
                     { targets:[5],data: "supplier_name" },
-                    { targets:[6],data: "remarks" },
+                    { targets:[6],data: "remarks" , render: $.fn.dataTable.render.ellipsis(40) },
                     {  targets:[7],data: "check_status",
                         render: function (data, type, full, meta){
                             //alert(data.check_status);
@@ -1115,7 +1073,7 @@
                     },
                     {  targets:[8],
                         render: function (data, type, full, meta){
-                            var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i> Print Check</button>';
+                            var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i> </button>';
                             return '<center>'+btn_check_print+'</center>';
                         } }
                 ],
@@ -1161,7 +1119,7 @@
             });
 
             var createToolBarButton=function() {
-                var _btnNew='<button class="btn btn-green" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" >'+
+                var _btnNew='<button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" >'+
                     '<i class="fa fa-plus"></i> New Cash Disbursement Journal</button>';
                 $("div.toolbar").html(_btnNew);
 

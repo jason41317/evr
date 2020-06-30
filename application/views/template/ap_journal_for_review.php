@@ -4,16 +4,13 @@
         <tr>
             <td>
                 <br />
-
                 <div class="tab-container tab-top tab-default">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#journal_review_<?php echo $purchase_info->dr_invoice_id; ?>" data-toggle="tab"><i class="fa fa-gavel"></i> Review Journal</a></li>
                         <li class=""><a href="#purchase_review_<?php echo $purchase_info->dr_invoice_id; ?>" data-toggle="tab"><i class="fa fa-folder-open-o"></i> Transaction</a></li>
                     </ul>
                     <div class="tab-content">
-
                         <div class="tab-pane active" id="journal_review_<?php echo $purchase_info->dr_invoice_id; ?>" data-parent-id="<?php echo $purchase_info->dr_invoice_id; ?>" style="min-height: 300px;">
-
                             <?php if(!$valid_particular){ ?>
                                 <div class="alert alert-dismissable alert-danger">
                                     <i class="ti ti-close"></i>&nbsp; <strong>Sorry!</strong> We could not find the record of <b><?php echo $purchase_info->supplier_name; ?></b>.<br />
@@ -23,84 +20,58 @@
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                 </div>
                             <?php } ?>
-
-
-
                             <form id="frm_journal_review" role="form" class="form-horizontal row-border">
-
-
-                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Account Payable Journal</strong></span></h4>
-                                <hr />
-
-                                <div style="width: 90%;">
                                     <input type="hidden" name="dr_invoice_id" value="<?php echo $purchase_info->dr_invoice_id; ?>">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <label> <b class="required"> * </b> Branch : </label>
+                                            <select name="department_id" class="cbo_department_list" data-error-msg="" required>
+                                                <?php foreach($departments as $department){ ?>
+                                                    <option value="<?php echo $department->department_id; ?>" <?php echo ($purchase_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
+                                                <?php } ?>
+                                            </select>
 
-
-                                    <label class="col-lg-2"> * Txn # :</label>
-                                    <div class="col-lg-10">
-                                        <input type="text" name="txn_no" class="form-control" style="font-weight: bold;" placeholder="TXN-MMDDYYY-XXX" readonly>
+                                        </div>
+                                        
+                                        <div class="col-lg-3 col-lg-offset-3">
+                                            <label>Txn # :</label>
+                                            <input type="text" name="txn_no" class="form-control" style="font-weight: bold;" placeholder="TXN-MMDDYYY-XXX" readonly>
+                                        </div>
                                     </div>
+                                    <div class="row">
+                                       
+                                        <div class="col-lg-6">
+                                            <label> <b class="required"> * </b> Supplier : </label>
+                                            <select name="supplier_id" class="cbo_supplier_list" data-error-msg="Input Tax Account is required." required>
+                                                <?php foreach($suppliers as $supplier){ ?>
+                                                    <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($purchase_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
+                                                <?php } ?>
+                                            </select>
 
-                                    <br /><br />
-
-                                    <label class="col-lg-2"> * Date :</label>
-                                    <div class="col-lg-10">
-                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $purchase_info->date_delivered; ?>">
-                                    </div>
-
-                                    <br /><br />
-
-                                    <label class="col-lg-2"> * Supplier : </label>
-                                    <div class="col-lg-10">
-                                        <select name="supplier_id" class="cbo_supplier_list" data-error-msg="Input Tax Account is required." required>
-                                            <?php foreach($suppliers as $supplier){ ?>
-                                                <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($purchase_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
-                                            <?php } ?>
-                                        </select>
-
-                                    </div>
-
-
-                                    <br /><br />
-
-                                    <label class="col-lg-2"> * Branch : </label>
-                                    <div class="col-lg-10">
-                                        <select name="department_id" class="cbo_department_list" data-error-msg="" required>
-                                            <?php foreach($departments as $department){ ?>
-                                                <option value="<?php echo $department->department_id; ?>" <?php echo ($purchase_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
-                                            <?php } ?>
-                                        </select>
-
-                                    </div>
-
-                                </div>
-
-
-
-                                <br /><br /><br />
-                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Journal Entries</strong></span></h4>
+                                        </div>
+                                        
+                                        <div class="col-lg-3 col-lg-offset-3">
+                                            <label><b class="required"> * </b> Date :</label>
+                                            <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $purchase_info->date_delivered; ?>">
+                                        </div>
+                                    </div><br />
+                                    <span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
                                 <hr />
 
                                 <table id="tbl_entries_for_review_<?php echo $purchase_info->dr_invoice_id; ?>" class="table table-bordered" style="background-color: white;">
                                     <thead>
-                                    <tr style="border-bottom:solid gray;">
+                                    <tr style="">
                                         <th style="width: 30%;">Account</th>
-                                        <th style="width: 30%;">Memo</th>
+                                        <th style="">Memo</th>
                                         <th style="width: 15%;text-align: right;">Dr</th>
                                         <th style="width: 15%;text-align: right;">Cr</th>
-                                        <th>Action</th>
+                                        <th style="width: 10%;">Action</th>
                                     </tr>
                                     </thead>
-
                                     <tbody>
-
                                     <?php
-
                                             $dr_total=0.00; $cr_total=0.00;
-
                                             foreach($entries as $entry){
-
-
                                         ?>
                                         <tr>
                                             <td>
@@ -121,14 +92,9 @@
                                     <?php
                                                 $dr_total+=$entry->dr_amount;
                                                 $cr_total+=$entry->cr_amount;
-
                                             }
-
                                     ?>
-
-
                                     </tbody>
-
                                     <tfoot>
                                     <tr>
                                         <td colspan="2" align="right"><strong>Total</strong></td>
@@ -140,8 +106,6 @@
 
                                 </table>
 
-
-                                <hr />
                                 <label class="col-lg-2"> Remarks :</label><br />
                                 <div class="col-lg-12">
                                     <textarea name="remarks" class="form-control" style="width: 100%;"></textarea>
@@ -165,30 +129,30 @@
 
                         <div class="tab-pane" id="purchase_review_<?php echo $purchase_info->dr_invoice_id; ?>" >
 
-                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Purchase Invoice</strong></span></h4>
+                                <span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Purchase Invoice</strong></span>
                                 <hr />
 
                                 <div style="margin-left: 2%">
 
                                     <div class="row">
                                         <div class="col-lg-6">
-                                            <i class="fa fa-code"></i> Invoice # : <?php echo $purchase_info->dr_invoice_no; ?><br />
-                                            <i class="fa fa-caret-square-o-left"></i> External # : <?php echo $purchase_info->external_ref_no; ?><br />
-                                            <i class="fa fa-bookmark"></i> PO # : <?php echo $purchase_info->po_no; ?><br /><br />
-                                            <i class="fa fa-calendar"></i> Terms : <?php echo $purchase_info->term_description; ?><br />
-                                            <i class="fa fa-calendar-o"></i> Delivery Date : <?php echo $purchase_info->date_delivered; ?><br />
-                                            <i class="fa fa-file-o"></i> Remarks : <?php echo $purchase_info->remarks; ?><br />
+                                            <i class="fa fa-code"></i> <b>Invoice # :</b> <?php echo $purchase_info->dr_invoice_no; ?><br />
+                                            <i class="fa fa-caret-square-o-left"></i> <b>External # :</b> <?php echo $purchase_info->external_ref_no; ?><br />
+                                            <i class="fa fa-bookmark"></i> <b>PO # :</b> <?php echo $purchase_info->po_no; ?><br /><br />
+                                            <i class="fa fa-calendar"></i> <b>Terms :</b> <?php echo $purchase_info->term_description; ?><br />
+                                            <i class="fa fa-calendar-o"></i> <b>Delivery Date :</b> <?php echo $purchase_info->date_delivered; ?><br />
+                                            <i class="fa fa-file-o"></i> <b>Remarks :</b> <?php echo $purchase_info->remarks; ?><br />
                                         </div>
 
                                         <div class="col-lg-6">
-                                            <i class="fa fa-users"></i> Supplier : <?php echo $purchase_info->supplier_name; ?><br />
-                                            <i class="fa fa-globe"></i> Address : <?php echo $purchase_info->address; ?><br />
-                                            <i class="fa fa-send"></i> Email : <?php echo $purchase_info->email_address; ?><br />
-                                            <i class="fa fa-phone-square"></i> Telephone : <?php echo $purchase_info->contact_no; ?><br />
+                                            <i class="fa fa-users"></i> <b>Supplier : </b><?php echo $purchase_info->supplier_name; ?><br />
+                                            <i class="fa fa-globe"></i> <b>Address : </b><?php echo $purchase_info->address; ?><br />
+                                            <i class="fa fa-send"></i> <b>Email : </b><?php echo $purchase_info->email_address; ?><br />
+                                            <i class="fa fa-phone-square"></i> <b>Telephone : </b><?php echo $purchase_info->contact_no; ?><br />
                                             <br />
 
-                                            <i class="fa fa-user"></i> Posted by : <?php echo $purchase_info->posted_by; ?><br />
-                                            <i class="fa fa-calendar"></i> Date : <?php echo $purchase_info->date_created; ?><br />
+                                            <i class="fa fa-user"></i> <b>Posted by : </b><?php echo $purchase_info->posted_by; ?><br />
+                                            <i class="fa fa-calendar"></i> <b>Date : </b><?php echo $purchase_info->date_created; ?><br />
 
                                         </div>
                                     </div>
@@ -197,9 +161,9 @@
 
                                     <br /><br />
 
-                                    <table class="table table-bordered" style="background-color: white;">
+                                    <table class="table table-striped" style="background-color: white;">
                                         <thead>
-                                            <tr style="border-bottom: solid gray;">
+                                            <tr style="">
                                                 <td style="width: 40%;"><strong>Item</strong></td>
                                                 <td style="width: 12%;text-align: right;"><strong>Qty</strong></td>
                                                 <td style="width: 12%;"><strong>UM</strong></td>

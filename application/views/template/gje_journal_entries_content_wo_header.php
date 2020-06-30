@@ -16,10 +16,6 @@
             text-align: left;
         }
 
-        .data {
-            border-bottom: 1px solid #404040;
-        }
-
         .align-center {
             text-align: center;
         }
@@ -28,54 +24,9 @@
             font-weight: bolder;
         }
 
-        hr {
-            /*border-top: 3px solid #404040;*/
-        }
-
-        tr {
-/*            border: none!important;*/
-        }
-
-        tr:nth-child(even){
-/*            background: #414141 !important;
-            border: none!important;*/
-        }
-
-/*        tr:hover {
-            transition: .4s;
-            background: #414141 !important;
-            color: white;
-        }
-
-        tr:hover .btn {
-            border-color: #494949!important;
-            border-radius: 0!important;
-            -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-            -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-            box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        }
-*/
-    table{
-        border:none;
-    }
     </style>
 </head>
 <body>
-    <table width="100%">
-        <tr>
-            <td width="10%" style="object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
-            <td width="90%" class="">
-                <h2 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h2>
-                <p><?php echo $company_info->company_address; ?></p>
-                <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p>
-                <p><?php echo $company_info->email_address; ?></p>
-            </td>
-
-        </tr>
-    </table><hr>
-    <div class="">
-        <h3 class="report-header"><strong>GENERAL JOURNAL ENTRY</strong></h3>
-    </div>
     <table width="100%" border="0" cellspacing="-1">
         <tr>
             <td style="padding: 4px;" width="50%"><strong>DATE :</strong> <?php echo date_format(new DateTime($journal_info->date_txn),"m/d/Y"); ?></td>
@@ -140,34 +91,10 @@
                         <td style="border: 1px solid black;text-align: right;height: 30px;padding: 6px;" align="right"><strong><?php echo number_format($cr_amount,2); ?></strong></td>
                     </tr>
                     <tr style="border: 1px solid black;">
-                        <td colspan="5" style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;"><?php echo $journal_info->remarks; ?></td>
+                        <td colspan="2" style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;"><?php echo $journal_info->remarks; ?></td>
+                        <td colspan="3" style="border: 1px solid black;text-align: left;height: 30px;padding: 6px;"></td>
                     </tr>
                 </tfoot>    
-        </table><br><br>
-        <center>
-        <br>
-            <table style="text-align: center;border: none!important; ">
-                <tr>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    <?php echo $this->session->journal_prepared_by; ?><br style="">
-                    _____________________________</td>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    <?php echo $this->session->journal_approved_by; ?><br style="line-height:5px;">
-                    _____________________________</td>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    &nbsp;<br style="line-height:5px;">
-                    _____________________________</td>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    &nbsp;<br style="line-height:5px;">
-                    _____________________________</td>
-                </tr>
-                <tr>
-                    <td width="25%" style=""><strong>Prepared by</strong></td>
-                    <td width="25%" style=""><strong>Approved by</strong></td>
-                    <td width="25%" style=""><strong>Received by<br><small>(Signature Over Printed Name)</small></strong></td>
-                    <td width="25%" style=""><strong>Date Received</strong></td>
-                </tr>
-            </table>
-        </center>
+        </table>
 </body>
 </html>

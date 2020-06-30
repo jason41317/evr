@@ -34,11 +34,6 @@
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
         .toolbar{
             float: left;
         }
@@ -86,6 +81,20 @@
             text-align: right;
         }
 
+        #tbl_accounts_receivable_filter{
+            display: none;
+        }
+
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
 
 
     </style>
@@ -117,102 +126,75 @@
 <div class="col-md-12">
 
 <div id="div_payable_list">
-
-    <div class="panel-group panel-default" id="accordionA">
-
-
-        <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
-            <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne"><div class="panel-heading"><h2 style="font-family:tahoma;">General Journal</h2></div></a>
-            <div id="collapseOne" class="collapse in"> -->
-                <div class="panel-body" style="min-height: 400px;">
-                <h2>General Journal</h2>
-                    <table id="tbl_accounts_receivable" class="custom-design table-striped" cellspacing="0" width="100%">
-                        <thead class="">
-                        <tr>
-                            <th></th>
-                            <th>Txn #</th>
-                            <th>Particular</th>
-                            <th>Remarks</th>
-                            <th>Txn Date</th>
-                            <th>Posted</th>
-                            <th>Status</th>
-                            <th><center>Action</center></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
-
-
-                </div>
+    <div class="panel panel-default" >
+        <div class="panel-body" style="min-height: 400px;">
+        <h2 class="h2-panel-heading">General Journal</h2> <hr>
+        <div class="row">
+            <div class="col-sm-3"><br>
+                <button class="btn btn-primary" id="btn_new" title="New General Journal" ><i class="fa fa-plus-o"></i> New General Journal</button>
             </div>
+            <div class="col-sm-3 col-sm-offset-6">
+                Search :<br />
+                <input type="text" id="searchbox_tbl_accounts_receivable" class="form-control">
+            </div>
+        </div><br>
+            <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
+                <thead class="">
+                <tr>
+                    <th></th>
+                    <th width="15%">Txn #</th>
+                    <th>Particular</th>
+                    <th>Remarks</th>
+                    <th>Txn Date</th>
+                    <th>Posted</th>
+                    <th>Status</th>
+                    <th width="10%"><center>Action</center></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
         </div>
-
     </div>
-
-
 </div>
 
 
-
-
 <div id="div_payable_fields" style="display: none;">
-
-
     <div class="row">
         <div class="col-sm-12">
-            <div class="panel panel-default" style=" margin: 20px; border-top: 3px solid #2196f3;">
-                <!-- <div class="panel-heading">
-                    <h2>General Journal</h2>
-                    <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body, .panel-footer"}'></div>
-                </div> -->
-
-
+            <div class="panel panel-default">
                 <div class="panel-body">
-                    <h2>General Journal</h2>
+                <h2 class="h2-panel-heading"> General Journal</h2><hr />
                     <div class="tab-container tab-top tab-primary">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#general_journal" data-toggle="tab"><i class="fa fa-bars"></i> Transaction</a></li>
-                        </ul>
-                        <div class="tab-content">
                             <div class="tab-pane active" id="general_journal" style="min-height: 300px;">
-
-
                                 <form id="frm_journal" role="form" class="form-horizontal">
-
-                                    <span><strong><i class="fa fa-bars"></i> Info</strong></span>
-                                    <hr />
-
-                                    <label class="col-lg-2"> * Txn # :</label>
-                                    <div class="col-lg-4">
-
+                                <div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <label> <b class="required">*</b>  Branch : </label>
+                                        <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
+                                            <option value="0">[ Create New Department ]</option>
+                                                <?php foreach($departments as $department){ ?>
+                                                    <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                                <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3 col-lg-offset-3">
+                                    <label> Txn # : </label>
                                         <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-code"></i>
-                                    </span>
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-code"></i>
+                                            </span>
                                             <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
-
                                         </div>
-
-
                                     </div>
 
-                                    <label class="col-lg-2"> * Date :</label>
-                                    <div class="col-lg-4">
-                                        <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
-                                            <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
-                                        </div>
-
-                                    </div>
-
-                                    <br /><br />
-
-                                    <label class="col-lg-2"> * Particular :</label>
-                                    <div class="col-lg-10">
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                      <label> <b class="required">*</b>  Particular : </label>
                                         <select id="cbo_particulars" name="particular_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Customer is required." required>
 
                                             <optgroup label="Customers">
@@ -229,31 +211,20 @@
 
                                         </select>
                                     </div>
-
-                                    <br /><br />
-
-                                    <label class="col-lg-2"> * Branch :</label>
-                                    <div class="col-lg-10">
-                                        <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
-
-
-
-                                            <option value="0">[ Create New Department ]</option>
-                                                <?php foreach($departments as $department){ ?>
-                                                    <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
-                                                <?php } ?>
-
-
-                                        </select>
+                                    <div class="col-lg-3 col-lg-offset-3">
+                                        <label> <b class="required">*</b>  Date : </label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                            <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                        </div>
                                     </div>
-
-
-                                    <br /><br />
-                                    <span><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
-                                    <hr />
-
+                                </div>
+                                </div><br>
+                                    <span><strong><i class="fa fa-bars"></i> Journal Entries</strong></span><hr>
                                     <div style="width: 100%;">
-                                        <table id="tbl_entries" class="custom-design table-striped">
+                                        <table id="tbl_entries" class="table table-striped">
                                             <thead class="">
                                             <tr>
                                                 <th style="width: 30%;">Account</th>
@@ -314,24 +285,18 @@
                                         </table>
 
                                     </div>
-
-
-                                    <hr />
                                     <label>Remarks :</label><br />
-                                    <textarea name="remarks" class="col-lg-12"></textarea>
+                                    <textarea name="remarks" class="col-lg-12 form-control"></textarea>
 
                                 </form>
 
-                                <br /><br /><hr />
-
                                 <div class="row">
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-12"><hr>
                                         <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Save Changes</button>
                                         <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </div>
 
 
@@ -479,7 +444,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrar-select.min.js"></script>-->
@@ -527,6 +492,7 @@ $(document).ready(function(){
         dt=$('#tbl_accounts_receivable').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "order": [[ 8, "desc" ]],
             "ajax" : "General_journal/transaction/list",
             "columns": [
                 {
@@ -538,7 +504,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "particular" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks" , render: $.fn.dataTable.render.ellipsis(40) },
                 { targets:[4],data: "date_txn" },
                 { targets:[5],data: "posted_by" },
                 {
@@ -565,7 +531,8 @@ $(document).ready(function(){
 
                         return '<center>'+btn_edit+"&nbsp;"+btn_cancel+'</center>';
                     }
-                }
+                },
+                { visible:false, targets:[8],data: "journal_id" }
             ]
         });
 
@@ -593,14 +560,6 @@ $(document).ready(function(){
             autoclose: true
 
         });
-
-
-        var createToolBarButton=function() {
-            var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New General Journal" >'+
-                '<i class="fa fa-plus-o"></i> New General Journal</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
-
 
 
         _cboParticulars=$('#cbo_particulars').select2({
@@ -669,6 +628,12 @@ $(document).ready(function(){
         } );
 
 
+        $("#searchbox_tbl_accounts_receivable").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
 
         $('#tbl_sales_review tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
@@ -727,6 +692,7 @@ $(document).ready(function(){
             _txnMode="new";
             clearFields($('#frm_journal'))
             showList(false);
+            $('input[name="date_txn"]').val(<?php echo json_encode(date("m/d/Y")); ?>);
             //$('#modal_journal_entry').modal('show');
         });
 
@@ -851,6 +817,7 @@ $(document).ready(function(){
 
 
            _cboParticulars.select2('val',data.particular_id);
+           _cboDepartments.select2('val',data.department_id);
 
             $.ajax({
                 url: 'General_journal/transaction/get-entries?id=' + data.journal_id,
