@@ -25,7 +25,9 @@ class Company extends CORE_Controller
         $company=$this->Company_model->get_list();
         $data['company']=$company[0];
 
-        $this->load->view('company_view', $data);
+        (in_array('6-6',$this->session->user_rights)? 
+        $this->load->view('company_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
     function transaction($txn = null) {

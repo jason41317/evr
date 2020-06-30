@@ -27,7 +27,7 @@
 
     </head>
 
-<body class="focused-form animated-content login-background">
+<body class="focused-form login-background">
         
         
 <div class="container" id="login-form">
@@ -53,7 +53,7 @@
 										<span class="input-group-addon">
 											<i class="ti ti-user"></i>
 										</span>
-										<input name="user_name" type="text" class="form-control" placeholder="Username" data-parsley-minlength="20" placeholder="At least 6 characters" required>
+										<input name="user_name" type="text" class="form-control" placeholder="Username" data-parsley-minlength="20" placeholder="At least 6 characters" required autofocus="autofocus">
 									</div>
 		                        </div>
 							</div>
@@ -122,7 +122,6 @@
 
 
             var bindEventHandlers=(function(){
-
                 $('#btn_login').click(function(){
 
                     var l = Ladda.create(this);

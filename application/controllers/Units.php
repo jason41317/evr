@@ -16,7 +16,9 @@ class Units extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Unit Management';
 
-        $this->load->view('units_view', $data);
+        (in_array('4-3',$this->session->user_rights)? 
+        $this->load->view('units_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
     function transaction($txn = null) {

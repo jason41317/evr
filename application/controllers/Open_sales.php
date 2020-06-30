@@ -26,8 +26,10 @@ class Open_sales extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
         $data['title'] = 'Open Sales';
-        $this->load->view('open_sales_view', $data);
 
+        (in_array('8-10',$this->session->user_rights)? 
+        $this->load->view('open_sales_view', $data)
+        :redirect(base_url('dashboard')));
 
     }
 
