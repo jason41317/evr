@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Accounts Payable Journal</title>
+    <title>Accounts Receivable Journal</title>
     <style type="text/css">
         body {
             font-family: 'Calibri',sans-serif;
@@ -28,54 +28,10 @@
             font-weight: bolder;
         }
 
-        hr {
-            /*border-top: 3px solid #404040;*/
-        }
-
-        tr {
-/*            border: none!important;*/
-        }
-
-        tr:nth-child(even){
-/*            background: #414141 !important;
-            border: none!important;*/
-        }
-
-/*        tr:hover {
-            transition: .4s;
-            background: #414141 !important;
-            color: white;
-        }
-
-        tr:hover .btn {
-            border-color: #494949!important;
-            border-radius: 0!important;
-            -webkit-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-            -moz-box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-            box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.75);
-        }
-        */
-            table{
-        border:none;
-    }
     </style>
 </head>
 <body>
-    <table width="100%">
-        <tr>
-            <td width="10%" style="object-fit: cover;"><img src="<?php echo $company_info->logo_path; ?>" style="height: 90px; width: 90px; text-align: left;"></td>
-            <td width="90%" class="">
-                <h2 class="report-header"><strong><?php echo $company_info->company_name; ?></strong></h2>
-                <p><?php echo $company_info->company_address; ?></p>
-                <p><?php echo $company_info->landline.'/'.$company_info->mobile_no; ?></p>
-                <p><?php echo $company_info->email_address; ?></p>
-            </td>
-        </tr>
-    </table><hr>
-    <div class="">
-        <h3 class="report-header"><strong>ACCOUNTS PAYABLE JOURNAL</strong></h3>
-    </div>
-    <table width="100%"  cellspacing="-1">
+    <table width="100%" cellspacing="-1">
         <tr>
             <td style="padding: 4px;" colspan="3"><strong>TXN # :</strong> <?php echo $journal_info->txn_no; ?></td>
         </tr>
@@ -84,11 +40,11 @@
             <td width="50%" style="padding: 4px;" colspan="2"><strong>TXN DATE :</strong> <?php echo date_format(new DateTime($journal_info->date_txn),"m/d/Y"); ?></td>
         </tr>
         <tr>
-            <td style="padding: 4px;"><strong>SUPPLIER :</strong> <?php echo $journal_info->supplier_name; ?></td>
+            <td style="padding: 4px;"><strong>CUSTOMER :</strong> <?php echo $journal_info->customer_name; ?></td>
             <td style="padding: 4px;" colspan="2"><strong>ADDRESS :</strong> <?php echo $journal_info->address; ?></td>
         </tr>
     </table><br>
-    <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;" border="0" class="table table-striped">
+    <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;" border="0">
             <thead>
             <tr>
                 <td style="border: 1px solid black;text-align: center;padding: 6px;" colspan="5"><strong>ENTRIES</strong></td>
@@ -127,39 +83,32 @@
 
             </tbody>
                 <tfoot>
-                    <tr style="">
+                    <tr style="border: 1px solid black;">
+                        <td colspan="5"></td>
+                    </tr>
+                    <tr style="border: 1px solid black;">
                         <td style="border: 1px solid black;text-align: left;padding: 6px;" colspan="2"><strong>Remarks :</strong></td>
                         <td style="border: 1px solid black;text-align: right;padding: 6px;" align="right"><strong>Total : </strong></td>
                         <td style="border: 1px solid black;text-align: right;padding: 6px;" align="right"><strong><?php echo number_format($dr_amount,2); ?></strong></td>
                         <td style="border: 1px solid black;text-align: right;padding: 6px;" align="right"><strong><?php echo number_format($cr_amount,2); ?></strong></td>
                     </tr>
                     <tr style="border: 1px solid black;">
-                        <td colspan="5" style="border: 1px solid black;text-align: left;padding: 6px;"><?php echo $journal_info->remarks; ?> &nbsp;</td>
+                        <td colspan="2" style="border: 1px solid black;text-align: left;padding: 6px;"><?php echo $journal_info->remarks; ?> &nbsp;</td>
+                        <td colspan="3" style="border: 1px solid black;text-align: left;padding: 6px;"></td>
                     </tr>
                 </tfoot>    
         </table><br><br>
         <center>
-        <br>
-            <table style="text-align: center;border: none!important; ">
+            <table style="text-align: center;">
                 <tr>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    <?php echo $this->session->journal_prepared_by; ?><br style="">
-                    _____________________________</td>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    <?php echo $this->session->journal_approved_by; ?><br style="line-height:5px;">
-                    _____________________________</td>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    &nbsp;<br style="line-height:5px;">
-                    _____________________________</td>
-                    <td width="25%" style="padding-right: 10px;line-height: 5px;">
-                    &nbsp;<br style="line-height:5px;">
-                    _____________________________</td>
+                    <td width="30%" style="padding-right: 10px;">___________________________________</td>
+                    <td width="30%" style="padding-right: 10px;">___________________________________</td>
+                    <td width="30%" style="padding-right: 10px;">___________________________________</td>
                 </tr>
                 <tr>
-                    <td width="25%" style=""><strong>Prepared by</strong></td>
-                    <td width="25%" style=""><strong>Approved by</strong></td>
-                    <td width="25%" style=""><strong>Received by<br><small>(Signature Over Printed Name)</small></strong></td>
-                    <td width="25%" style=""><strong>Date Received</strong></td>
+                    <td width="30%" style="padding-right: 10px;"><strong>Prepared by</strong></td>
+                    <td width="30%" style="padding-right: 10px;"><strong>Checked by</strong></td>
+                    <td width="30%" style="padding-right: 10px;"><strong>Posted by</strong></td>
                 </tr>
             </table>
         </center>
