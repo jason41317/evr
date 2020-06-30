@@ -33,8 +33,9 @@ class Product_list extends CORE_Controller
         $data['product_types']=$this->Refproduct_model->get_list(array('is_deleted'=>FALSE));
         $data['suppliers']=$this->Suppliers_model->get_list(array('is_deleted'=>FALSE));
 
-        $this->load->view('product_list_view',$data);
-
+        (in_array('8-8',$this->session->user_rights)? 
+        $this->load->view('product_list_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
 

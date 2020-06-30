@@ -29,7 +29,10 @@ class Sales_detailed_summary extends CORE_Controller {
         );
 
         $data['title']='Sales Report';
-        $this->load->view('sales_detailed_summary_view',$data);
+
+        (in_array('8-1',$this->session->user_rights)? 
+        $this->load->view('sales_detailed_summary_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

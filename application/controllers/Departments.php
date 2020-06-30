@@ -16,7 +16,9 @@ class Departments extends CORE_Controller {
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Department Management';
 
-        $this->load->view('departments_view', $data);
+        (in_array('4-2',$this->session->user_rights)? 
+        $this->load->view('departments_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
     function transaction($txn = null) {

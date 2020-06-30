@@ -22,8 +22,9 @@ class User_groups extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'User Group Management';
 
-        $this->load->view('user_group_view', $data);
-
+        (in_array('6-4',$this->session->user_rights)? 
+        $this->load->view('user_group_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
     function transaction($txn = null) {

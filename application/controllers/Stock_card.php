@@ -29,7 +29,9 @@
 	        $data['products']= $this->Products_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE ),'product_id,product_desc');
 	        $data['title'] = 'Stock Card Report';
 
-	        $this->load->view('stock_card_view',$data);
+	        (in_array('8-6',$this->session->user_rights)? 
+	        $this->load->view('stock_card_view', $data)
+	        :redirect(base_url('dashboard')));	        
 		}
 
 		function transaction($txn=null){

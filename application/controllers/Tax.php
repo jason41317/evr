@@ -19,7 +19,10 @@ class Tax extends CORE_Controller {
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
         $data['title']='Tax Management';
         $data['tax_type']=$this->Tax_types_model->get_list();
-        $this->load->view('tax_view',$data);
+
+        (in_array('6-1',$this->session->user_rights)? 
+        $this->load->view('tax_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 
