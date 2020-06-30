@@ -42,16 +42,14 @@
 
                             <form id="frm_journal_review" role="form" class="form-horizontal row-border">
 
-                                <br />
                                 <input type="hidden" name="payment_id" value="<?php echo $payment_info->payment_id; ?>">
 
                                 <div class="row">
                                     <div class="col-lg-8">
-                                        <div style="border: 1px solid lightgrey;padding: 2%;border-radius: 5px;">
 
                                             <div class="row">
                                                 <div class="col-lg-4">
-                                                    Txn # * :<br />
+                                                    <label> <b class="required">*</b>  Txn # : </label>
 
                                                     <div class="input-group">
                                                         <span class="input-group-addon">
@@ -60,21 +58,9 @@
                                                         <input type="text" name="txn_no" class="form-control" value="TXN-YYYYMMDD-XXX" readonly>
                                                     </div>
 
-                                                </div><br />
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-lg-7">
-                                                    Supplier * :<br />
-                                                    <select name="supplier_id" class="cbo_customer_list">
-                                                        <?php foreach($suppliers as $supplier){ ?>
-                                                            <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($payment_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
-                                                        <?php } ?>
-                                                    </select>
                                                 </div>
-
-                                                <div class="col-lg-4 col-lg-offset-1">
-                                                    Date * :<br />
+                                                <div class="col-lg-4">
+                                                    <label><b class="required">*</b> Date :</label>
                                                     <div class="input-group">
                                                         <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>">
                                                         <span class="input-group-addon">
@@ -82,12 +68,25 @@
                                                         </span>
                                                     </div>
                                                 </div><br />
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-lg-8">
+                                                    <label><b class="required">*</b> Supplier :</label>
+                                                    <select name="supplier_id" class="cbo_customer_list">
+                                                        <?php foreach($suppliers as $supplier){ ?>
+                                                            <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($payment_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+
+
 
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-7">
-                                                    Branch * :<br />
+                                                <div class="col-lg-8">
+                                                    <label><b class="required">*</b> Branch :</label>
                                                     <select name="department_id" class="cbo_department_list">
                                                         <?php foreach($departments as $department){ ?>
                                                             <option value="<?php echo $department->department_id; ?>" <?php echo ($payment_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
@@ -98,17 +97,13 @@
 
                                             </div>
 
-
-                                        </div>
                                     </div>
 
                                     <div class="col-lg-4">
-                                        <div style="border: 1px solid lightgrey;padding: 4%;border-radius: 5px;">
-
 
                                             <div class="row">
                                                 <div class="col-lg-12">
-                                                    Method of Payment * :<br />
+                                                    <label><b class="required">*</b> Method of Payment:</label>
                                                     <select name="payment_method" class="cbo_payment_method">
                                                         <?php foreach($methods as $method){ ?>
                                                             <option value="<?php echo $method->payment_method_id; ?>" <?php echo ($payment_info->payment_method_id==$method->payment_method_id?'selected':''); ?>><?php echo $method->payment_method; ?></option>
@@ -119,7 +114,7 @@
 
                                             <div class="row">
                                                 <div class="col-lg-6">
-                                                    OR # * :<br />
+                                                   <label><b class="required">*</b>  OR # :</label>
 
                                                     <div class="input-group">
                                                         <span class="input-group-addon">
@@ -129,7 +124,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
-                                                    Amount* :<br />
+                                                    <label><b class="required">*</b>  Amount :</label>
                                                     <input type="text" name="amount" class="numeric form-control" value="<?php echo number_format($payment_info->total_paid_amount,2); ?>">
 
                                                 </div>
@@ -138,7 +133,7 @@
 
                                             <div class="row">
                                                 <div class="col-lg-6">
-                                                    Check Date :<br />
+                                                    <label>Check Date :</label>
                                                     <div class="input-group">
                                                         <input type="text" name="check_date" class="date-picker form-control" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->date_check:''); ?>">
                                                             <span class="input-group-addon">
@@ -148,24 +143,22 @@
                                                 </div>
 
                                                 <div class="col-lg-6">
-                                                    Check # :<br />
+                                                    <label>Check # :</label>
                                                     <input type="text" name="check_no" class="form-control" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->check_no:''); ?>">
                                                 </div>
 
                                             </div>
 
-
-                                        </div>
                                     </div>
 
                                 </div>
 
-                                <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Journal Entries</strong></span></h4>
+                                <br><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
                                 <hr />
 
-                                <table id="tbl_entries_for_review_<?php echo $payment_info->payment_id; ?>" class="table table-bordered" style="background-color: white;">
+                                <table id="tbl_entries_for_review_<?php echo $payment_info->payment_id; ?>" class="table table-striped" style="background-color: white;">
                                     <thead>
-                                    <tr style="border-bottom:solid gray;">
+                                    <tr >
                                         <th style="width: 30%;">Account</th>
                                         <th style="width: 30%;">Memo</th>
                                         <th style="width: 15%;text-align: right;">Dr</th>
@@ -253,11 +246,11 @@
                             <div style="margin-left: 2%">
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <i class="fa fa-code"></i> OR/AR # : <b><?php echo $payment_info->receipt_no; ?></b><br />
-                                        <i class="fa fa-calendar"></i> Payment Date : <?php echo $payment_info->payment_date; ?><br />
-                                        <i class="fa fa-caret-square-o-left"></i> Receipt type : <?php echo $payment_info->receipt_type; ?><br /><br />
-                                        <i class="fa fa-bookmark"></i> Department : <?php echo $payment_info->department_name; ?><br />
-                                        <i class="fa fa-users"></i> Customer : <?php echo $payment_info->supplier_name; ?><br /><br />
+                                        <i class="fa fa-code"></i> <b>OR/AR # : </b><b><?php echo $payment_info->receipt_no; ?></b><br />
+                                        <i class="fa fa-calendar"></i> <b>Payment Date : </b><?php echo $payment_info->payment_date; ?><br />
+                                        <i class="fa fa-caret-square-o-left"></i> </b><b>Receipt type : </b><?php echo $payment_info->receipt_type; ?><br /><br />
+                                        <i class="fa fa-bookmark"></i> <b>Department : </b><?php echo $payment_info->department_name; ?><br />
+                                        <i class="fa fa-users"></i> <b>Customer :</b> <?php echo $payment_info->supplier_name; ?><br /><br />
                                     </div>
 
                                     <div class="col-lg-6">
@@ -271,14 +264,14 @@
                                 </div>
 
 
-                                <table class="table table-bordered" style="background-color: white;">
+                                <table class="table table-striped" style="background-color: white;">
                                     <thead>
-                                    <tr style="border-bottom: solid gray;">
-                                        <td width="12%"><strong>Invoice #</strong></td>
+                                    <tr >
+                                        <td width="15%"><strong>Invoice #</strong></td>
                                         <td width="12%"><strong>Received Date</strong></td>
                                         <td width="12%"><strong>Term</strong></td>
                                         <td width="12%"><strong>Due Date</strong></td>
-                                        <td width="38%"><strong>Remarks</strong></td>
+                                        <td ><strong>Remarks</strong></td>
                                         <td width="14%" style="text-align: right;"><strong>Paid Amount</strong></td>
                                     </tr>
                                     </thead>
