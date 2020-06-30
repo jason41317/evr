@@ -25,7 +25,9 @@ class Customers extends CORE_Controller {
         $data['departments'] = $this->Departments_model->get_list(array('departments.is_deleted'=>FALSE));
         $data['refcustomertype'] = $this->RefCustomerType_model->get_list(array('refcustomertype.is_deleted'=>FALSE));
 
-        $this->load->view('customers_view',$data);
+        (in_array('5-3',$this->session->user_rights)? 
+        $this->load->view('customers_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

@@ -28,7 +28,9 @@ class Cogs extends CORE_Controller
         $data['title'] = 'Cost of Good Sold Report';
         $data['departments']=$this->Departments_model->get_list('is_deleted=0');
 
-        $this->load->view('cost_of_good_sold_view', $data);
+        (in_array('8-5',$this->session->user_rights)? 
+        $this->load->view('cost_of_good_sold_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

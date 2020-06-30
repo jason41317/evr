@@ -212,7 +212,7 @@
 
 
 <div id="div_user_fields" style="display: none;">
-    <div class="panel panel-default" style="border: 4px solid #2980b9;border-radius: 8px;">
+    <div class="panel panel-default" style="border: 4px solid #2980b9;border-radius: 8px;z-index: 1;">
     <!-- <div class="panel-heading">
         <h2>Item Adjustment</h2>
         <div class="panel-ctrls" data-actions-container=""></div>
@@ -809,10 +809,22 @@ $(document).ready(function(){
             limit: 100000,
             templates: {
                 header: [
-                    '<table width="100%"><tr><td width=20%" style="padding-left: 1%;"><b>PLU</b></td><td width="30%" align="left"><b>Description 1</b></td><td width="10%" align="left"><b>Unit</b></td><td width="10%" align="right" style="padding-right: 2%;"><b>On hand</b><td width="10%" align="right" style="padding-right: 2%;"><b>Cost</b></td></tr></table>'
+                    '<table class="tt-head"><tr>'+
+                    '<td width=10%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                    '<td width="50%" align="left"><b>Description 1</b></td>'+
+                    '<td width="10%" align="left"><b>Unit</b></td>'+
+                    '<td width="15%" align="right"><b>On hand</b></td>'+
+                    '<td width="15%" align="right" style="padding-right: 1%;"><b>Cost</b></td>'+
+                    '</tr></table>'
                 ].join('\n'),
 
-                suggestion: Handlebars.compile('<table width="100%"><tr><td width="20%" style="padding-left: 1%">{{product_code}}</td><td width="30%" align="left">{{product_desc}}</td><td width="10%" align="left">{{unit_name}}</td><td width="10%" align="right" style="padding-right: 2%;">{{on_hand}}</td><td width="10%" align="right" style="padding-right: 2%;">{{cost}}</td></tr></table>')
+                suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
+                    '<td width="10%" style="padding-left: 1%">{{product_code}}</td>'+
+                    '<td width="50%" align="left">{{product_desc}}</td>'+
+                    '<td width="10%" align="left">{{unit_name}}</td>'+
+                    '<td width="15%" align="right">{{on_hand}}</td>'+
+                    '<td width="15%" align="right" style="padding-right: 1%;">{{cost}}</td>'+
+                    '</tr></table>')
 
             }
         }).on('keyup', this, function (event) {
