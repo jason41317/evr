@@ -31,8 +31,10 @@ class Sales_summary extends CORE_Controller
 
         $data['departments']=$this->Departments_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         $data['title']="Sales Summary";
-        $this->load->view('sales_summary_view',$data);
 
+        (in_array('8-3',$this->session->user_rights)? 
+        $this->load->view('sales_summary_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
 

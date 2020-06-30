@@ -236,7 +236,7 @@
                                     </div>
                                 </div>
                                 <div id="div_sales_invoice_fields" style="display: none;">
-                                    <div class="panel panel-default" style="border: 4px solid #2980b9;border-radius: 8px;">
+                                    <div class="panel panel-default" style="border: 4px solid #2980b9;border-radius: 8px;z-index: 1;">
 
                                         <div class="pull-right">
                                             <h4 class="sales_invoice_title" style="margin-top: 0%;"></h4>
@@ -931,10 +931,34 @@
                 source: products,
             templates: {
                 header: [
-                    '<table width="100%"><tr><td width=7%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="7%" align="left"><b>Batch #</b></td><td width="7%" align="left"><b>Expiration</b></td><td width="7%" style="text-align: right;padding-right:1%;"><b>On hand</b></td><td width="7%" align="right" style="padding-right: 2%;"><b>SRP</b></td><td width="7%" align="right" style="padding-right: 0%;"><b>Dealer</b></td><td width="7%" align="right" style="padding-right: 0%;"><b>Distributor</b></td><td width="7%" align="right" style="padding-right: 0%;"><b>Discounted</b></td><td width="7%" align="right" style="padding-right: 0%;"><b>Public</b></td><td width="7%" align="right" style="padding-right: 1%;"><b>Cost</b></td></tr></table>'
+                    '<table class="tt-head"><tr>'+
+                    '<td width=8%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                    '<td width="20%" align="left"><b>Description 1</b></td>'+
+                    '<td width="8%" align="left"><b>Batch #</b></td>'+
+                    '<td width="8%" align="left"><b>Expiration</b></td>'+
+                    '<td width="8%" align="right"><b>On hand</b></td>'+
+                    '<td width="8%" align="right"><b>SRP</b></td>'+
+                    '<td width="8%" align="right"><b>Dealer</b></td>'+
+                    '<td width="8%" align="right"><b>Distributor</b></td>'+
+                    '<td width="8%" align="right"><b>Discounted</b></td>'+
+                    '<td width="8%" align="right"><b>Public</b></td>'+
+                    '<td width="8%" align="right" style="padding-right: 1%;"><b>Cost</b></td>'+
+                    '</tr></table>'
                 ].join('\n'),
 
-                suggestion: Handlebars.compile('<table width="100%"><tr><td width="7%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="7%" align="left">{{batch_no}}</td><td width="7%" align="left">{{exp_date}}</td><td width="7%" style="padding-right:1%;" align="right">{{on_hand_per_batch}}</td><td width="7%" align="right" style="padding-right: 2%;">{{srp}}</td><td width="7%" align="right" style="padding-right: 0%;">{{srp_dealer}}</td><td width="7%" align="right" style="padding-right: 0%;">{{srp_distributor}}</td><td width="7%" align="right" style="padding-right: 0%;">{{srp_discounted}}</td><td width="7%" align="right" style="padding-right: 0%;">{{srp_public}}</td><td width="7%" align="right" style="padding-right: 1%;">{{srp_cost}}</td></tr></table>')
+                suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
+                    '<td width="8%" style="padding-left: 1%">{{product_code}}</td>'+
+                    '<td width="20%" align="left">{{product_desc}}</td>'+
+                    '<td width="8%" align="left">{{batch_no}}</td>'+
+                    '<td width="8%" align="left">{{exp_date}}</td>'+
+                    '<td width="8%" align="right">{{on_hand_per_batch}}</td>'+
+                    '<td width="8%" align="right">{{srp}}</td>'+
+                    '<td width="8%" align="right">{{srp_dealer}}</td>'+
+                    '<td width="8%" align="right">{{srp_distributor}}</td>'+
+                    '<td width="8%" align="right">{{srp_discounted}}</td>'+
+                    '<td width="8%" align="right">{{srp_public}}</td>'+
+                    '<td width="8%" align="right" style="padding-right: 1%;">{{srp_cost}}</td>'+
+                    '</tr></table>')
 
             }
             }).on('keyup', this, function (event) {

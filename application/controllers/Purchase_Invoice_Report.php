@@ -34,8 +34,10 @@
 	        	null,
 	        	'product_type ASC'
 	        );
-
-	        $this->load->view('purchase_invoice_report_view',$data);
+	        
+	        (in_array('8-4',$this->session->user_rights)? 
+	        $this->load->view('purchase_invoice_report_view', $data)
+	        :redirect(base_url('dashboard')));	        
 		}
 
 		function transaction($txn=null){

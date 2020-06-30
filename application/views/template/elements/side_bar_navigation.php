@@ -109,7 +109,7 @@
                         <li class="<?php echo (in_array('8',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#"><i class="ti ti-pie-chart"></i><span>Sales & Purchasing</span></a>
                             <ul class="acc-menu">
                                 <li class="<?php echo (in_array('8-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Cogs">Cost of Goods Sold</a></li>
-                                <!-- <li class="<?php echo (in_array('8-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_detailed_summary">Sales Report</a></li> -->
+                                <li class="<?php echo (in_array('8-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_detailed_summary">Sales Report</a></li>
                                 <li class="<?php echo (in_array('8-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_returns_report">Sales Returns</a></li>
                                 <li class="<?php echo (in_array('8-8',$this->session->user_rights)?'':'hidden'); ?>"><a href="Product_list">Product Inventory Report</a></li>
                                 <li class="<?php echo (in_array('8-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Inventory">Batch Inventory Report</a></li>

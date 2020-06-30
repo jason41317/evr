@@ -219,7 +219,7 @@
 
 
 <div id="div_user_fields" style="display: none;">
-    <div class="panel panel-default" style="border: 4px solid #2980b9;border-radius: 8px;">
+    <div class="panel panel-default" style="border: 4px solid #2980b9;border-radius: 8px;z-index: 1;">
 <!-- <div class="panel-heading">
     <h2>Sales Order</h2>
     <div class="panel-ctrls" data-actions-container=""></div>
@@ -321,6 +321,7 @@
                     <select name="lookup_price" id="cboLookupPrice">
                         <option value="1">SRP (Recommended)</option>
                         <option value="3">Dealer Price</option>
+                        <option value="6">Purchase Cost</option>
                     </select>
                 </div>
             </div>
@@ -1038,10 +1039,23 @@ $(document).ready(function(){
         source: products,
         templates: {
             header: [
-                '<table width="100%"><tr><td width=7%" style="padding-left: 1%;"><b>PLU</b></td><td width="20%" align="left"><b>Description 1</b></td><td width="7%" style="text-align: right;padding-right:1%;"><b>On hand</b></td><td width="7%" align="right" style="padding-right: 2%;"><b>SRP</b></td><td width="7%" align="right" style="padding-right: 0%;"><b>Dealer</b></td></tr></table>'
+                '<table class="tt-head"><tr>'+
+                '<td width=7%" style="padding-left:1%;"><b>PLU</b></td>'+
+                '<td width="20%" align="left"><b>Description 1</b></td>'+
+                '<td width="7%" style="text-align: right;"><b>On hand</b></td>'+
+                '<td width="7%" align="right"><b>SRP</b></td>'+
+                '<td width="7%" align="right"><b>Dealer</b></td>'+
+                '<td width="7%" align="right" style="padding-right:1%;"><b>Cost</b></td></tr></table>'
+
             ].join('\n'),
 
-            suggestion: Handlebars.compile('<table width="100%"><tr><td width="7%" style="padding-left: 1%">{{product_code}}</td><td width="20%" align="left">{{product_desc}}</td><td width="7%" style="padding-right:1%;" align="right">{{on_hand}}</td><td width="7%" align="right" style="padding-right: 2%;">{{sale_price}}</td><td width="7%" align="right" style="padding-right: 0%;">{{dealer_price}}</td></tr></table>')
+            suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
+                '<td width="7%" style="padding-left:1%;">{{product_code}}</td>'+
+                '<td width="20%" align="left">{{product_desc}}</td>'+
+                '<td width="7%" align="right">{{on_hand}}</td>'+
+                '<td width="7%" align="right">{{sale_price}}</td>'+
+                '<td width="7%" align="right">{{dealer_price}}</td>'+
+                '<td width="7%" align="right" style="padding-right:1%;">{{purchase_cost}}</td></tr></table>')
 
         }
     }).on('keyup', this, function (event) {

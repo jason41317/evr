@@ -22,7 +22,10 @@ class Suppliers extends CORE_Controller {
 
 
         $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
-        $this->load->view('suppliers_view',$data);
+
+        (in_array('5-2',$this->session->user_rights)? 
+        $this->load->view('suppliers_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

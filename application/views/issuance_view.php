@@ -190,7 +190,7 @@ echo $_side_bar_navigation;
 
 
 <div id="div_user_fields" style="display: none;">
-<div class="panel panel-default" style="border-top: 3px solid #2196f3;">
+<div class="panel panel-default" style="border-top: 3px solid #2196f3;z-index: 1;">
 <!-- <div class="panel-heading">
     <h2>Item Issuance</h2>
     <div class="panel-ctrls" data-actions-container=""></div>
@@ -830,10 +830,24 @@ $(document).ready(function(){
             source: products,
             templates: {
                 header: [
-                    '<table width="100%"><tr><td width=10%" style="padding-left: 1%;"><b>PLU</b></td><td width="30%" align="left"><b>Description 1</b></td><td width="15%" align="left"><b>Batch #</b></td><td width="15%" align="left"><b>Expiration</b></td><td width="15%" style="padding-right: 2%;text-align: right"><b>On hand</b></td><td width="15%" align="right" style="padding-right: 2%;"><b>SRP</b></td></tr></table>'
+                    '<table class="tt-head"><tr>'+
+                    '<td width=10%" style="padding-left: 1%;"><b>PLU</b></td>'+
+                    '<td width="40%" align="left"><b>Description 1</b></td>'+
+                    '<td width="15%" align="left"><b>Batch #</b></td>'+
+                    '<td width="15%" align="left"><b>Expiration</b></td>'+
+                    '<td width="10%" align="right"><b>On hand</b></td>'+
+                    '<td width="10%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
+                    '</tr></table>'
                 ].join('\n'),
 
-                suggestion: Handlebars.compile('<table width="100%"><tr><td width="10%" style="padding-left: 1%">{{product_code}}</td><td width="30%" align="left">{{product_desc}}</td><td width="15%" align="left">{{batch_no}}</td><td width="15%" align="left">{{exp_date}}</td><td width="15%" align="right">{{on_hand_per_batch}}</td><td width="15%" align="right" style="padding-right: 2%;">{{sale_price}}</td></tr></table>')
+                suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
+                    '<td width="10%" style="padding-left: 1%">{{product_code}}</td>'+
+                    '<td width="40%" align="left">{{product_desc}}</td>'+
+                    '<td width="15%" align="left">{{batch_no}}</td>'+
+                    '<td width="15%" align="left">{{exp_date}}</td>'+
+                    '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
+                    '<td width="10%" align="right" style="padding-right: 1%;">{{sale_price}}</td>'+
+                    '</tr></table>')
 
             }
         }).on('keyup', this, function (event) {
