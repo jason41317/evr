@@ -26,8 +26,9 @@
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
 	        $data['title'] = 'Sales Returns Report';
 
-
-	        $this->load->view('sales_returns_report_view',$data);
+	        (in_array('8-7',$this->session->user_rights)? 
+	        $this->load->view('sales_returns_report_view', $data)
+	        :redirect(base_url('dashboard')));	        
 		}
 
 		function transaction($txn=null){

@@ -60,7 +60,9 @@ class Account_integration extends CORE_Controller
             'account_title,account_no'
         );
 
-        $this->load->view('account_integration_view', $data);
+        (in_array('6-3',$this->session->user_rights)? 
+        $this->load->view('account_integration_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

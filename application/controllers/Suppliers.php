@@ -18,11 +18,12 @@ class Suppliers extends CORE_Controller {
         $data['_side_bar_navigation']=$this->load->view('template/elements/side_bar_navigation','',TRUE);
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
         $data['suppliers']=$this->Suppliers_model->get_list(array('suppliers.is_deleted'=>FALSE));
+        $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
         $data['title']='Supplier Management';
 
-
-        $data['tax_types']=$this->Tax_model->get_list(array('tax_types.is_deleted'=>FALSE));
-        $this->load->view('suppliers_view',$data);
+        (in_array('5-2',$this->session->user_rights)? 
+        $this->load->view('suppliers_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

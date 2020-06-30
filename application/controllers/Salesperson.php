@@ -17,7 +17,9 @@ class Salesperson extends CORE_Controller {
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
         $data['title']='Salesperson Management';
 
-        $this->load->view('salesperson_view',$data);
+        (in_array('5-4',$this->session->user_rights)? 
+        $this->load->view('salesperson_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

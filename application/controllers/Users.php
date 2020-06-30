@@ -21,7 +21,9 @@ class Users extends CORE_Controller
         $data['user_groups']=$this->User_groups_model->get_list(array('is_deleted'=>0));
         $data['title'] = 'User Account Management';
 
-        $this->load->view('users_view', $data);
+        (in_array('6-5',$this->session->user_rights)? 
+        $this->load->view('users_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
     function transaction($txn = null) {
