@@ -89,6 +89,7 @@ class General_journal extends CORE_Controller
 
 
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
+                $m_journal->department_id=$this->input->post('department_id',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='GJE';
 
@@ -161,7 +162,7 @@ class General_journal extends CORE_Controller
                 }
 
 
-
+                $m_journal->department_id=$this->input->post('department_id',TRUE);
                 $m_journal->remarks=$this->input->post('remarks',TRUE);
                 $m_journal->date_txn=date('Y-m-d',strtotime($this->input->post('date_txn',TRUE)));
                 $m_journal->book_type='GJE';
@@ -243,6 +244,7 @@ class General_journal extends CORE_Controller
                 'journal_info.journal_id',
                 'journal_info.txn_no',
                 'DATE_FORMAT(journal_info.date_txn,"%m/%d/%Y")as date_txn',
+                'journal_info.department_id',
                 'journal_info.is_active',
                 'journal_info.remarks',
                 'CONCAT(IF(NOT ISNULL(customers.customer_id),CONCAT("C-",customers.customer_id),""),IF(NOT ISNULL(suppliers.supplier_id),CONCAT("S-",suppliers.supplier_id),"")) as particular_id',

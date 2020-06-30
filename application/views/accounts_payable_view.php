@@ -34,10 +34,6 @@
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
         .alert {
             border-width: 0;
             border-style: solid;
@@ -167,15 +163,11 @@
                     <div class="panel-group panel-default" id="accordionA">
 
                         <div class="panel panel-default" style="border-radius: 6px;border: 1px solid lightgrey;">
-                            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo">
-                                <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
-                                    <b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Accounts Payable (Pending)</b>
-                                </div>
-                            </a>
                             <div id="" class="">
                                 <div class="panel-body">
-                                    <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
-                                    <table id="tbl_purchase_review" class="custom-design table-striped" cellspacing="0" width="100%">
+                                    <h2 class="h2-panel-heading">Accounts Payable (Pending)</h2><hr />
+                                    <div style="">
+                                    <table id="tbl_purchase_review" class="table table-striped" cellspacing="0" width="100%">
                                         <thead class="">
                                         <tr>
                                             <th></th>
@@ -183,7 +175,7 @@
                                             <th>Vendor</th>
                                             <th>Terms</th>
                                             <th>Delivered</th>
-                                            <th>Remarks</th>
+                                            <th width="20%">Remarks</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -196,14 +188,10 @@
                         </div>
 
                         <div class="panel panel-default" style="border-radius: 6px;border: 1px solid lightgrey;">
-                            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne">
-                                <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
-                                    <b style="font-size: 12pt;color:white;"><i class="fa fa-bars"></i> Accounts Payable Journal</b>
-                                </div>
-                            </a>    
                                 <div class="panel-body" style="min-height: 400px;">
-                                    <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
-                                        <table id="tbl_account_payables" class="custom-design table-striped" cellspacing="0" width="100%">
+                                <h2 class="h2-panel-heading">Accounts Payable Journal</h2><hr />
+                                    <div style="">
+                                        <table id="tbl_account_payables" class="table table-striped" cellspacing="0" width="100%">
                                             <thead class="">
                                             <tr>
                                                 <th></th>
@@ -234,63 +222,16 @@
 
 
                         <div id="div_payable_fields" style="display: none;">
-
-
-
-
-
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
-
-
-
-
-
                                         <div class="panel-body">
-                                        <h2 style="margin-top: 0px;">Accounts Payable</h2>
-
-
-                                            <div class="tab-container tab-top tab-primary">
-                                                <ul class="nav nav-tabs">
-                                                    <li class="active"><a href="#supplier_info" data-toggle="tab"><i class="fa fa-bars"></i> Transaction</a></li>
-
-                                                </ul>
-                                                <div class="tab-content">
-                                                    <div class="tab-pane active" id="supplier_info" style="min-height: 300px;">
-
-
+                                        <h2 class="h2-panel-heading">Accounts Payable</h2><hr>
                                                         <form id="frm_journal" role="form" class="form-horizontal">
 
-                                                            <span><strong><i class="fa fa-bars"></i> Info</strong></span>
-                                                            <hr />
-
-                                                            <label class="col-lg-2"> * Txn # :</label>
-                                                            <div class="col-lg-4">
-
-                                                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-code"></i>
-                                    </span>
-                                                                    <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
-
-                                                                </div>
-
-
-                                                            </div>
-
-                                                            <label class="col-lg-2"> * Date :</label>
-                                                            <div class="col-lg-4">
-                                                                <div class="input-group">
-                                                                    <span class="input-group-addon">
-                                                                        <i class="fa fa-calendar"></i>
-                                                                    </span>
-                                                                    <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
-                                                                </div>
-                                                            </div>
-                                                            <br /><br />
-                                                            <label class="col-lg-2"> * Supplier :</label>
-                                                            <div class="col-lg-10">
+                                                        <div class="row">
+                                                            <div class="col-lg-6">
+                                                            <label class=""> <b class="required">*</b>  Supplier :</label>
                                                                 <select id="cbo_suppliers" name="supplier_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Supplier name is required." required>
                                                                     <option value="0">[ Create New Supplier ]</option>
                                                                     <?php foreach($suppliers as $supplier){ ?>
@@ -298,10 +239,20 @@
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
-
-                                                            <br /><br />
-                                                            <label class="col-lg-2"> * Branch :</label>
-                                                            <div class="col-lg-10">
+                                                            <div class="col-lg-3 col-lg-offset-3">
+                                                            <label>  Txn # :</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-code"></i>
+                                                                    </span>
+                                                                    <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            
+                                                            <div class="col-lg-6">
+                                                            <label class=""> <b class="required">*</b> Branch :</label>
                                                                 <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
                                                                     <option value="0">[ Create New Department ]</option>
                                                                     <?php foreach($departments as $department){ ?>
@@ -309,20 +260,28 @@
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
-
-                                                            <br /><br />
+                                                            <div class="col-lg-3 col-lg-offset-3">
+                                                            <label> <b class="required">*</b>  Date :</label>
+                                                                <div class="input-group">
+                                                                    <span class="input-group-addon">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                    </span>
+                                                                    <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                                                </div>
+                                                            </div>
+                                                        </div><br>
                                                             <span><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
                                                             <hr />
 
                                                             <div style="width: 100%;">
-                                                                <table id="tbl_entries" class="custom-design table-striped">
+                                                                <table id="tbl_entries" class="table table-striped">
                                                                     <thead class="">
                                                                     <tr>
                                                                         <th style="width: 30%;">Account</th>
-                                                                        <th style="width: 30%;">Memo</th>
+                                                                        <th >Memo</th>
                                                                         <th style="width: 15%;text-align: right;">Dr</th>
                                                                         <th style="width: 15%;text-align: right;">Cr</th>
-                                                                        <th>Action</th>
+                                                                        <th width="10%">Action</th>
                                                                     </tr>
                                                                     </thead>
 
@@ -360,9 +319,7 @@
                                                                             <button type="button" class="btn btn-default remove_account"><i class="fa fa-times-circle" style="color: red;"></i></button>
                                                                         </td>
                                                                     </tr>
-
                                                                     </tbody>
-
                                                                     <tfoot>
                                                                     <tr>
                                                                         <td colspan="2" align="right"><strong>Total</strong></td>
@@ -371,30 +328,17 @@
                                                                         <td></td>
                                                                     </tr>
                                                                     </tfoot>
-
-
                                                                 </table>
-
                                                             </div>
-
-
-                                                            <hr />
-                                                            <label>Remarks :</label><br />
-                                                            <textarea name="remarks" class="col-lg-12"></textarea>
-
+                                                            <label>Remarks :</label>
+                                                            <textarea name="remarks" class="col-lg-12 form-control"></textarea>
                                                         </form>
-
-                                                        <br /><br /><hr />
-
                                                         <div class="row">
-                                                            <div class="col-sm-12">
+                                                            <div class="col-sm-12"><hr />
                                                                 <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Save Changes</button>
                                                                 <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
 
                                         </div>
 
@@ -709,6 +653,7 @@
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
 
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrap-select.min.js"></script>-->
@@ -815,7 +760,7 @@
                     { targets:[2],data: "supplier_name" },
                     { targets:[3],data: "term_description" },
                     { targets:[4],data: "date_delivered" },
-                    { targets:[5],data: "remarks" }
+                    { targets:[5],data: "remarks",  render: $.fn.dataTable.render.ellipsis(60) }
                 ]
             });
 
@@ -988,6 +933,7 @@
                 _txnMode="new";
                 clearFields($('#div_payable_fields'))
                 showList(false);
+                $('input[name="date_txn"]').datepicker('setDate','today');
                 //$('#modal_journal_entry').modal('show');
             });
 
