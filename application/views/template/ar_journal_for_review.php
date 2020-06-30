@@ -27,41 +27,11 @@
 
 
     <form id="frm_journal_review" role="form" class="form-horizontal row-border">
-
-
-        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Sales Journal</strong></span></h4>
-        <hr />
-
-        <div style="width: 90%;">
             <input type="hidden" name="sales_invoice_id" value="<?php echo $sales_info->sales_invoice_id; ?>">
-
-
-            <label class="col-lg-2"> * Txn # :</label>
-            <div class="col-lg-10">
-                <input type="text" name="txn_no" class="form-control" style="font-weight: bold;" placeholder="TXN-MMDDYYY-XXX" readonly>
-            </div>
-
-            <br /><br />
-
-            <label class="col-lg-2"> * Date :</label>
-            <div class="col-lg-10">
-                <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $sales_info->date_invoice; ?>">
-            </div>
-
-            <br /><br />
-
-            <label class="col-lg-2"> * Customer :</label>
-            <div class="col-lg-10">
-                <select name="customer_id" class="cbo_customer_list" data-error-msg="Customer is required." required>
-                    <?php foreach($customers as $customer){ ?>
-                        <option value="<?php echo $customer->customer_id; ?>" <?php echo ($sales_info->customer_id===$customer->customer_id?'selected':''); ?>><?php echo $customer->customer_name; ?></option>
-                    <?php } ?>
-                </select>
-
-            </div>
-            <br /><br />
-            <label class="col-lg-2"> * Branch :</label>
-            <div class="col-lg-10">
+            <div class="row">
+            
+            <div class="col-lg-6">
+            <label > <b class="required">*</b> Branch :</label>
                 <select name="department_id" class="cbo_department_list" data-error-msg="Branch is required." required>
                     <?php foreach($departments as $department){ ?>
                         <option value="<?php echo $department->department_id; ?>" <?php echo ($sales_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
@@ -69,23 +39,43 @@
                 </select>
 
             </div>
+            
+            <div class="col-lg-3 col-lg-offset-3">
+            <label> Txn # :</label>
+                <input type="text" name="txn_no" class="form-control" style="font-weight: bold;" placeholder="TXN-MMDDYYY-XXX" readonly>
+            </div>
 
-        </div>
+            </div>
 
+            <div class="row">
+            
+            <div class="col-lg-6">
+            <label > <b class="required">*</b> Customer :</label>
+                <select name="customer_id" class="cbo_customer_list" data-error-msg="Customer is required." required>
+                    <?php foreach($customers as $customer){ ?>
+                        <option value="<?php echo $customer->customer_id; ?>" <?php echo ($sales_info->customer_id===$customer->customer_id?'selected':''); ?>><?php echo $customer->customer_name; ?></option>
+                    <?php } ?>
+                </select>
 
+            </div>   
+            
+            <div class="col-lg-3 col-lg-offset-3">
+                <label class=""> <b class="required">*</b> Date :</label>
+                <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $sales_info->date_invoice; ?>">
+            </div>
+            </div>
 
-        <br /><br /><br />
-        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Journal Entries</strong></span></h4>
+        <br /><span><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
         <hr />
 
         <table id="tbl_entries_for_review_<?php echo $sales_info->sales_invoice_id; ?>" class="table table-bordered" style="background-color: white;">
             <thead>
-            <tr style="border-bottom:solid gray;">
+            <tr style="">
                 <th style="width: 30%;">Account</th>
-                <th style="width: 30%;">Memo</th>
+                <th >Memo</th>
                 <th style="width: 15%;text-align: right;">Dr</th>
                 <th style="width: 15%;text-align: right;">Cr</th>
-                <th>Action</th>
+                <th width="10%">Action</th>
             </tr>
             </thead>
 
@@ -136,9 +126,6 @@
             </tfoot>
 
         </table>
-
-
-        <hr />
         <label class="col-lg-2"> Remarks :</label><br />
         <div class="col-lg-12">
             <textarea name="remarks" class="form-control" style="width: 100%;"></textarea>
@@ -162,28 +149,28 @@
 
 <div class="tab-pane" id="purchase_review_<?php echo $sales_info->sales_invoice_id; ?>" >
 
-    <h4><span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Sales Invoice</strong></span></h4>
+    <span style="margin-left: 1%"><strong><i class="fa fa-bars"></i> Sales Invoice</strong></span>
     <hr />
 
     <div style="margin-left: 2%">
 
         <div class="row">
             <div class="col-lg-6">
-                <i class="fa fa-code"></i> Invoice # : <?php echo $sales_info->sales_inv_no; ?><br />
-                <i class="fa fa-bookmark"></i> SO # : <?php echo $sales_info->so_no; ?><br /><br />
-                <i class="fa fa-calendar-o"></i> Invoice Date : <?php echo $sales_info->date_invoice; ?><br />
-                <i class="fa fa-file-o"></i> Remarks : <?php echo $sales_info->remarks; ?><br />
+                <i class="fa fa-code"></i> <b>Invoice # : </b><?php echo $sales_info->sales_inv_no; ?><br />
+                <i class="fa fa-bookmark"></i> <b>SO # : </b><?php echo $sales_info->so_no; ?><br /><br />
+                <i class="fa fa-calendar-o"></i> <b>Invoice Date : </b><?php echo $sales_info->date_invoice; ?><br />
+                <i class="fa fa-file-o"></i> <b>Remarks : </b><?php echo $sales_info->remarks; ?><br />
             </div>
 
             <div class="col-lg-6">
-                <i class="fa fa-users"></i> Customer : <?php echo $sales_info->customer_name; ?><br />
-                <i class="fa fa-globe"></i> Address : <?php echo $sales_info->address; ?><br />
-                <i class="fa fa-send"></i> Email : <?php echo $sales_info->email_address; ?><br />
-                <i class="fa fa-phone-square"></i> Telephone : <?php echo $sales_info->contact_no; ?><br />
+                <i class="fa fa-users"></i><b> Customer : </b><?php echo $sales_info->customer_name; ?><br />
+                <i class="fa fa-globe"></i><b> Address : </b><?php echo $sales_info->address; ?><br />
+                <i class="fa fa-send"></i> <b>Email : </b><?php echo $sales_info->email_address; ?><br />
+                <i class="fa fa-phone-square"></i> <b>Telephone : </b><?php echo $sales_info->contact_no; ?><br />
                 <br />
 
-                <i class="fa fa-user"></i> Posted by : <?php echo $sales_info->posted_by; ?><br />
-                <i class="fa fa-calendar"></i> Date : <?php echo $sales_info->date_created; ?><br />
+                <i class="fa fa-user"></i> <b>Posted by : </b><?php echo $sales_info->posted_by; ?><br />
+                <i class="fa fa-calendar"></i> <b>Date : </b><?php echo $sales_info->date_created; ?><br />
 
             </div>
         </div>
@@ -192,9 +179,9 @@
 
         <br /><br />
 
-        <table class="table table-bordered" style="background-color: white;">
+        <table class="table table-striped" style="background-color: white;">
             <thead>
-            <tr style="border-bottom: solid gray;">
+            <tr style="">
                 <td style="width: 40%;"><strong>Item</strong></td>
                 <td style="width: 12%;text-align: right;"><strong>Qty</strong></td>
                 <td style="width: 12%;"><strong>UM</strong></td>

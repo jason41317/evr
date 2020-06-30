@@ -34,11 +34,6 @@
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
         .alert {
             border-width: 0;
             border-style: solid;
@@ -195,16 +190,10 @@
 
     <div class="panel-group panel-default" id="accordionA">
 
-        <div class="panel panel-default" style="border-radius: 6px;border: 1px solid lightgrey;">
-            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo">
-                <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
-                    <b style="font-size: 12pt;color:white;"><i class="fa fa-bars"></i> Review Sales Journal (Pending)</b>
-                </div>
-            </a>
-            <div id="" class="">
+        <div class="panel panel-default" style="">
                 <div class="panel-body">
-                    <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
-                    <table id="tbl_sales_review" class="custom-design table-striped" cellspacing="0" width="100%">
+                    <h2 class="h2-panel-heading"> Review Sales Journal (Pending)</h2><hr>
+                    <table id="tbl_sales_review" class="table table-striped" cellspacing="0" width="100%">
                         <thead class="">
                         <tr>
                             <th>&nbsp;</th>
@@ -218,20 +207,13 @@
 
                         </tbody>
                     </table>
-                    </div>
                 </div>
-            </div>
         </div>
 
-        <div class="panel panel-default" style="border-radius: 6px;border: 1px solid lightgrey;">
-            <a data-toggle="collapse" data-parent="#accordionA" href="#collapseOne">
-                <div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;">
-                    <b style="font-size: 11pt;color:white;"><i class="fa fa-bars"></i> Sales / AR Journal</b>
-                </div>
-            </a>
+        <div class="panel panel-default" style="">
                 <div class="panel-body" style="min-height: 400px;">
-                    <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
-                    <table id="tbl_accounts_receivable" class="custom-design table-striped" cellspacing="0" width="100%">
+                <h2 class="h2-panel-heading"> Sales / AR Journal</h2><hr>
+                    <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
                         <thead class="">
                         <tr>
                             <th></th>
@@ -248,7 +230,6 @@
 
                         </tbody>
                     </table>
-                    </div>
 
                 </div>
         </div>
@@ -267,62 +248,32 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
-                <!-- <div class="panel-heading">
-                    <h2>Sales Journal</h2>
-                    <div class="panel-ctrls" data-actions-container=""></div>
-                </div> -->
-
-
                 <div class="panel-body">
-                <h2>Sales Journal</h2>
-
-                    <div class="tab-container tab-top tab-primary">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#supplier_info" data-toggle="tab"><i class="fa fa-bars"></i> Transaction</a></li>
-
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="supplier_info" style="min-height: 300px;">
-
-
+                <h2 class="h2-panel-heading"> Sales / AR Journal</h2><hr>
                                 <form id="frm_journal" role="form" class="form-horizontal">
-
-                                    <span><strong><i class="fa fa-bars"></i>  Info</strong></span>
-                                    <hr />
-
-                                    <label class="col-lg-2"> * Txn # :</label>
-                                    <div class="col-lg-4">
-
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                    <label class=""> <b class="required">*</b> Branch :</label>
+                                        <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
+                                            <option value="0">[ Create New Department ]</option>
+                                            <?php foreach($departments as $department){ ?>
+                                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>                                    
+                                    <div class="col-lg-3 col-lg-offset-3">
+                                    <label class=""> Txn # :</label>
                                         <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-code"></i>
-                                    </span>
+                                            <span class="input-group-addon">
+                                                <i class="fa fa-code"></i>
+                                            </span>
                                             <input type="text" name="txn_no" class="form-control" placeholder="TXN-YYYYMMDD-XXX" readonly>
-
                                         </div>
-
-
                                     </div>
-
-                                    <label class="col-lg-2"> * Date :</label>
-                                    <div class="col-lg-4">
-                                        <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </span>
-                                            <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
-                                        </div>
-
-                                    </div>
-
-
-
-
-
-                                    <br /><br />
-
-                                    <label class="col-lg-2"> * Customer :</label>
-                                    <div class="col-lg-10">
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                    <label class=""> <b class="required">*</b> Customer :</label>
                                         <select id="cbo_customers" name="customer_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Customer is required." required>
                                             <option value="0">[ Create New Customer ]</option>
                                             <?php foreach($customers as $customer){ ?>
@@ -330,27 +281,21 @@
                                             <?php } ?>
                                         </select>
                                     </div>
-
-
-                                    <br /><br />
-
-                                    <label class="col-lg-2"> * Branch :</label>
-                                    <div class="col-lg-10">
-                                        <select id="cbo_departments" name="department_id" class="selectpicker show-tick form-control" data-live-search="true" data-error-msg="Department is required." required>
-                                            <option value="0">[ Create New Department ]</option>
-                                            <?php foreach($departments as $department){ ?>
-                                                <option value='<?php echo $department->department_id; ?>'><?php echo $department->department_name; ?></option>
-                                            <?php } ?>
-                                        </select>
+                                    <div class="col-lg-3 col-lg-offset-3">
+                                    <label class=""> <b class="required">*</b> Date :</label>
+                                        <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </span>
+                                            <input type="text" name="date_txn" class="date-picker form-control" data-error-msg="Date is required." required>
+                                        </div>
                                     </div>
-
-
-                                    <br /><br />
+                                </div><br />
                                     <span><strong><i class="fa fa-bars"></i> Journal Entries</strong></span>
                                     <hr />
 
                                     <div style="width: 100%;">
-                                        <table id="tbl_entries" class="custom-design table-striped">
+                                        <table id="tbl_entries" class="table table-striped">
                                             <thead class="">
                                             <tr>
                                                 <th style="width: 30%;">Account</th>
@@ -410,25 +355,16 @@
                                         </table>
 
                                     </div>
-
-
-                                    <hr />
                                     <label>Remarks :</label><br />
-                                    <textarea name="remarks" class="col-lg-12"></textarea>
+                                    <textarea name="remarks" class="col-lg-12 form-control"></textarea>
 
                                 </form>
-
-                                <br /><br /><hr />
-
                                 <div class="row">
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-12"><hr>
                                         <button id="btn_save" class="btn-primary btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span>  Save Changes</button>
                                         <button id="btn_cancel" class="btn-default btn" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"">Cancel</button>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
 
 
 
@@ -499,7 +435,7 @@
 
 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content">
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Confirm Cancellation</h4>
@@ -514,7 +450,7 @@
                 <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
             </div>
-        </div><!---content---->
+        </div>
     </div>
 </div><!---modal-->
 
@@ -660,7 +596,7 @@
 
 <div id="modal_new_department" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
-        <div class="modal-content"><!---content--->
+        <div class="modal-content">
             <div class="modal-header ">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
                 <h4 class="modal-title" style="color: white;"><span id="modal_mode"> </span>New Branch</h4>
@@ -694,7 +630,7 @@
                 <button id="btn_create_department" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
                 <button id="btn_close_close_department" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div>
     </div>
 </div><!---modal-->
 
@@ -985,6 +921,7 @@ $(document).ready(function(){
             _txnMode="new";
             clearFields($('#div_receivable_fields'))
             showList(false);
+            $('input[name="date_txn"]').datepicker('setDate','today');
             //$('#modal_journal_entry').modal('show');
         });
 

@@ -708,7 +708,7 @@ class Templates extends CORE_Controller {
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
-                    echo $this->load->view('template/journal_entries_content',$data,TRUE);
+                    echo $this->load->view('template/journal_entries_content_wo_header',$data,TRUE);
                     echo $this->load->view('template/journal_entries_content_menus',$data,TRUE);
                 }
 
@@ -800,7 +800,7 @@ class Templates extends CORE_Controller {
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
-                    echo $this->load->view('template/cdj_journal_entries_content',$data,TRUE);
+                    echo $this->load->view('template/cdj_journal_entries_content_wo_header',$data,TRUE);
                     echo $this->load->view('template/cdj_journal_entries_content_menus',$data,TRUE);
                 }
 
@@ -888,7 +888,7 @@ class Templates extends CORE_Controller {
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
-                    echo $this->load->view('template/sales_journal_entries_content',$data,TRUE);
+                    echo $this->load->view('template/sales_journal_entries_content_wo_header',$data,TRUE);
                     echo $this->load->view('template/sales_journal_entries_content_menus',$data,TRUE);
                 }
 
@@ -972,7 +972,7 @@ class Templates extends CORE_Controller {
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
-                    echo $this->load->view('template/crj_journal_entries_content',$data,TRUE);
+                    echo $this->load->view('template/crj_journal_entries_content_wo_header',$data,TRUE);
                     echo $this->load->view('template/crj_journal_entries_content_menus',$data,TRUE);
                 }
 
@@ -1012,7 +1012,7 @@ class Templates extends CORE_Controller {
                 $company_info=$m_company->get_list();
                 $journal_info=$m_journal_info->get_list(
 
-                    "journal_info.is_active=TRUE AND journal_info.is_deleted=FALSE AND journal_info.book_type='GJE' AND journal_info.journal_id=$journal_id",
+                    " journal_info.book_type='GJE' AND journal_info.journal_id=$journal_id",
 
                     array(
                         'journal_info.journal_id',
@@ -1061,7 +1061,7 @@ class Templates extends CORE_Controller {
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){
-                    echo $this->load->view('template/gje_journal_entries_content',$data,TRUE);
+                    echo $this->load->view('template/gje_journal_entries_content_wo_header',$data,TRUE);
                     echo $this->load->view('template/gje_journal_entries_content_menus',$data,TRUE);
                 }
 
