@@ -36,6 +36,7 @@ class Sales_order_item_model extends CORE_Model
                 SELECT
                 m.sales_order_id,
                 m.so_no,m.product_id,m.batch_no,m.exp_date,
+                m.product_category,
                 MAX(m.so_price)as so_price,
                 MAX(m.so_discount)as so_discount,
                 MAX(m.so_tax_rate)as so_tax_rate,
@@ -46,23 +47,23 @@ class Sales_order_item_model extends CORE_Model
 
                 (
                     SELECT so.sales_order_id,so.so_no,soi.product_id,so_price as price,SUM(soi.so_qty) as SoQty,0 as InvQty,
-                    soi.so_price,soi.so_discount,soi.so_tax_rate,soi.batch_no,soi.exp_date FROM sales_order as so
-                    INNER JOIN sales_order_items as soi ON so.sales_order_id=soi.sales_order_id
+                    soi.so_price,soi.so_discount,soi.so_tax_rate,soi.batch_no,soi.exp_date,soi.product_category FROM sales_order as so
+                    INNER JOIN (SELECT *, IF(ROUND(so_price) = 0, 'free','paid') as product_category FROM sales_order_items) soi ON so.sales_order_id=soi.sales_order_id
                     WHERE so.sales_order_id=$sales_order_id AND so.is_active=TRUE AND so.is_deleted=FALSE
-                    GROUP BY so.so_no,soi.product_id,soi.so_price
+                    GROUP BY so.so_no,soi.product_id,soi.product_category
 
 
                     UNION ALL
                     
 
                     SELECT so.sales_order_id,so.so_no,sii.product_id,inv_price as price,0 as SoQty,SUM(sii.inv_qty) as InvQty,
-                    0 as so_price,0 as so_discount,0 as so_tax_rate,sii.batch_no,sii.exp_date FROM (sales_invoice as si
+                    0 as so_price,0 as so_discount,0 as so_tax_rate,sii.batch_no,sii.exp_date,sii.product_category FROM (sales_invoice as si
                     INNER JOIN sales_order as so ON si.sales_order_id=so.sales_order_id)
-                    INNER JOIN sales_invoice_items as sii ON si.sales_invoice_id=sii.sales_invoice_id
+                    INNER JOIN (SELECT *, IF(ROUND(inv_price) = 0, 'free','paid') as product_category FROM sales_invoice_items) as sii ON si.sales_invoice_id=sii.sales_invoice_id
                     WHERE so.sales_order_id=$sales_order_id AND si.is_active=TRUE AND si.is_deleted=FALSE
-                    GROUP BY so.so_no,sii.product_id,sii.inv_price)as
+                    GROUP BY so.so_no,sii.product_id,sii.product_category)as
 
-                    m GROUP BY m.so_no,m.product_id,m.price HAVING so_qty>0
+                    m GROUP BY m.so_no,m.product_id,m.product_category HAVING so_qty>0
 
                 )as main
 
@@ -92,30 +93,31 @@ class Sales_order_item_model extends CORE_Model
                 max(m.date_invoice) as last_invoice_date,
                 m.SoQty as SoQtyTotal,
                 (m.SoQty - (SUM(m.SoQty)-SUM(m.InvQty))) as SoQtyDelivered,
-                (SUM(m.SoQty)-SUM(m.InvQty))as SoQtyBalance
+                (SUM(m.SoQty)-SUM(m.InvQty))as SoQtyBalance,
+                m.product_category
 
 
                 FROM
 
                 (
-                    SELECT so.sales_order_id,so.so_no,'' as date_invoice,soi.product_id,soi.so_price as price,SUM(soi.so_qty) as SoQty,0 as InvQty
+                    SELECT so.sales_order_id,so.so_no,'' as date_invoice,soi.product_id,soi.so_price as price,SUM(soi.so_qty) as SoQty,0 as InvQty,soi.product_category
                     FROM sales_order as so
-                    INNER JOIN sales_order_items as soi ON so.sales_order_id=soi.sales_order_id
+                    INNER JOIN (SELECT *, IF(ROUND(so_price) = 0, 'free','paid') as product_category FROM sales_order_items) soi ON so.sales_order_id=soi.sales_order_id
                     WHERE  so.is_active=TRUE AND so.is_deleted=FALSE AND (so.order_status_id=1 OR so.order_status_id=3) AND so.is_closed = FALSE
-                    GROUP BY so.so_no,soi.product_id,soi.so_price
+                    GROUP BY so.so_no,soi.product_id,soi.product_category
 
                     UNION ALL
 
-                    SELECT so.sales_order_id,so.so_no,max(si.date_invoice),sii.product_id,sii.inv_price as price,0 as SoQty,SUM(sii.inv_qty) as InvQty
+                    SELECT so.sales_order_id,so.so_no,max(si.date_invoice),sii.product_id,sii.inv_price as price,0 as SoQty,SUM(sii.inv_qty) as InvQty,sii.product_category
                     FROM (sales_invoice as si
                     INNER JOIN sales_order as so ON si.sales_order_id=so.sales_order_id)
-                    INNER JOIN sales_invoice_items as sii ON si.sales_invoice_id=sii.sales_invoice_id
+                    INNER JOIN (SELECT *, IF(ROUND(inv_price) = 0, 'free','paid') as product_category FROM sales_invoice_items) as sii ON si.sales_invoice_id=sii.sales_invoice_id
                     WHERE  si.is_active=TRUE AND si.is_deleted=FALSE
-                    GROUP BY so.so_no,sii.product_id,sii.inv_price
+                    GROUP BY so.so_no,sii.product_id,sii.product_category
 
                     )as
 
-                    m GROUP BY m.so_no,m.product_id,m.price HAVING SoQtyBalance>0
+                    m GROUP BY m.so_no,m.product_id,m.product_category HAVING SoQtyBalance>0
 
                 )as main
 
@@ -145,30 +147,31 @@ class Sales_order_item_model extends CORE_Model
             
                 m.SoQty as SoQtyTotal,
    
-                (SUM(m.SoQty)-SUM(m.InvQty))as SoQtyBalance
+                (SUM(m.SoQty)-SUM(m.InvQty))as SoQtyBalance,
+                m.product_category
 
 
                 FROM
 
                 (
-                    SELECT so.sales_order_id,so.so_no,soi.product_id,soi.so_price as price,SUM(soi.so_qty) as SoQty,0 as InvQty
+                    SELECT so.sales_order_id,so.so_no,soi.product_id,soi.so_price as price,SUM(soi.so_qty) as SoQty,0 as InvQty,soi.product_category
                     FROM sales_order as so
-                    INNER JOIN sales_order_items as soi ON so.sales_order_id=soi.sales_order_id
+                    INNER JOIN (SELECT *, IF(ROUND(so_price) = 0, 'free','paid') as product_category FROM sales_order_items) soi ON so.sales_order_id=soi.sales_order_id
                     WHERE  so.is_active=TRUE AND so.is_deleted=FALSE AND (so.order_status_id=1 OR so.order_status_id=3) AND so.is_closed = FALSE
-                    GROUP BY so.so_no,soi.product_id,soi.so_price
+                    GROUP BY so.so_no,soi.product_id,soi.product_category
 
 
                     UNION ALL
                     
 
-                    SELECT so.sales_order_id,so.so_no,sii.product_id,sii.inv_price as price,0 as SoQty,SUM(sii.inv_qty) as InvQty
+                    SELECT so.sales_order_id,so.so_no,sii.product_id,sii.inv_price as price,0 as SoQty,SUM(sii.inv_qty) as InvQty,sii.product_category
                     FROM (sales_invoice as si
                     INNER JOIN sales_order as so ON si.sales_order_id=so.sales_order_id)
-                    INNER JOIN sales_invoice_items as sii ON si.sales_invoice_id=sii.sales_invoice_id
+                    INNER JOIN (SELECT *, IF(ROUND(inv_price) = 0, 'free','paid') as product_category FROM sales_invoice_items) as sii ON si.sales_invoice_id=sii.sales_invoice_id
                     WHERE  si.is_active=TRUE AND si.is_deleted=FALSE
-                    GROUP BY so.so_no,sii.product_id,sii.inv_price)as
+                    GROUP BY so.so_no,sii.product_id,sii.product_category)as
 
-                    m GROUP BY m.so_no,m.product_id,m.price HAVING SoQtyBalance>0
+                    m GROUP BY m.so_no,m.product_id,m.product_category HAVING SoQtyBalance>0
 
                 )as main
 

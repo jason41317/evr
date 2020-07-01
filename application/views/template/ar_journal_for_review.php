@@ -202,7 +202,7 @@
                 <tr>
                     <td><?php echo $item->product_desc; ?></td>
                     <td align="right"><?php echo number_format($item->inv_qty,2); ?></td>
-                    <td>pcs</td>
+                    <td><?php echo $item->unit_name; ?></td>
                     <td align="right"><?php echo number_format($item->inv_price,2); ?></td>
                     <td align="right"><?php echo number_format($item->inv_tax_amount,2); ?></td>
                     <td align="right"><?php echo number_format($item->inv_line_total_price,2); ?></td>
