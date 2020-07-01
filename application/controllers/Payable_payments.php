@@ -104,11 +104,13 @@ class Payable_payments extends CORE_Controller
                 $payable_amount=$this->input->post('payable_amount',TRUE);
 
                 for($i=0;$i<=count($payment_amount)-1;$i++){
+                    if($this->get_numeric_value($payment_amount[$i]) >0){
                     $m_payment_items->payment_id=$payment_id;
                     $m_payment_items->dr_invoice_id=$dr_invoice_id[$i];
                     $m_payment_items->payment_amount=$this->get_numeric_value($payment_amount[$i]);
                     $m_payment_items->payable_amount=$this->get_numeric_value($payable_amount[$i]);
                     $m_payment_items->save();
+                    }
                 }
 
 
