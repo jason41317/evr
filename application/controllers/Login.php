@@ -31,7 +31,15 @@ class Login extends CORE_Controller {
         $data['_def_css_files']=$this->load->view('template/assets/css_files','',TRUE);
         $data['_def_js_files']=$this->load->view('template/assets/js_files','',TRUE);
         $data['company_info'] = $this->Company_model->get_list(1)[0];
-        $this->load->view('login_view',$data);
+        
+
+        if($this->session->userdata('logged_in') == 1) {
+            redirect(base_url('Dashboard'));
+        } else {
+
+            $this->load->view('login_view',$data);
+
+        }
 
     }
 
@@ -132,6 +140,7 @@ class Login extends CORE_Controller {
                                 'user_photo'=>$result->row()->photo_path,
                                 'company_top_navigation'=>$company[0]->company_name,
                                 'user_rights'=>$user_rights,
+                                'logged_in'=>1,
                                 'parent_rights'=>$parent_links
                             )
                         );
