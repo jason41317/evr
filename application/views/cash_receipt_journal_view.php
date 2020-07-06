@@ -154,6 +154,23 @@
             padding-bottom: 15px;
         }
         
+        #tbl_accounts_receivable_filter{
+            display: none;
+        }
+
+        div.dataTables_processing{ 
+                position: absolute!important; 
+                top: 0%!important; 
+                right: -45%!important; 
+                left: auto!important; 
+                width: 100%!important; 
+                height: 40px!important; 
+                background: none!important; 
+                background-color: transparent!important; 
+        } 
+        .right_align{
+            text-align: right;
+        }
     </style>
 
 </head>
@@ -205,7 +222,34 @@
     </div>
     <div class="panel panel-default">
         <div class="panel-body" style="min-height: 400px;">
-            <h2 class="h2-panel-heading">Review Collection (Pending)</h2><hr>
+            <h2 class="h2-panel-heading">Cash Receipt Journal</h2><hr>
+                <div class="row">
+                    <div class="col-lg-3">&nbsp;<br>
+                        <button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Cash Receipt Journal" ><i class="fa fa-plus"></i> New Cash Receipt Journal</button>
+                    </div>
+                    <div class="col-lg-3">
+                            From :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_start_date_ar" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            To :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_end_date_ar" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            Search :<br />
+                             <input type="text" id="searchbox_ar" class="form-control">
+                    </div>
+                </div><br>
             <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -661,7 +705,22 @@ $(document).ready(function(){
         dt=$('#tbl_accounts_receivable').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "ajax" : "Cash_receipt/transaction/list",
+            "order": [[ 8, "desc" ]],
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "Cash_receipt/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date_ar').val(),
+                            "ted":$('#txt_end_date_ar').val()
+
+                        });
+                    }
+            },
             "columns": [
                 {
                     "targets": [0],
@@ -700,7 +759,8 @@ $(document).ready(function(){
                         /*return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';*/
                         return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
-                }
+                },
+                { targets:[5],data: "journal_id", visible:false },
             ]
         });
 
@@ -756,15 +816,6 @@ $(document).ready(function(){
 
         });
 
-
-        var createToolBarButton=function() {
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Cash Receipt Journal" >'+
-                '<i class="fa fa-plus-circle"></i> New Cash Receipt Journal</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
-
-
-
         _cboCustomers=$('#cbo_customers').select2({
             placeholder: "Please select customer.",
             allowClear: true
@@ -799,6 +850,19 @@ $(document).ready(function(){
 
 
     var bindEventHandlers=function(){
+        $("#txt_start_date_ar").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+        });
+
+        $("#txt_end_date_ar").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+        });
+        $("#searchbox_ar").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
         var detailRows = [];
 
         $('#tbl_accounts_receivable tbody').on( 'click', 'tr td.details-control', function () {
