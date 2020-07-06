@@ -34,10 +34,7 @@
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
 
     <style>
-        html{
-            zoom: 0.75;
-            zoom: 75%;
-        }
+
 
         .toolbar{
             float: left;
@@ -78,12 +75,13 @@
 
 
                                             <div class="panel panel-default" style="border-radius: 0px;border: 1px solid lightgrey;min-height: 800px;">
-                                                <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Schedule of Expense</b></div></a>
+                                               <!--  <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Schedule of Expense</b></div></a> -->
 
 
                                                 <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
-                                                        <div style="border: 1px solid #a0a4a5;padding: 8px;border-radius: 0px;padding-bottom: 10px;margin-bottom: 5px;">
+                                                    <h2 class="h2-panel-heading">Schedule of Expense</h2><hr>
+                                                        <div >
                                                             <div class="row">
 
                                                                 <div class="col-lg-6">
@@ -111,9 +109,9 @@
 
                                                         </div>
 
+                                                        <br>
 
-
-                                                        <table id="tbl_expenses" class="custom-design table-striped">
+                                                        <table id="tbl_expenses" class="table table-striped" width="100%">
                                                             <thead>
                                                             <tr>
                                                                 <th width="55%">Operating Expenses</th>

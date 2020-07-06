@@ -32,10 +32,7 @@
 
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
+
 
         .drag_member{
             cursor: pointer;
@@ -163,10 +160,11 @@
                                             <div id="div_tests" class="panel panel-default" style="border: 3px solid #2196f3;border-radius: 5px;">
 
                                                 <div class="panel-body" style="min-height: 400px;">
-                                                    <b><i class="fa fa-bars"></i> Check Layout</b><hr />
-                                                    <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 5%;">
-                                                        <table id="tbl_check_layouts" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                                            <thead class="table-erp">
+                                                <h2 class="h2-panel-heading">Check Layout</h2><hr>
+                                                    <!-- <b><i class="fa fa-bars"></i> Check Layout</b><hr /> -->
+                                                    <div style="">
+                                                        <table id="tbl_check_layouts" class="table table-striped d" cellspacing="0" width="100%">
+                                                            <thead class="">
                                                             <tr>
 
                                                                 <th>Check Layout</th>
@@ -323,7 +321,7 @@
             });
 
             var createToolBarButton=function(){
-                var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Check Layout" >'+
+                var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Check Layout" >'+
                     '<i class="fa fa-plus-circle"></i> New Check Layout</button>';
                 $("div.toolbar").html(_btnNew);
             }();

@@ -111,10 +111,10 @@
 
         <div class="tab-container tab-top tab-primary">
             <ul class="nav nav-tabs">
-                <li class="hidden"><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Accounts</a></li>
-                <li class="hidden "><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li>
+                <li class=""><a href="#accounts_integration_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Accounts</a></li>
+                <li class=" "><a href="#sched_expense_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-gear"></i> Expense Group (Schedule of Expense)</a></li>
 
-                <li class="hidden "><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-calendar"></i> Accounting Period</a></li>
+                <li class=" "><a href="#account_year_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-calendar"></i> Accounting Period</a></li>
                 <li class="active"><a href="#invoice_counter_setting" data-toggle="tab" style="font-family: tahoma;"><i class="fa fa-code"></i> Invoice Number</a></li>
 
             </ul>
@@ -283,7 +283,7 @@
                 <div class="tab-pane" id="sched_expense_setting" style="min-height: 300px;">
                     <br />
                     Please specify the group of each account :<br />
-                    <table class="custom-design table-striped">
+                    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th width="10%">Account #</th>
@@ -325,7 +325,7 @@
                             <br />
 
 
-                            <table id="tbl_account_year" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                            <table id="tbl_account_year" class="table table-striped " cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
                                         <td width="40%">Accounting Period</td>
