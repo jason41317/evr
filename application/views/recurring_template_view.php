@@ -23,11 +23,6 @@
     <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
 
     <style>
-        html {
-            zoom: 0.8;
-            zoom: 85%;
-        }
-
         .toolbar{
             float: left;
         }
@@ -84,13 +79,13 @@
 
                     <div class="container-fluid">
                         <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <b style="color:white;font-size: 12pt;" class="panel-title"><i class="fa fa-bars"></i> Recurring Template </b>
-                            </div>
+
+
                             <div class="panel-body">
+                            <h2 class="h2-panel-heading">Recurring Template </h2><hr>
                                 <div id="panel_list">
                                     <button id="btn_create" class="btn btn-green pull-left" style="text-transform: capitalize;"><i class="fa fa-plus"></i>&nbsp; Create New Template</button>
-                                    <table id="tbl_recurring_templates" class="table table-striped table-bordered" width="100%">
+                                    <table id="tbl_recurring_templates" class="table table-striped" width="100%">
                                         <thead>
                                             <th>Book Type</th>
                                             <th>Template Code</th>
@@ -154,7 +149,7 @@
                                             </div><br>
                                             <div class="container-fluid group-box">
                                                 <div style="width: 100%;">
-                                                    <table id="tbl_entries" class="custom-design table-striped">
+                                                    <table id="tbl_entries" class="table table-striped">
                                                         <thead class="">
                                                         <tr>
                                                             <th style="width: 30%;">Account</th>
@@ -219,7 +214,7 @@
 
                                                 <hr />
                                                 <label>Remarks :</label><br />
-                                                <textarea name="remarks" class="col-lg-12"></textarea>
+                                                <textarea name="remarks" class="col-lg-12 form-control"></textarea>
 
                                             </form>
                                             </div>

@@ -34,10 +34,6 @@
 
     <style>
 
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
 
         .toolbar{
             float: left;
@@ -45,7 +41,7 @@
 
         #tbl_payables td,#tbl_payables tr,#tbl_payables th{
             table-layout: fixed;
-            border: 1px solid gray;
+            /*border: 1px solid gray;*/
             border-collapse: collapse;
         }
 
@@ -165,12 +161,12 @@
 
     <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
 
-        <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Payment History</b></div></a>
+<!--         <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Payment History</b></div></a> -->
 
 
         <div class="panel-body table-responsive">
-
-            <table id="tbl_payments" class="custom-design table-striped" cellspacing="0" width="100%">
+            <h2 class="h2-panel-heading">Payment History</h2><hr>
+            <table id="tbl_payments" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
                     <th></th>
@@ -337,7 +333,7 @@
 
 
                 <div class="table-responsive">
-                    <table id="tbl_payables" class="custom-design table-striped" cellspacing="0" width="100%" style="font-font:tahoma;border: 1px solid gray;">
+                    <table id="tbl_payables" class="table table-striped" cellspacing="0" width="100%" style="">
                         <thead class="">
                         <tr>
                             <th width="12%">Invoice #</th>

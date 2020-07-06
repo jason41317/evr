@@ -33,10 +33,6 @@
 
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
 
         .toolbar{
             float: left;
@@ -44,7 +40,7 @@
 
         #tbl_receivables td,#tbl_receivables tr,#tbl_receivables th{
             table-layout: fixed;
-            border: 1px solid gray;
+            /*border: 1px solid gray;*/
             border-collapse: collapse;
         }
 
@@ -161,9 +157,9 @@
 
                                     <div class="panel panel-default" style="border: 3px solid #2196f3;border-radius: 5px;">
                                         <div class="panel-body table-responsive">
-                                            <h2>Collection Entry</h2>
-                                            <table id="tbl_payments" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                                <thead class="table-erp">
+                                            <h2 class="h2-panel-heading">Collection Entry</h2><hr>
+                                            <table id="tbl_payments" class="table table-striped" cellspacing="0" width="100%">
+                                                <thead class="">
                                                 <tr>
                                                     <th></th>
                                                     <th>Receipt #</th>
@@ -334,8 +330,8 @@
 
 
                                                 <div class="table-responsive">
-                                                    <table id="tbl_receivables" class="table table-striped table-bordered" cellspacing="0" width="100%" style="font-font:tahoma;border: 1px solid gray;">
-                                                        <thead class="table-erp">
+                                                    <table id="tbl_receivables" class="table table-striped" cellspacing="0" width="100%" style="font-font:tahoma;border: 1px solid gray;">
+                                                        <thead class="">
                                                         <tr>
 
                                                             <th width="12%">Invoice #</th>

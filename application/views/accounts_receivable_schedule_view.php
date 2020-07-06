@@ -34,10 +34,6 @@
     <link type="text/css" href="assets/plugins/iCheck/skins/minimal/_all.css" rel="stylesheet">                   <!-- Custom Checkboxes / iCheck -->
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
 
         .toolbar{
             float: left;
@@ -138,10 +134,13 @@
 
 
                                             <div class="panel panel-default" style="border-radius: 6px;border: 1px solid lightgrey;min-height: 670px;">
-                                                <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Accounts Receivable Entries</b></div></a>
+                                                <!-- <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;;"><b style="color:white;font-size: 12pt;"><i class="fa fa-bars"></i> Accounts Receivable Entries</b></div></a> -->
+
+
                                                 <div id="collapseTwo" class="collapse in">
                                                     <div class="panel-body">
-                                                        <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
+                                                    <h2 class="h2-panel-heading">Accounts Receivable Entries</h2><hr>
+                                                        <div style="">
                                                             <div class="row">
                                                                 <div class="col-lg-9">
                                                                     Account * : <br />
@@ -166,8 +165,8 @@
                                                         </div>
 <br />
 
-                                                        <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
-                                                            <table id="tbl_accounts_receivable" class="custom-design table-striped" cellspacing="0" width="100%">
+                                                        <div style="">
+                                                            <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
                                                                 <thead class="">
                                                                 <tr>
                                                                     <th width="5%"></th>
@@ -336,7 +335,7 @@
                     }
                 },
                 "columns": [
-                    {
+                    {   visible:false,
                         "targets": [0],
                         "class":          "details-control",
                         "orderable":      false,
