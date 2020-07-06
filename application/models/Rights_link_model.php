@@ -15,55 +15,98 @@ class Rights_link_model extends CORE_Model{
 
     function create_default_link_list(){
         $sql="INSERT INTO `rights_links` (`link_id`, `parent_code`, `link_code`, `link_name`) VALUES
-                                          -- (1,'1','1-1','General Journal'),
-                                          -- (2,'1','1-2','Cash Disbursement'),
-                                          -- (3,'1','1-3','Purchase Journal'),
-                                          -- (4,'1','1-4','Sales Journal'),
-                                          -- (5,'1','1-5','Cash Receipt'),
+                                          -- Financing
+                                          (1,'1','1-1','General Journal'),
+                                          (2,'1','1-2','Cash Disbursement'),
+                                          (3,'1','1-3','Purchase Journal'),
+                                          (4,'1','1-4','Sales Journal'),
+                                          (5,'1','1-5','Cash Receipt'),
+
+                                          -- Purchasing
                                           (6,'2','2-1','Purchase Order'),
                                           (7,'2','2-2','Purchase Invoice'),
-                                          -- (8,'2','2-3','Record Payment'),
+                                          (8,'2','2-3','Record Payment'),
                                           (9,'2','2-4','Item Issuance'),
                                           (10,'2','2-5','Item Adjustment (In)'),
+
+                                          -- Sales
                                           (11,'3','3-1','Sales Order'),
                                           (12,'3','3-2','Sales Invoice'),
-                                          -- (13,'3','3-3','Record Payment'),
+                                          (13,'3','3-3','Collection Entry'),
+
+                                          -- References
                                           (14,'4','4-1','Category Management'),
                                           (15,'4','4-2','Department Management'),
                                           (16,'4','4-3','Unit Management'),
+
+                                          -- Masterfiles
                                           (17,'5','5-1','Product Management'),
                                           (18,'5','5-2','Supplier Management'),
                                           (19,'5','5-3','Customer Management'),
+
+                                          -- Settings
                                           (20,'6','6-1','Setup Tax'),
-                                          -- (21,'6','6-2','Setup Chart of Accounts'),
+                                          (21,'6','6-2','Setup Chart of Accounts'),
                                           (22,'6','6-3','Account Integration'),
                                           (23,'6','6-4','Setup User Group'),
                                           (24,'6','6-5','Create User Account'),
                                           (25,'6','6-6','Setup Company Info'),
                                           -- (26,'7','7-1','Purchase Order for Approval'),
-                                          -- (27,'9','9-1','Balance Sheet Report'),
-                                          -- (28,'9','9-2','Income Statement'),
+
+                                          -- Accounting Reports
+                                          (27,'9','9-1','Balance Sheet Report'),
+                                          (28,'9','9-2','Income Statement'),
+
+                                          -- References
                                           (29,'4','4-4','Product Types'),
+
+                                          -- Sales & Purchasing Report
                                           (30,'8','8-1','Sales Report'),
                                           (31,'8','8-2','Batch Inventory Report'),
+
+                                          -- Masterfiles
                                           (32,'5','5-4','Salesperson Management'),
+
+                                          -- Purchasing
                                           (33,'2','2-6','Item Adjustment (Out)'),
+
+                                          -- Sales & Purchasing Report
                                           (34,'8','8-3','Export Sales Summary'),
-                                          -- (35,'9','9-3','Export Trial Balance'),
-                                          -- (36,'6','6-7','Setup Check Layout'),
-                                          -- (37,'9','9-4','AR Schedule'),
-                                          -- (38,'9','9-6','Customer Subsidiary'),
-                                          -- (39,'9','9-8','Account Subsidiary'),
-                                          -- (40,'9','9-7','Supplier Subsidiary'),
-                                          -- (41,'9','9-5','AP Schedule'),
+
+                                          -- Accounting Reports
+                                          (35,'9','9-3','Export Trial Balance'),
+
+                                          -- Settings
+                                          (36,'6','6-7','Setup Check Layout'),
+
+                                          -- Accounting Reports 
+                                          (37,'9','9-4','AR Schedule'),
+                                          (38,'9','9-6','Customer Subsidiary'),
+                                          (39,'9','9-8','Account Subsidiary'),
+                                          (40,'9','9-7','Supplier Subsidiary'),
+                                          (41,'9','9-5','AP Schedule'),
+
+                                          -- Sales & Purchasing Report
                                           (42,'8','8-4','Purchase Invoice Report'),
                                           (43,'8','8-5','Cost of Goods Sold'),
-                                          -- (44,'6','6-8','Create Recurring Journal Template'),
+
+                                          -- Settings
+                                          (44,'6','6-8','Create Recurring Journal Template'),
+
+                                          -- Accounting Reports
                                           (45,'9','9-10','Schedule of Expense'),
+
+                                          -- Settings
                                           (46,'6','6-9','Backup Database'),
+
+                                          -- Sales & Purchasing Report
                                           (47,'8','8-6','Stock Card'),
                                           (48,'8','8-7','Sales Return Report'),
+
+                                          -- Sales
                                           (49,'3','3-4','Other Sales Invoice'),
+
+                                          -- Sales & Purchasing Report
                                           (50,'8','8-8','Product Inventory Report'),
                                           (51,'8','8-9','Open Purchases Report'),
                                           (52,'8','8-10','Open Sales Report'),
@@ -110,8 +153,10 @@ class Rights_link_model extends CORE_Model{
                                           (77,'27','27-2','Other Sales Invoice Edit'),
                                           (78,'27','27-3','Other Sales Invoice Delete'),
 
-                                          -- Invoice History
+                                          -- Purchasing
                                           (79,'2','2-7','Purchase Invoice History'),
+
+                                          -- Sales
                                           (80,'3','3-5','Sales Invoice History')
                                           
                                           ON DUPLICATE KEY UPDATE

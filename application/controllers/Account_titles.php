@@ -27,7 +27,9 @@ class Account_titles extends CORE_Controller
         $data['parents']=$this->Account_title_model->get_list(array('account_titles.is_active'=>TRUE,'account_titles.is_deleted'=>FALSE),null,null,'account_titles.account_title ASC');
         $data['accounts']=$this->get_account_hierarchy();
 
-        $this->load->view('account_titles_view', $data);
+        (in_array('6-2',$this->session->user_rights)? 
+        $this->load->view('account_titles_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 
