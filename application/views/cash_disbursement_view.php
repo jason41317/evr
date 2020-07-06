@@ -155,6 +155,20 @@
             -o-transform: scale(1.5); /* Opera */
         }
 
+        #tbl_cash_disbursement_list_filter{
+            display: none;
+        }
+
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
     </style>
 
 </head>
@@ -214,6 +228,34 @@
                                             <div class="panel panel-default" style="border-radius:6px;">
                                                 <div class="panel-body" style="min-height: 400px;">
                                                     <h2 class="h2-panel-heading">Cash Disbursement Journal</h2><hr />
+                                                    <div class="row">
+                                                        <div class="col-lg-3">
+                                                        &nbsp;<br>
+                                                            <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" ><i class="fa fa-plus"></i> New Disbursement Journal</button>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                                From :<br />
+                                                                <div class="input-group">
+                                                                    <input type="text" id="txt_start_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                                                     <span class="input-group-addon">
+                                                                            <i class="fa fa-calendar"></i>
+                                                                     </span>
+                                                                </div>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                                To :<br />
+                                                                <div class="input-group">
+                                                                    <input type="text" id="txt_end_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                                                     <span class="input-group-addon">
+                                                                            <i class="fa fa-calendar"></i>
+                                                                     </span>
+                                                                </div>
+                                                        </div>
+                                                        <div class="col-lg-3">
+                                                                Search :<br />
+                                                                 <input type="text" id="searchbox_cdj" class="form-control">
+                                                        </div>
+                                                    </div><br>
                                                     <div style="">
                                                         <table id="tbl_cash_disbursement_list" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">
@@ -960,7 +1002,21 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "order": [[ 9, "desc" ]],
-                "ajax" : "Cash_disbursement/transaction/list",
+                oLanguage: {
+                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },
+                processing : true,
+                "ajax" : {
+                    "url" : "Cash_disbursement/transaction/list",
+                    "bDestroy": true,            
+                    "data": function ( d ) {
+                            return $.extend( {}, d, {
+                                "tsd":$('#txt_start_date_cdj').val(),
+                                "ted":$('#txt_end_date_cdj').val()
+
+                            });
+                        }
+                }, 
                 "columns": [
                     {
                         "targets": [0],
@@ -1119,10 +1175,6 @@
             });
 
             var createToolBarButton=function() {
-                var _btnNew='<button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" >'+
-                    '<i class="fa fa-plus"></i> New Cash Disbursement Journal</button>';
-                $("div.toolbar").html(_btnNew);
-
                 var _btnPrint='<button class="btn btn-default" id="btn_print_check_list" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Print Check list" >'+
                     '<i class="fa fa-print"></i> Print Check list</button>';
 
@@ -1237,6 +1289,20 @@
                 $('#modal_recurring').modal('hide');
 
             });
+
+            $("#txt_start_date_cdj").on("change", function () {        
+                $('#tbl_cash_disbursement_list').DataTable().ajax.reload()
+            });
+
+            $("#txt_end_date_cdj").on("change", function () {        
+                $('#tbl_cash_disbursement_list').DataTable().ajax.reload()
+            });
+            $("#searchbox_cdj").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
+
 
             $('#btn_browse_recurring').on('click', function(){
                 dtRecurring.destroy();
