@@ -40,7 +40,9 @@ class Accounts_receivable extends CORE_Controller
         $data['methods']=$this->Payment_method_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 
         $data['title'] = 'Accounts Receivable';
-        $this->load->view('accounts_receivable_view', $data);
+        (in_array('1-4',$this->session->user_rights)? 
+        $this->load->view('accounts_receivable_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
 
@@ -48,7 +50,10 @@ class Accounts_receivable extends CORE_Controller
         switch($txn){
             case 'list':
                 $m_journal=$this->Journal_info_model;
-                $response['data']=$this->get_response_rows();
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted'";
+                $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
             case 'get-entries':
@@ -217,11 +222,11 @@ class Accounts_receivable extends CORE_Controller
 
 
 
-    public function get_response_rows($criteria=null){
+    public function get_response_rows($criteria=null,$additional=null){
         $m_journal=$this->Journal_info_model;
         return $m_journal->get_list(
 
-            "journal_info.is_deleted=FALSE AND journal_info.book_type='SJE'".($criteria==null?'':' AND journal_info.journal_id='.$criteria),
+            "journal_info.is_deleted=FALSE AND journal_info.book_type='SJE' ".($criteria==null?'':'  AND journal_info.journal_id='.$criteria)."".($additional==null?'':$additional),
 
             array(
                 'journal_info.journal_id',

@@ -128,7 +128,19 @@
         #img_user {
             padding-bottom: 15px;
         }
-
+        #tbl_account_payables_filter{
+            display: none;
+        }
+        div.dataTables_processing{ 
+        position: absolute!important; 
+        top: 0%!important; 
+        right: -45%!important; 
+        left: auto!important; 
+        width: 100%!important; 
+        height: 40px!important; 
+        background: none!important; 
+        background-color: transparent!important; 
+        } 
 
     </style>
 
@@ -190,18 +202,46 @@
                         <div class="panel panel-default" style="border-radius: 6px;border: 1px solid lightgrey;">
                                 <div class="panel-body" style="min-height: 400px;">
                                 <h2 class="h2-panel-heading">Accounts Payable Journal</h2><hr />
+                                <div class="row">
+                                    <div class="col-lg-3">&nbsp;<br>
+                                    <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Journal" ><i class="fa fa-plus"></i> New Purchase Journal</button>
+                                    </div>
+                                    <div class="col-lg-3">
+                                            From :<br />
+                                            <div class="input-group">
+                                                <input type="text" id="txt_start_date_ap" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                                 <span class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                 </span>
+                                            </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                            To :<br />
+                                            <div class="input-group">
+                                                <input type="text" id="txt_end_date_ap" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                                 <span class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                 </span>
+                                            </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                            Search :<br />
+                                             <input type="text" id="searchbox_ap" class="form-control">
+                                    </div>
+                                </div><br>
                                     <div style="">
                                         <table id="tbl_account_payables" class="table table-striped" cellspacing="0" width="100%">
                                             <thead class="">
                                             <tr>
                                                 <th></th>
-                                                <th>Txn #</th>
+                                                <th width="15%">Txn #</th>
                                                 <th>Particular</th>
                                                 <th>Remarks</th>
-                                                <th>Txn Date</th>
+                                                <th width="10%">Txn Date</th>
                                                 <th>Posted</th>
-                                                <th>Status</th>
-                                                <th><center>Action</center></th>
+                                                <th width="5%">Status</th>
+                                                <th width="10%"><center>Action</center></th>
+                                                <th></th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -700,7 +740,22 @@
             dt=$('#tbl_account_payables').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
-                "ajax" : "Account_payables/transaction/list",
+                oLanguage: {
+                        sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+                },
+                processing : true,
+                "order": [[ 8, "desc" ]],
+                "ajax" : {
+                    "url" :  "Account_payables/transaction/list",
+                    "bDestroy": true,            
+                    "data": function ( d ) {
+                            return $.extend( {}, d, {
+                                "tsd":$('#txt_start_date_ap').val(),
+                                "ted":$('#txt_end_date_ap').val()
+
+                            });
+                        }
+                }, 
                 "columns": [
                     {
                         "targets": [0],
@@ -711,7 +766,7 @@
                     },
                     { targets:[1],data: "txn_no" },
                     { targets:[2],data: "particular" },
-                    { targets:[3],data: "remarks" },
+                    { targets:[3],data: "remarks",  render: $.fn.dataTable.render.ellipsis(40) },
                     { targets:[4],data: "date_txn" },
                     { targets:[5],data: "posted_by" },
                     {
@@ -731,7 +786,7 @@
 
                     },
                     {
-                        targets:[6],
+                        targets:[7],
                         render: function (data, type, full, meta){
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
@@ -740,7 +795,8 @@
 
                             return '<center>'+btn_edit+'&nbsp;'+btn_cancel+'</center>';
                         }
-                    }
+                    },
+                    { targets:[8],data: "journal_id", visible:false },
                 ]
             });
 
@@ -760,7 +816,7 @@
                     { targets:[2],data: "supplier_name" },
                     { targets:[3],data: "term_description" },
                     { targets:[4],data: "date_delivered" },
-                    { targets:[5],data: "remarks",  render: $.fn.dataTable.render.ellipsis(60) }
+                    { targets:[5],data: "remarks",  render: $.fn.dataTable.render.ellipsis(40) }
                 ]
             });
 
@@ -785,15 +841,6 @@
                 autoclose: true
 
             });
-
-
-            var createToolBarButton=function() {
-                var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Purchase Journal" >'+
-                    '<i class="fa fa-plus-circle"></i> New Purchase Journal</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
-
-
 
             _cboSuppliers=$('#cbo_suppliers').select2({
                 placeholder: "Please select supplier.",
@@ -833,6 +880,19 @@
 
 
         var bindEventHandlers=function(){
+            $("#txt_start_date_ap").on("change", function () {        
+                $('#tbl_account_payables').DataTable().ajax.reload()
+            });
+
+            $("#txt_end_date_ap").on("change", function () {        
+                $('#tbl_account_payables').DataTable().ajax.reload()
+            });
+            $("#searchbox_ap").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
+
             var detailRows = [];
 
             $('#tbl_account_payables tbody').on( 'click', 'tr td.details-control', function () {
