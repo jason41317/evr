@@ -49,7 +49,9 @@ class Cash_disbursement extends CORE_Controller
         $data['banks']=$this->Journal_info_model->get_list('is_active=1 AND is_deleted=0 AND payment_method_id=2',null,null,null,'bank');
 
         $data['title'] = 'Disbursement Journal';
-        $this->load->view('cash_disbursement_view', $data);
+        (in_array('1-2',$this->session->user_rights)? 
+        $this->load->view('cash_disbursement_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
 
@@ -57,7 +59,10 @@ class Cash_disbursement extends CORE_Controller
         switch($txn){
             case 'list':
                 $m_journal=$this->Journal_info_model;
-                $response['data']=$this->get_response_rows();
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted'";
+                $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
             case 'print-check-list':
@@ -326,11 +331,11 @@ class Cash_disbursement extends CORE_Controller
 
 
 
-    public function get_response_rows($criteria=null){
+    public function get_response_rows($criteria=null,$additional=null){
         $m_journal=$this->Journal_info_model;
         return $m_journal->get_list(
-
-            "journal_info.is_deleted=FALSE AND journal_info.book_type='CDJ'".($criteria==null?'':' AND journal_info.journal_id='.$criteria),
+            
+            "journal_info.is_deleted=FALSE AND journal_info.book_type='CDJ'".($criteria==null?'':' AND journal_info.journal_id='.$criteria)."".($additional==null?'':$additional),
 
             array(
                 'journal_info.journal_id',
