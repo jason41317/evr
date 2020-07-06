@@ -129,15 +129,35 @@
     <div class="panel panel-default" >
         <div class="panel-body" style="min-height: 400px;">
         <h2 class="h2-panel-heading">General Journal</h2> <hr>
-        <div class="row">
-            <div class="col-sm-3"><br>
-                <button class="btn btn-primary" id="btn_new" title="New General Journal" ><i class="fa fa-plus-o"></i> New General Journal</button>
-            </div>
-            <div class="col-sm-3 col-sm-offset-6">
-                Search :<br />
-                <input type="text" id="searchbox_tbl_accounts_receivable" class="form-control">
-            </div>
-        </div><br>
+                <div class="row">
+                    <div class="col-lg-3"><br>
+                        <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New General Journal" ><i class="fa fa-plus"></i> New General Journal</button>
+                    </div>
+                    <div class="col-lg-3">
+                            From :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            To :<br />
+                            <div class="input-group">
+                                <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                 <span class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                 </span>
+                            </div>
+                    </div>
+                    <div class="col-lg-3">
+                            Search :<br />
+                             <input type="text" id="searchbox_general_journal" class="form-control">
+                    </div>
+                </div>
+<br>
+     
             <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -493,7 +513,21 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "order": [[ 8, "desc" ]],
-            "ajax" : "General_journal/transaction/list",
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
+            "ajax" : {
+                "url" : "General_journal/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date').val(),
+                            "ted":$('#txt_end_date').val()
+
+                        });
+                    }
+            },
             "columns": [
                 {
                     "targets": [0],
@@ -628,10 +662,19 @@ $(document).ready(function(){
         } );
 
 
-        $("#searchbox_tbl_accounts_receivable").keyup(function(){         
+        $("#searchbox_general_journal").keyup(function(){         
             dt
                 .search(this.value)
                 .draw();
+        });
+
+
+        $("#txt_start_date").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+        });
+
+        $("#txt_end_date").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
         });
 
 

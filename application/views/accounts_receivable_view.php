@@ -157,7 +157,19 @@
         #img_user {
             padding-bottom: 15px;
         }
-
+        #tbl_accounts_receivable_filter{
+            display: none;
+        }
+        div.dataTables_processing{ 
+                position: absolute!important; 
+                top: 0%!important; 
+                right: -45%!important; 
+                left: auto!important; 
+                width: 100%!important; 
+                height: 40px!important; 
+                background: none!important; 
+                background-color: transparent!important; 
+        } 
     </style>
 
 </head>
@@ -213,6 +225,34 @@
         <div class="panel panel-default" style="">
                 <div class="panel-body" style="min-height: 400px;">
                 <h2 class="h2-panel-heading"> Sales / AR Journal</h2><hr>
+                    <div class="row">
+                        <div class="col-lg-3">&nbsp;<br>
+                            <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Journal" ><i class="fa fa-plus"></i> New Sales Journal</button>
+                        </div>
+                        <div class="col-lg-3">
+                                From :<br />
+                                <div class="input-group">
+                                    <input type="text" id="txt_start_date_ar" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                     <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                     </span>
+                                </div>
+                        </div>
+                        <div class="col-lg-3">
+                                To :<br />
+                                <div class="input-group">
+                                    <input type="text" id="txt_end_date_ar" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                     <span class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                     </span>
+                                </div>
+                        </div>
+                        <div class="col-lg-3">
+                                Search :<br />
+                                 <input type="text" id="searchbox_ar" class="form-control">
+                        </div>
+                    </div>
+                    <br>
                     <table id="tbl_accounts_receivable" class="table table-striped" cellspacing="0" width="100%">
                         <thead class="">
                         <tr>
@@ -224,6 +264,7 @@
                             <th>Posted</th>
                             <th>Status</th>
                             <th><center>Action</center></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -649,7 +690,7 @@
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+<script type="text/javascript" src="assets/plugins/datatables/ellipsis.js"></script>
 <!-- Select2-->
 <script src="assets/plugins/select2/select2.full.min.js"></script>
 <!---<script src="assets/plugins/dropdown-enhance/dist/js/bootstrar-select.min.js"></script>-->
@@ -698,8 +739,23 @@ $(document).ready(function(){
 
         dt=$('#tbl_accounts_receivable').DataTable({
             "dom": '<"toolbar">frtip',
+            oLanguage: {
+                    sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
+            },
+            processing : true,
             "bLengthChange":false,
-            "ajax" : "Accounts_receivable/transaction/list",
+            "order": [[ 8, "desc" ]],
+            "ajax" : {
+                "url" :  "Accounts_receivable/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date_ar').val(),
+                            "ted":$('#txt_end_date_ar').val()
+
+                        });
+                    }
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -710,7 +766,7 @@ $(document).ready(function(){
                 },
                 { targets:[1],data: "txn_no" },
                 { targets:[2],data: "particular" },
-                { targets:[3],data: "remarks" },
+                { targets:[3],data: "remarks" , render: $.fn.dataTable.render.ellipsis(60) },
                 { targets:[4],data: "date_txn" },
                 { targets:[5],data: "posted_by" },
                 {
@@ -730,14 +786,15 @@ $(document).ready(function(){
 
                 },
                 {
-                    targets:[6],
+                    targets:[7],
                     render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
 
                         return '<center>'+btn_edit+'&nbsp;'+btn_cancel+'</center>';
                     }
-                }
+                },
+                { targets:[8],data: "journal_id", visible:false },
             ]
         });
 
@@ -756,7 +813,7 @@ $(document).ready(function(){
                 { targets:[1],data: "sales_inv_no" },
                 { targets:[2],data: "customer_name" },
                 { targets:[3],data: "date_invoice" },
-                { targets:[4],data: "remarks" }
+                { targets:[4],data: "remarks" , render: $.fn.dataTable.render.ellipsis(60) }
             ]
         });
 
@@ -780,14 +837,6 @@ $(document).ready(function(){
             autoclose: true
 
         });
-
-
-        var createToolBarButton=function() {
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Journal" >'+
-                '<i class="fa fa-plus-circle"></i> New Sales Journal</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
-
 
 
         _cboCustomers=$('#cbo_customers').select2({
@@ -822,6 +871,19 @@ $(document).ready(function(){
 
 
     var bindEventHandlers=function(){
+        $("#txt_start_date_ar").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+        });
+
+        $("#txt_end_date_ar").on("change", function () {        
+            $('#tbl_accounts_receivable').DataTable().ajax.reload()
+        });
+        $("#searchbox_ar").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+        
         var detailRows = [];
 
         $('#tbl_accounts_receivable tbody').on( 'click', 'tr td.details-control', function () {
