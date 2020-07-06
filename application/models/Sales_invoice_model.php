@@ -178,7 +178,7 @@ class Sales_invoice_model extends CORE_Model
                     FROM adjustment_items aii 
                     LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id  
 
-                    WHERE ai.date_adjusted BETWEEN '$start' AND '$end'
+                    WHERE ai.is_returns = TRUE
                     AND ai.is_deleted = FALSE AND ai.is_active = TRUE
                     GROUP BY ai.inv_no, aii.product_id
                 
@@ -223,8 +223,7 @@ class Sales_invoice_model extends CORE_Model
             FROM  adjustment_items aii 
                 LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
                 LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
-                WHERE ai.date_adjusted BETWEEN '$start' AND '$end' 
-                AND ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
+                WHERE ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
                 AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
                 si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type=1
                 GROUP BY si.customer_id
@@ -261,8 +260,7 @@ class Sales_invoice_model extends CORE_Model
             FROM  adjustment_items aii 
                 LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
                 LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
-                WHERE ai.date_adjusted BETWEEN '$start' AND '$end'
-                AND ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
+                WHERE ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
                 AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
                 si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type=2
                 GROUP BY si.issue_to_department
@@ -361,8 +359,7 @@ class Sales_invoice_model extends CORE_Model
                 LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
                 LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
                 LEFT JOIN salesperson AS sp ON sp.salesperson_id = si.salesperson_id
-                WHERE ai.date_adjusted BETWEEN'$start' AND '$end' 
-                AND ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
+                WHERE ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
                 AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
                 si.date_invoice BETWEEN '$start' AND '$end'  AND si.inv_type = 1   ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND sp.salesperson_id='."'".$salesperson_id."'")."     
         
@@ -401,8 +398,7 @@ class Sales_invoice_model extends CORE_Model
             FROM  adjustment_items aii 
                 LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
                 LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
-                WHERE ai.date_adjusted BETWEEN '$start' AND '$end'
-                AND ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
+                WHERE ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
                 AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
                 si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type = 1 ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND si.salesperson_id='."'".$salesperson_id."'")."
                 GROUP BY si.salesperson_id) as main_returns on main_returns.salesperson_id = main_sales.salesperson_id
