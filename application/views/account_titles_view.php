@@ -24,10 +24,7 @@
     <link type="text/css" href="assets/plugins/zTree/zTreeStyle.css" rel="stylesheet">
 
     <style>
-        html{
-            zoom: 0.82;
-            zoom: 82%;
-        }
+
 
         .toolbar{
             float: left;
@@ -112,8 +109,9 @@
                     <div class="col-md-12">
                         <div id="div_chart_list">
                             <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
-
-                                <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Chart of Accounts</b></div></a>
+                            <div class="panel-body table-responsive" >
+                            <h2 class="h2-panel-heading">Chart of Accounts</h2><hr>
+                               <!--  <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Chart of Accounts</b></div></a> -->
 
 
 
@@ -124,8 +122,8 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-lg-8">
-                                        <div class="panel-body table-responsive" style="padding-left: 1px!important;">
-                                            <table id="tbl_accounts" class="custom-design table-striped" cellspacing="0" width="100%">
+                                        
+                                            <table id="tbl_accounts" class="table table-striped" cellspacing="0" width="100%">
                                                 <thead class="">
                                                 <tr>
                                                     <th>&nbsp;&nbsp;</th>
@@ -133,15 +131,15 @@
                                                     <th>Account</th>
                                                     <th>Parent</th>
                                                     <th>Type</th>
-                                                    <th><center>Action</center></th>
+                                                    <th width="10%"><center>Action</center></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 </tbody>
                                             </table>
-                                        </div>
                                     </div>
                                 </div>
+                            </div>
                                 <!-- <div class="panel-footer"></div> -->
                             </div>
                         </div>
@@ -154,7 +152,7 @@
                                     <div class="panel-ctrls" data-actions-container="" data-action-collapse='{"target": ".panel-body"}'></div>
                                 </div> -->
                                 <div class="panel-body">
-                                    <h2 id="account_add_title"></h2><br>
+                                    <h2 id="account_add_title" class="h2-panel-heading"></h2><hr><br>
                                     <form id="frm_accounts" role="form" class="form-horizontal row-border">
                                         <div class="form-group">
                                             <label class="col-md-2 control-label"><strong>* Account # :</strong></label>

@@ -26,11 +26,6 @@
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
         .select2-container{
             min-width: 100%;
         }
@@ -147,7 +142,6 @@
                                         <div class="modal-footer">
                                             <div class="col-xs-12">
                                                 <a id="btn_print" href="#" target="_blank" class="btn btn-success" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-print"></i> Print </a>
-                                                <a href="Templates/layout/income-statement?type=&type=pdf" class="btn btn-primary" style="text-transform:none;font-family: tahoma;" ><i class="fa fa-file-pdf-o"></i> Download as PDF </a>
                                                 <button class="btn btn-red" data-dismiss="modal">Close</button>
                                             </div>
 
