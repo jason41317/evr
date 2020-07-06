@@ -26,11 +26,6 @@
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
     <style>
-        html{
-            zoom: 0.8;
-            zoom: 80%;
-        }
-
         .select2-container{
             min-width: 100%;
         }
@@ -134,8 +129,6 @@
                                                 <div class="col-xs-12">
 
                                                     <button id="btn_print" class="btn btn-default" style="text-transform: none;"><i class="fa fa-print"></i> Print Report</button>
-
-                                                    <button id="btn_export" class="btn btn-success disabled" style="text-transform: none;"><i class="fa fa-file-excel-o"></i> Export to Excel</button>
 
                                                     <button class="btn btn-red" data-dismiss="modal" style="text-transform: none;">Close</button>
                                                 </div>
