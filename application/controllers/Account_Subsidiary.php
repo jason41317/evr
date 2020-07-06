@@ -31,7 +31,9 @@
 	        $data['title'] = 'Per Account Subsidiary';
 	        $data['account_titles'] = $this->Account_title_model->get_list('account_titles.is_deleted=FALSE AND account_titles.is_active=TRUE',null,null,'account_title');
 
-	        $this->load->view('account_subsidiary_view',$data);
+	        (in_array('9-8',$this->session->user_rights)? 
+	        $this->load->view('account_subsidiary_view', $data)
+	        :redirect(base_url('dashboard')));	        
 		}
 
 		function transaction($txn=null){

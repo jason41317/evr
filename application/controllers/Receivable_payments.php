@@ -33,8 +33,9 @@ class receivable_payments extends CORE_Controller
         $data['departments']=$this->Departments_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
 
         $data['title'] = 'AR Payment';
-        $this->load->view('payment_receivable_view', $data);
-
+        (in_array('3-3',$this->session->user_rights)? 
+        $this->load->view('payment_receivable_view', $data)
+        :redirect(base_url('dashboard')));
 
     }
 

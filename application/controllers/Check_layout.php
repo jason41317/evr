@@ -20,7 +20,9 @@ class Check_layout extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
         $data['title'] = 'Check Layout';
 
-        $this->load->view('check_layout_view', $data);
+        (in_array('6-7',$this->session->user_rights)? 
+        $this->load->view('check_layout_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 
