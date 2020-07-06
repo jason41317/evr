@@ -32,7 +32,9 @@
 	        $data['suppliers']=$this->Suppliers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 	        $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
 
-	        $this->load->view('recurring_template_view',$data);
+	        (in_array('6-8',$this->session->user_rights)? 
+	        $this->load->view('recurring_template_view', $data)
+	        :redirect(base_url('dashboard')));	        
 		}
 
 		function transaction($txn=null)

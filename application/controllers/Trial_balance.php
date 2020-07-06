@@ -32,8 +32,10 @@ class Trial_balance extends CORE_Controller
 
         $data['departments']=$this->Departments_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         $data['title']="Trial Balance Report";
-        $this->load->view('trial_balance_view',$data);
 
+        (in_array('9-3',$this->session->user_rights)? 
+        $this->load->view('trial_balance_view', $data)
+        :redirect(base_url('dashboard')));
     }
 
 

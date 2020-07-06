@@ -36,8 +36,9 @@ class Account_payable_schedule extends CORE_Controller
         $data['accounts']=$this->Account_title_model->get_list('is_active=TRUE AND is_deleted=FALSE');
         $data['ap_account']=$ar_id[0]->payable_account_id;
 
-        $this->load->view('accounts_payable_schedule_view', $data);
-
+        (in_array('9-5',$this->session->user_rights)? 
+        $this->load->view('accounts_payable_schedule_view', $data)
+        :redirect(base_url('dashboard')));
 
     }
 

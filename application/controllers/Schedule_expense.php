@@ -25,7 +25,9 @@ class Schedule_expense extends CORE_Controller
         $data['title'] = 'Schedule of Expense';
         $data['departments'] = $this->Departments_model->get_list('is_deleted=0 AND is_active=1');
 
-        $this->load->view('schedule_expense_view', $data);
+        (in_array('9-10',$this->session->user_rights)? 
+        $this->load->view('schedule_expense_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
     public function transaction($txn=nul){
