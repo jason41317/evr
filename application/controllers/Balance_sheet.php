@@ -32,7 +32,9 @@ class Balance_sheet extends CORE_Controller
 
 
 
-        $this->load->view('balance_sheet_view', $data);
+        (in_array('9-1',$this->session->user_rights)? 
+        $this->load->view('balance_sheet_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

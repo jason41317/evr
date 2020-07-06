@@ -31,7 +31,9 @@ class Payable_payments extends CORE_Controller
         $data['departments']=$this->Departments_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
 
         $data['title'] = 'AP Payment';
-        $this->load->view('payment_payable_view', $data);
+        (in_array('2-3',$this->session->user_rights)? 
+        $this->load->view('payment_payable_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 

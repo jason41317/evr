@@ -28,7 +28,9 @@ class Income_statement extends CORE_Controller
         $data['income_accounts']=$this->Journal_info_model->get_account_balance(4);
         $data['expense_accounts']=$this->Journal_info_model->get_account_balance(5);
 
-        $this->load->view('income_statement_view', $data);
+        (in_array('9-2',$this->session->user_rights)? 
+        $this->load->view('income_statement_view', $data)
+        :redirect(base_url('dashboard')));        
     }
 
 
