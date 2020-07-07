@@ -96,8 +96,8 @@ class Products extends CORE_Controller
                 $m_products->created_by_user = $this->session->user_id;
 
                 $m_products->product_code = $this->input->post('product_code', TRUE);
-                $m_products->product_desc = $this->input->post('product_desc', TRUE);
-                $m_products->product_desc1 = $this->input->post('product_desc1', TRUE);
+                $m_products->product_desc = str_replace("'", "", $this->input->post('product_desc', TRUE));
+                $m_products->product_desc1 = str_replace("'", "", $this->input->post('product_desc1', TRUE));
                 $m_products->size = $this->input->post('size', TRUE);
                 $m_products->supplier_id = $this->input->post('supplier_id', TRUE);
                 $m_products->category_id = $this->input->post('category_id', TRUE);
@@ -147,8 +147,8 @@ class Products extends CORE_Controller
                 $m_products->modified_by_user = $this->session->user_id;
 
                 $m_products->product_code = $this->input->post('product_code', TRUE);
-                $m_products->product_desc = $this->input->post('product_desc', TRUE);
-                $m_products->product_desc1 = $this->input->post('product_desc1', TRUE);
+                $m_products->product_desc = str_replace("'", "", $this->input->post('product_desc', TRUE));
+                $m_products->product_desc1 = str_replace("'", "", $this->input->post('product_desc1', TRUE));
                 $m_products->size = $this->input->post('size', TRUE);
                 $m_products->supplier_id = $this->input->post('supplier_id', TRUE);
                 $m_products->category_id = $this->input->post('category_id', TRUE);
