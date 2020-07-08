@@ -74,7 +74,7 @@ class Sales_detailed_summary extends CORE_Controller {
                 $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
                 $customer_id=$this->input->get('cus_id',TRUE);
 
-                $data['customers']=$m_sales_invoice->get_customers_sales_summary($startDate,$endDate,$customer_id);
+                // $data['customers']=$m_sales_invoice->get_customers_sales_summary($startDate,$endDate,$customer_id);
 
                 $data['sales_summary']=$m_sales_invoice->get_report_summary($startDate,$endDate);
 
@@ -97,6 +97,22 @@ class Sales_detailed_summary extends CORE_Controller {
                 $data['sales_summary']=$m_sales_invoice->get_salesperson_report_summary($start,$end,$salesperson_id);
 
                 $this->load->view('template/vet_rep_sales_report',$data);
+                break;  
+
+            case 'summary-report-vet-rep-summary':
+                $m_company_info=$this->Company_model;
+                $m_sales_invoice=$this->Sales_invoice_model;
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+
+                $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
+                $end=date("Y-m-d",strtotime($this->input->get('endDate',TRUE)));
+                $salesperson_id=$this->input->get('sp_id',TRUE);
+
+                $data['sales_summary']=$m_sales_invoice->get_salesperson_sales_summary($start,$end,$salesperson_id);
+
+                $this->load->view('template/vet_rep_sales_report_summary',$data);
                 break;  
         }
     }
