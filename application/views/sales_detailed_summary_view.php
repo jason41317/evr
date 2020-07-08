@@ -131,9 +131,9 @@
                                                                             <option value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
-                                                                    <button class="btn btn-primary pull-left hidden" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_customer_report" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
-                                                                    <i class="fa fa-print"></i> Print Report</button>
-                                                                    <button class="btn btn-success pull-left" id="btn_refresh" style="text-transform: none; font-family: Tahoma, Georgia, Serif; margin-top: 10px; margin-bottom: 10px;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Reload" >
+                                                                    <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_customer_report" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print Summary Report (All Customers)">
+                                                                    <i class="fa fa-print"></i> Summary Report</button>
+                                                                    <button class="btn btn-success pull-left" id="btn_refresh" style="text-transform: none; font-family: Tahoma, Georgia, Serif; margin-top: 10px; margin-bottom: 10px;" title="Reload" >
                                                                     <i class="fa fa-refresh"></i></button>
                                                                     <table id="tbl_account_subsidiary" style="margin-top: 10px;" class="table table-striped" cellspacing="0" width="100%">
                                                                         <thead class="">
@@ -169,8 +169,10 @@
                                                                             <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->salesperson_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
-                                                                    <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_salesperson_report" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
-                                                                    <i class="fa fa-print"></i> Print Report</button>
+                                                                    <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_salesperson_report" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print" >
+                                                                    <i class="fa fa-print"></i> Detailed Report</button>
+                                                                    <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_salesperson_report_summary" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print" >
+                                                                    <i class="fa fa-print"></i> Summary Report</button>
                                                                     <button class="btn btn-success pull-left" id="btn_refresh" style="text-transform: none; font-family: Tahoma, Georgia, Serif; margin-top: 10px; margin-bottom: 10px;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Reload" >
                                                                     <i class="fa fa-refresh"></i></button>
                                                                     <table id="tbl_salespersons" style="margin-top: 10px;" class="table table-striped" cellspacing="0" width="100%">
@@ -294,6 +296,10 @@
         var bindEventControls=function(){
             $('#btn_print_salesperson_report').on('click', function(){
                 window.open('Sales_detailed_summary/transaction/summary-report-vet-rep?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&sp_id='+_cboSalesperson.val());
+            });
+
+            $('#btn_print_salesperson_report_summary').on('click', function(){
+                window.open('Sales_detailed_summary/transaction/summary-report-vet-rep-summary?startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&sp_id='+_cboSalesperson.val());
             });
 
             $('.date-picker').on('change',function(){

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Customers Sales Summary Report</title>
+	<title>Salesperson Sales Summary Report</title>
 	<style type="text/css">
         body {
             font-family: 'Calibri',sans-serif;
@@ -25,13 +25,13 @@
         }
 
         .report-header {
+            font-weight: bolder;
             font-size: 22px;
         }
 
         hr {
             border-top: 1px solid #404040;
         }
-        @media print{@page {size: landscape}}
     </style>
     <script type="text/javascript">
         (function(){
@@ -54,32 +54,30 @@
         </tr>
     </table><hr>
     <div>
-        <span ><strong>CUSTOMER SALES REPORT</strong></span><br>
-        <span>Period <?php echo $_GET['startDate']; ?> to <?php echo $_GET['endDate']; ?></span>
+        <span style="text-align: center;"><strong>SALESPERSON SALES SUMMARY REPORT </strong></span><br>
+        <span style="text-align: center;">Period <?php echo $_GET['startDate']; ?> to <?php echo $_GET['endDate']; ?></span>
     </div>
+
     
     <table width="95%" style="margin-left: 5%; text-align: right;">
         <thead>
             <tr style="text-transform: uppercase;">
-                <td width="25%" style="text-align: left;"><strong>Customer</strong></td>
-                <td width="50%" style="text-align: left;"><strong>Address</strong></td>
-                <td width="25%"><strong>Invoice Amount</strong></td>
+                <td  style="text-align: left;"><strong>Salesperson</strong></td>
+                <td style="text-align: right;"><strong>Invoice Amount</strong></td>
             </tr><hr>
         </thead>
         <tbody>
             <?php $sum=0; 
                 foreach($sales_summary as $summary) { ?>
                         <tr>
-                            <td style="text-align: left;"><?php echo $summary->customer_name; ?></td>
-                            <td style="text-align: left;"><?php echo $summary->address; ?></td>
-                            <td><?php echo number_format($summary->total_after_tax,4); ?></td>
+                            <td style="text-align: left;"><?php echo $summary->salesperson_name; ?></td>
+                            <td><?php echo  ($summary->total_amount_invoice < 0 ? "(".number_format(abs($summary->total_amount_invoice),4).")" :number_format($summary->total_amount_invoice,4))   ?></td>
                         </tr>
                     <?php
-                    $sum+=$summary->total_after_tax; 
+                    $sum+=$summary->total_amount_invoice; 
                 }
             ?>
             <tr>
-                <td></td>
                 <td></td>
                 <td><h2><?php echo number_format($sum,4); ?></h2></td>
             </tr>
