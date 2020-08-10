@@ -420,7 +420,13 @@
 
                                     </div>
                                 </div>
-                                <div class="col-xs-12 <?php echo ($this->session->user_group_id == 1 ? 'col-sm-4' : 'hidden' ); ?>">
+
+
+                            </div>
+                        </div>
+                    </div>
+ -->
+                                 <div class="col-xs-12 <?php echo ($this->session->user_group_id == 1 ? ' col-sm-offset-8 col-sm-4' : 'hidden' ); ?>">
                                   <div id="style-1" class="data-container" style="min-height: 700px; max-height: 700px; overflow-y: scroll;">
                                     <h3><i class="fa fa-rss" style="color: #067cb2;;"></i> ACTIVITY FEED</h3>
                                     <div class="v-timeline vertical-container">
@@ -428,11 +434,6 @@
                                     </div>
                                   </div>
                                 </div>
-
-                            </div>
-                        </div>
-                    </div>
- -->
                     </div> <!-- #page-content -->
             </div>
 
