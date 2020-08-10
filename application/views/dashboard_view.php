@@ -20,6 +20,13 @@
 
 
     <style>
+    .data-container {
+          border-radius: 5px;
+        background: rgba(255, 255, 255, .1);
+        padding: 10px;
+        border:1px solid #d4dbdd;
+    }
+
     .toolbar{
         float: left;
     }
@@ -58,7 +65,160 @@
         from { -webkit-transform: rotate(0deg); }
         to { -webkit-transform: rotate(360deg); }
     }
+ .v-timeline {
+          position: relative;
+          padding: 0;
+          margin-top: 2em;
+          margin-bottom: 2em;
+      }
+      .vertical-container {
+          width: 98%;
+          margin: 0 auto;
+      }
 
+      .v-timeline::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 18px;
+          height: 100%;
+          width: 4px;
+          background: #525252;
+      }
+
+      .vertical-timeline-block:first-child {
+        margin-top: 0;
+      }
+
+      .vertical-timeline-block {
+          position: relative;
+          margin: 2em 0;
+      }
+
+      .vertical-timeline-icon {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          font-size: 16px;
+          border: 1px solid #525252;
+          text-align: center;
+          background: #525252;
+          color: #ffffff;
+      }
+
+      .vertical-timeline-icon i {
+          display: block;
+          width: 24px;
+          height: 24px;
+          position: relative;
+          left: 50%;
+          top: 50%;
+          margin-left: -12px;
+          margin-top: -9px;
+      }
+
+      .c-accent {
+          color: #f6a821;
+      }
+
+      .vertical-timeline-content {
+          position: relative;
+          margin-left: 60px;
+/*          background-color: rgba(68, 70, 79, 0.5);*/
+          border-radius: 0.25em;
+          border: 1px solid #3d404c;
+      }
+
+      .vertical-timeline-content:before {
+          border-color: transparent;
+          border-right-color: #3d404c;
+          border-width: 11px;
+          margin-top: -11px;
+      }
+
+      .vertical-timeline-content:after, .vertical-timeline-content:before {
+          right: 100%;
+          top: 20px;
+          border: solid transparent;
+          content: " ";
+          height: 0;
+          width: 0;
+          position: absolute;
+          pointer-events: none;
+      }
+
+      .p-sm {
+          padding: 15px !important;
+      }
+
+      .vertical-timeline-content .vertical-date {
+          font-weight: 500;
+          text-align: right;
+      }
+
+      .vertical-timeline-content p {
+          margin: 1em 0 0 0;
+          line-height: 1.6;
+      }
+
+      .vertical-timeline-content:after {
+          border-color: transparent;
+          border-right-color: #3d404c;
+          border-width: 10px;
+          margin-top: -10px;
+      }
+
+      .vertical-timeline-content:after, .vertical-timeline-content:before {
+          right: 100%;
+          top: 20px;
+          border: solid transparent;
+          content: " ";
+          height: 0;
+          width: 0;
+          position: absolute;
+          pointer-events: none;
+      }
+
+      .vertical-timeline-content:after {
+          content: "";
+          display: table;
+          clear: both;
+      }
+
+      .vertical-timeline-content {
+          position: relative;
+          margin-left: 60px;
+/*          background-color: rgba(68, 70, 79, 0.5);*/
+          border-radius: 0.25em;
+          border: 1px solid #3d404c;
+      }
+
+      .vertical-timeline-block:after {
+          content: "";
+          display: table;
+          clear: both;
+      }
+
+      .vertical-container::after {
+          content: '';
+          display: table;
+          clear: both;
+      }
+
+      .v-timeline {
+          position: relative;
+          padding: 0;
+          margin-top: 2em;
+          margin-bottom: 2em;
+      }
+
+      .vertical-container {
+          width: 98%;
+          margin: 0 auto;
+      }
     </style>
 
 </head>
@@ -226,7 +386,7 @@
                         <div class="container-fluid mt-n">
                         <div data-widget-group="group1">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-xs-12   <?php echo ($this->session->user_group_id != 1 ? 'col-sm-12' : 'col-sm-8'); ?>">
 
                                     <div class="panel panel-default <?php echo (in_array('7-1',$this->session->user_rights)?'':'hidden'); ?>">
                                         <div class="panel-body table-responsive" style="border-top: 3px solid #2196f3;">
@@ -255,6 +415,15 @@
 
                                     </div>
                                 </div>
+                                <div class="col-xs-12 <?php echo ($this->session->user_group_id == 1 ? 'col-sm-4' : 'hidden' ); ?>">
+                                  <div id="style-1" class="data-container" style="min-height: 700px; max-height: 700px; overflow-y: scroll;">
+                                    <h3><i class="fa fa-rss" style="color: #067cb2;;"></i> ACTIVITY FEED</h3>
+                                    <div class="v-timeline vertical-container">
+                                        <?php echo ($this->session->user_group_id != 1 ? '' : $news_feed); ?>
+                                    </div>
+                                  </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
