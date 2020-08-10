@@ -9,7 +9,8 @@ class Dashboard extends CORE_Controller {
         $this->validate_session();
         $this->load->model(array(
             'Journal_info_model',
-            'Journal_account_model'
+            'Journal_account_model',
+            'Users_model'
         ));
 
     }
@@ -230,6 +231,10 @@ class Dashboard extends CORE_Controller {
         $data['previous_year_income_monthly']=$previous_year_income_monthly;
         $data['expense_monthly']=$expense_monthly;
 
+        $params['activities']=$this->Users_model->get_newsfeed();
+        $template_news_feed = $this->load->view('template/activity_feed_content',$params,TRUE);
+
+        $data['news_feed'] = $template_news_feed;
 
         $this->load->view('dashboard_view',$data);
     }
