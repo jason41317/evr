@@ -2,7 +2,7 @@
 	
 	// Purchase Order Buttons
 	var po_btn_edit = '<button class="btn btn-primary btn-sm <?php echo (in_array('20-2',$this->session->user_rights)?'':'hidden'); ?>" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-	var po_btn_trash = '<button class="btn btn-red btn-sm <?php echo (in_array('20-3',$this->session->user_rights)?'':'hidden'); ?>" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';	
+	var po_btn_trash = '<button class="btn btn-red btn-sm <?php echo (in_array('20-3',$this->session->user_rights)?'':'hidden'); ?>" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
 	// Purchase Invoice Buttons
 	var pi_btn_edit='<button class="btn btn-primary btn-sm <?php echo (in_array('21-2',$this->session->user_rights)?'':'hidden'); ?>" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
@@ -32,4 +32,7 @@
     // Other Sales Invoice
     var osi_btn_edit='<button class="btn btn-primary btn-sm <?php echo (in_array('27-2',$this->session->user_rights)?'':'hidden'); ?>" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
     var osi_btn_trash='<button class="btn btn-red btn-sm <?php echo (in_array('27-3',$this->session->user_rights)?'':'hidden'); ?>" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+
+    var btn_lock = '<button class="btn btn-warning btn-sm <?php echo (in_array('20-3',$this->session->user_rights)?'':'hidden'); ?>" name="unlock_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Unlock Transaction"><i class="fa fa-unlock"></i> </button>';    
+    
 </script>

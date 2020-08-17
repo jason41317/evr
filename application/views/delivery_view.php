@@ -1470,105 +1470,111 @@ $(document).ready(function(){
 
         $('#tbl_delivery_invoice tbody').on('click','button[name="edit_info"]',function(){
             ///alert("ddd");
+
             _txnMode="edit";
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.dr_invoice_id;
 
-            //make sure save button is disabled
-            $('#btn_save').addClass('disabled');
+            verifyInvoice().done(function(response){
+                if(response.is_locked == 1){
+                    showNotification(response);
+                    return false;
+                }else{
+                                        //make sure save button is disabled
+                    $('#btn_save').addClass('disabled');
 
-            $('textarea[name="remarks"]').html(data.remarks);
-            $('#cbo_suppliers').select2('val',data.supplier_id);
-            $('#cbo_departments').select2('val',data.department_id);
+                    $('textarea[name="remarks"]').html(data.remarks);
+                    $('#cbo_suppliers').select2('val',data.supplier_id);
+                    $('#cbo_departments').select2('val',data.department_id);
 
-            $('input,textarea').each(function(){
-                var _elem=$(this);
-                $.each(data,function(name,value){
-                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
-                    }
-                });
-            });
-
-
-            resetSummary();
-
-            $.ajax({
-                url : 'Deliveries/transaction/items/'+data.dr_invoice_id,
-                type : "GET",
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                },
-                success : function(response){
-                    var rows=response.data;
-                    $('#tbl_items > tbody').html('');
-
-                    var total_discount=0;
-                    var total_tax_amount=0;
-                    var total_non_tax_amount=0;
-                    var gross_amount=0;
-
-                    $.each(rows,function(i,value){
-                        $('#tbl_items > tbody').append(newRowItem({
-                            dr_qty : value.dr_qty,
-                            product_code : value.product_code,
-                            unit_id : value.unit_id,
-                            unit_name : value.unit_name,
-                            batch_no : value.batch_no,
-                            product_id: value.product_id,
-                            product_desc : value.product_desc,
-                            dr_line_total_discount : value.dr_line_total_discount,
-                            tax_exempt : false,
-                            dr_tax_rate : value.dr_tax_rate,
-                            dr_price : value.dr_price,
-                            dr_discount : value.dr_discount,
-                            tax_type_id : null,
-                            dr_line_total_price : value.dr_line_total_price,
-                            dr_non_tax_amount: value.dr_non_tax_amount,
-                            dr_tax_amount:value.dr_tax_amount,
-                            exp_date : value.expiration,
-                            batch_no : value.batch_no
-                        }));
-
-
-                        //sum up all footer details
-                        total_discount+=getFloat(value.dr_line_total_discount);
-                        total_tax_amount+=getFloat(value.tax_amount);
-                        total_non_tax_amount+=getFloat(value.non_tax_amount);
-                        gross_amount+=getFloat(value.dr_line_total_price);
-
-
+                    $('input,textarea').each(function(){
+                        var _elem=$(this);
+                        $.each(data,function(name,value){
+                            if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                                _elem.val(value);
+                            }
+                        });
                     });
 
-                    //notify if already posted in Sales Journal
-                    if(response.post_status=='posted'){
-                        showNotification({title:"Invalid",stat:"info",msg:response.post_message});
-                    }else{ // if not yet posted, remove disabled class
-                        $('#btn_save').removeClass('disabled');
-                    }
 
-                    reInitializeNumeric();
-                    reInitializeExpireDate();
-                    //write summary details
-                    var tbl_summary=$('#tbl_delivery_summary');
-                    tbl_summary.find(oTableDetails.discount).html(accounting.formatNumber(total_discount,4));
-                    tbl_summary.find(oTableDetails.before_tax).html(accounting.formatNumber(total_non_tax_amount,4));
-                    tbl_summary.find(oTableDetails.tax_amount).html(accounting.formatNumber(total_tax_amount,4));
-                    tbl_summary.find(oTableDetails.after_tax).html('<b>'+accounting.formatNumber(gross_amount,4)+'</b>');
-                    reComputeTotal();
+                    resetSummary();
 
+                    $.ajax({
+                        url : 'Deliveries/transaction/items/'+data.dr_invoice_id,
+                        type : "GET",
+                        cache : false,
+                        dataType : 'json',
+                        processData : false,
+                        contentType : false,
+                        beforeSend : function(){
+                            $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                        },
+                        success : function(response){
+                            var rows=response.data;
+                            $('#tbl_items > tbody').html('');
+
+                            var total_discount=0;
+                            var total_tax_amount=0;
+                            var total_non_tax_amount=0;
+                            var gross_amount=0;
+
+                            $.each(rows,function(i,value){
+                                $('#tbl_items > tbody').append(newRowItem({
+                                    dr_qty : value.dr_qty,
+                                    product_code : value.product_code,
+                                    unit_id : value.unit_id,
+                                    unit_name : value.unit_name,
+                                    batch_no : value.batch_no,
+                                    product_id: value.product_id,
+                                    product_desc : value.product_desc,
+                                    dr_line_total_discount : value.dr_line_total_discount,
+                                    tax_exempt : false,
+                                    dr_tax_rate : value.dr_tax_rate,
+                                    dr_price : value.dr_price,
+                                    dr_discount : value.dr_discount,
+                                    tax_type_id : null,
+                                    dr_line_total_price : value.dr_line_total_price,
+                                    dr_non_tax_amount: value.dr_non_tax_amount,
+                                    dr_tax_amount:value.dr_tax_amount,
+                                    exp_date : value.expiration,
+                                    batch_no : value.batch_no
+                                }));
+
+
+                                //sum up all footer details
+                                total_discount+=getFloat(value.dr_line_total_discount);
+                                total_tax_amount+=getFloat(value.tax_amount);
+                                total_non_tax_amount+=getFloat(value.non_tax_amount);
+                                gross_amount+=getFloat(value.dr_line_total_price);
+
+
+                            });
+
+                            //notify if already posted in Sales Journal
+                            if(response.post_status=='posted'){
+                                showNotification({title:"Invalid",stat:"info",msg:response.post_message});
+                            }else{ // if not yet posted, remove disabled class
+                                $('#btn_save').removeClass('disabled');
+                            }
+
+                            reInitializeNumeric();
+                            reInitializeExpireDate();
+                            //write summary details
+                            var tbl_summary=$('#tbl_delivery_summary');
+                            tbl_summary.find(oTableDetails.discount).html(accounting.formatNumber(total_discount,4));
+                            tbl_summary.find(oTableDetails.before_tax).html(accounting.formatNumber(total_non_tax_amount,4));
+                            tbl_summary.find(oTableDetails.tax_amount).html(accounting.formatNumber(total_tax_amount,4));
+                            tbl_summary.find(oTableDetails.after_tax).html('<b>'+accounting.formatNumber(gross_amount,4)+'</b>');
+                            reComputeTotal();
+
+                        }
+                    });
+
+                    showList(false);
                 }
             });
 
-
-
-
-            showList(false);
         });
 
         $('#tbl_delivery_invoice tbody').on('click','button[name="remove_info"]',function(){
@@ -1576,7 +1582,13 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.dr_invoice_id;
 
-            $('#modal_confirmation').modal('show');
+            verifyInvoice().done(function(response){
+                if(response.is_locked == 1){
+                    showNotification(response);
+                }else{
+                    $('#modal_confirmation').modal('show');
+                }
+            });
         });
 
 
@@ -1835,6 +1847,15 @@ $(document).ready(function(){
             "type":"POST",
             "url":"Deliveries/transaction/delete",
             "data":{dr_invoice_id : _selectedID}
+        });
+    };
+
+    var verifyInvoice=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Transaction_lock/transaction/verify/1",
+            "data":{invoice_id : _selectedID}
         });
     };
 

@@ -1410,82 +1410,91 @@
                 _selectRowObj=$(this).closest('tr');
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.sales_invoice_id;
-				// disable button save
-				$('#btn_save').addClass('disabled');
-                $('#span_invoice_no').html(data.sales_inv_no);
 
-                $('input,textarea').each(function(){
-                    var _elem=$(this);
-                    $.each(data,function(name,value){
-                        if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                            _elem.val(value);
-                        }
-                    });
-                });
+                verifyInvoice().done(function(response){
+                    if(response.is_locked == 1){
+                        showNotification(response);
+                        return false;
+                    }else{
 
-                $('#cbo_departments').select2('val',1);
-                $('#cbo_issue_departments').select2('val',data.issue_to_department);
-                //$('#cbo_customers').select2('val',data.customer_id);
-                //$('#cbo_salesperson').select2('val',data.salesperson_id);
-                $('textarea[name="remarks"]').val(data.remarks);
-                $('#cboLookupPrice').select2('val', 1);
+                        // disable button save
+                        $('#btn_save').addClass('disabled');
+                        $('#span_invoice_no').html(data.sales_inv_no);
 
-
-                $.ajax({
-                    url : 'Sales_invoice_other/transaction/items/'+data.sales_invoice_id,
-                    type : "GET",
-                    cache : false,
-                    dataType : 'json',
-                    processData : false,
-                    contentType : false,
-                    beforeSend : function(){
-                        $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                    },
-                    success : function(response){
-                        var rows=response.data;
-                        $('#tbl_items > tbody').html('');
-
-                        $.each(rows,function(i,value){
-
-                            $('#tbl_items > tbody').append(newRowItem({
-                                inv_qty : value.inv_qty,
-                                product_code : value.product_code,
-                                unit_id : value.unit_id,
-                                unit_name : value.unit_name,
-                                product_id: value.product_id,
-                                product_desc : value.product_desc,
-                                inv_line_total_discount : value.inv_line_total_discount,
-                                tax_exempt : false,
-                                inv_tax_rate : value.inv_tax_rate,
-                                inv_price : value.inv_price,
-                                inv_discount : value.inv_discount,
-                                tax_type_id : null,
-                                inv_line_total_price : value.inv_line_total_price,
-                                inv_non_tax_amount: value.inv_non_tax_amount,
-                                inv_tax_amount:value.inv_tax_amount,
-                                batch_no:value.batch_no,
-                                exp_date:value.exp_date,
-                                orig_so_price:value.orig_so_price,
-                                cost_upon_invoice:value.cost_upon_invoice
-
-                            }));
+                        $('input,textarea').each(function(){
+                            var _elem=$(this);
+                            $.each(data,function(name,value){
+                                if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                                    _elem.val(value);
+                                }
+                            });
                         });
 
-                        reInitializeNumeric();
-                        reComputeTotal();
-						
-						if(response.post_status=='posted'){
-                            showNotification({title:"Invalid",stat:"info",msg:response.post_message});
-                        }else{ // if not yet posted, remove disabled class
-                            $('#btn_save').removeClass('disabled');
-                        }
+                        $('#cbo_departments').select2('val',1);
+                        $('#cbo_issue_departments').select2('val',data.issue_to_department);
+                        //$('#cbo_customers').select2('val',data.customer_id);
+                        //$('#cbo_salesperson').select2('val',data.salesperson_id);
+                        $('textarea[name="remarks"]').val(data.remarks);
+                        $('#cboLookupPrice').select2('val', 1);
+
+
+                        $.ajax({
+                            url : 'Sales_invoice_other/transaction/items/'+data.sales_invoice_id,
+                            type : "GET",
+                            cache : false,
+                            dataType : 'json',
+                            processData : false,
+                            contentType : false,
+                            beforeSend : function(){
+                                $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                            },
+                            success : function(response){
+                                var rows=response.data;
+                                $('#tbl_items > tbody').html('');
+
+                                $.each(rows,function(i,value){
+
+                                    $('#tbl_items > tbody').append(newRowItem({
+                                        inv_qty : value.inv_qty,
+                                        product_code : value.product_code,
+                                        unit_id : value.unit_id,
+                                        unit_name : value.unit_name,
+                                        product_id: value.product_id,
+                                        product_desc : value.product_desc,
+                                        inv_line_total_discount : value.inv_line_total_discount,
+                                        tax_exempt : false,
+                                        inv_tax_rate : value.inv_tax_rate,
+                                        inv_price : value.inv_price,
+                                        inv_discount : value.inv_discount,
+                                        tax_type_id : null,
+                                        inv_line_total_price : value.inv_line_total_price,
+                                        inv_non_tax_amount: value.inv_non_tax_amount,
+                                        inv_tax_amount:value.inv_tax_amount,
+                                        batch_no:value.batch_no,
+                                        exp_date:value.exp_date,
+                                        orig_so_price:value.orig_so_price,
+                                        cost_upon_invoice:value.cost_upon_invoice
+
+                                    }));
+                                });
+
+                                reInitializeNumeric();
+                                reComputeTotal();
+                                
+                                if(response.post_status=='posted'){
+                                    showNotification({title:"Invalid",stat:"info",msg:response.post_message});
+                                }else{ // if not yet posted, remove disabled class
+                                    $('#btn_save').removeClass('disabled');
+                                }
+                            }
+                        });
+
+
+
+
+                        showList(false);
                     }
                 });
-
-
-
-
-                showList(false);
 
             });
 
@@ -1494,7 +1503,13 @@
                 var data=dt.row(_selectRowObj).data();
                 _selectedID=data.sales_invoice_id;
 
-                $('#modal_confirmation').modal('show');
+                verifyInvoice().done(function(response){
+                    if(response.is_locked == 1){
+                        showNotification(response);
+                    }else{
+                        $('#modal_confirmation').modal('show');
+                    }
+                });
             });
 
 
@@ -1733,6 +1748,15 @@
                 "url":"Sales_invoice_other/transaction/update",
                 "data":_data,
                 "beforeSend": showSpinningProgress($('#btn_save'))
+            });
+        };
+
+        var verifyInvoice=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Transaction_lock/transaction/verify/3",
+                "data":{invoice_id : _selectedID}
             });
         };
 
