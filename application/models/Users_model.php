@@ -71,6 +71,348 @@ class Users_model extends CORE_Model{
         return $this->db->get()->result();
     }
 
+    function get_user_list_audit_trail($id=null){
+
+        $this->db->select('ua.user_id,ua.user_name,ua.user_lname,ua.user_fname,ua.user_mname,ua.photo_path');
+        $this->db->select('ua.user_address,ua.user_email,ua.user_mobile,ua.user_telephone');
+        $this->db->select('DATE_FORMAT(ua.user_bdate,"%m/%d/%Y")as user_bdate,ua.user_group_id');
+        $this->db->select('ua.is_active,ug.user_group,CONCAT_WS(" ",ua.user_fname,ua.user_mname,ua.user_lname)as full_name');
+        $this->db->from('user_accounts as ua');
+        $this->db->join('user_groups as ug', 'ua.user_group_id = ug.user_group_id','left');
+        $this->db->where('ua.user_id!=', 1);
+        $this->db->where('ua.user_id!=', 12);
+        $this->db->order_by('ua.user_fname', 'asc');
+
+        if($id!=null){ $this->db->where('ua.user_id=', $id); }
+
+        return $this->db->get()->result();
+    }    
+
+function get_newsfeed_revised($startDate,$endDate,$trans_type_id=null,$trans_key_id=null,$user_id=null) {
+        $sql = "SELECT
+                
+                IFNULL(CONCAT(ua.user_name,' - ',ua.user_fname,' ', ua.user_lname),'Unidentified User') as username,
+                t.*,
+                tk.trans_key_desc,tt.trans_type_desc,
+                DATE_FORMAT(t.date, '%m/%d/%Y  %r') as date_time
+                FROM
+                (SELECT
+                po.posted_by_user user_id,
+                1 as trans_key_id,
+                11 as trans_type_id,
+                concat('Created Purchase Order # ',po.po_no) message,
+                po.date_created date
+                FROM
+                purchase_order po
+                WHERE CAST(po.date_created as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                po.modified_by_user user_id,                
+                2 as trans_key_id,
+                11 as trans_type_id,
+                concat('Modified Purchase Order # ',po.po_no) message,
+                po.date_modified date
+                FROM
+                purchase_order po
+                WHERE CAST(po.date_modified as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                po.deleted_by_user user_id,    
+                3 as trans_key_id,
+                11 as trans_type_id,
+                concat('Deleted Purchase Order # ',po.po_no) message,
+                po.date_deleted date
+                FROM
+                purchase_order po
+                WHERE CAST(po.date_deleted as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                po.approved_by_user user_id,
+                8 as trans_key_id,
+                11 as trans_type_id,
+                concat('Approved Purchase Order #',po.po_no) message,
+                po.date_approved date
+                FROM
+                purchase_order po
+                WHERE CAST(po.date_approved as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                di.posted_by_user user_id,                
+                1 as trans_key_id,
+                12 as trans_type_id,
+                concat('Created Delivery Invoice # ', di.dr_invoice_no) message,
+                di.date_created date
+                FROM
+                delivery_invoice di
+                WHERE CAST(di.date_created as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                di.modified_by_user user_id,                
+                2 as trans_key_id,
+                12 as trans_type_id,
+                concat('Modified Delivery Invoice # ', di.dr_invoice_no) message,
+                di.date_modified date
+                FROM
+                delivery_invoice di
+                WHERE CAST(di.date_modified as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                di.deleted_by_user user_id,                
+                3 as trans_key_id,
+                12 as trans_type_id,
+                concat('Deleted Delivery Invoice # ', di.dr_invoice_no) message,
+                di.date_deleted date
+                FROM
+                delivery_invoice di
+                WHERE CAST(di.date_deleted as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                so.posted_by_user user_id,                
+                1 as trans_key_id,
+                16 as trans_type_id,
+                concat('Created Sales Order # ', so.so_no) message,
+                so.date_created date
+                FROM
+                sales_order so
+                WHERE CAST(so.date_created as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                so.modified_by_user user_id,
+                3 as trans_key_id,
+                16 as trans_type_id,
+                concat('Modified Sales Order # ', so.so_no) message,
+                so.date_modified date
+                FROM
+                sales_order so
+                WHERE CAST(so.date_modified as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                so.deleted_by_user user_id,
+                3 as trans_key_id,
+                16 as trans_type_id,                
+                concat('Deleted Sales Order # ', so.so_no) message,
+                so.date_deleted date
+                FROM
+                sales_order so
+                WHERE CAST(so.date_deleted as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                si.posted_by_user user_id,                
+                1 as trans_key_id,
+                17 as trans_type_id,
+                concat('Created Sales Invoice # ', si.sales_inv_no) message,
+                si.date_created date
+                FROM
+                sales_invoice si
+                WHERE CAST(si.date_created as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                si.modified_by_user user_id,                
+                2 as trans_key_id,
+                17 as trans_type_id,
+                concat('Modified Sales Invoice # ', si.sales_inv_no) message,
+                si.date_modified date
+                FROM
+                sales_invoice si
+                WHERE CAST(si.date_modified as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                si.deleted_by_user user_id,                
+                3 as trans_key_id,
+                17 as trans_type_id,
+                concat('Deleted Sales Invoice # ', si.sales_inv_no) message,
+                si.date_deleted date
+                FROM
+                sales_invoice si
+                WHERE CAST(si.date_deleted as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+
+                SELECT
+                ai.posted_by_user user_id,
+                1 as trans_key_id,
+                15 as trans_type_id,
+                concat('Created Adjustment # ',ai.adjustment_code) message,
+                ai.date_created date
+                FROM
+                adjustment_info ai
+                WHERE CAST(ai.date_created as DATE) BETWEEN '$startDate' AND '$endDate'
+                
+                UNION
+                
+                SELECT
+                ai.modified_by_user user_id,
+                2 as trans_key_id,
+                15 as trans_type_id,
+                concat('Modified Adjustment # ',ai.adjustment_code) message,
+                ai.date_modified date
+                FROM
+                adjustment_info ai
+                WHERE CAST(ai.date_modified as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION 
+                
+                SELECT
+                ai.deleted_by_user user_id,
+                3 as trans_key_id,
+                15 as trans_type_id,
+                concat('Deleted Adjustment # ',ai.adjustment_code) message,
+                ai.date_deleted date
+                FROM
+                adjustment_info ai   
+                WHERE CAST(ai.date_deleted as DATE) BETWEEN '$startDate' AND '$endDate'             
+                
+                UNION
+
+                SELECT
+                p.created_by_user user_id,
+                1 as trans_key_id,
+                50 as trans_type_id,
+                concat('Created Product ',p.product_desc) message,
+                p.date_created date
+                FROM
+                products p
+                WHERE CAST(p.date_created as DATE) BETWEEN '$startDate' AND '$endDate' 
+                
+                UNION
+                
+                SELECT
+                p.modified_by_user user_id,
+                2 as trans_key_id,
+                50 as trans_type_id,
+                concat('Modified Product',p.product_desc) message,
+                p.date_modified date
+                FROM
+                products p
+                WHERE CAST(p.date_modified as DATE) BETWEEN '$startDate' AND '$endDate' 
+
+                UNION 
+                
+                SELECT
+                p.deleted_by_user user_id,
+                3 as trans_key_id,
+                50 as trans_type_id,
+                concat('Deleted Product ',p.product_desc) message,
+                p.date_deleted date
+                FROM
+                products p
+                WHERE CAST(p.date_deleted as DATE) BETWEEN '$startDate' AND '$endDate' 
+
+
+                UNION
+
+                SELECT
+                c.posted_by_user user_id,
+                1 as trans_key_id,
+                52 as trans_type_id,
+                concat('Created Customer ',c.customer_name) message,
+                c.date_created date
+                FROM
+                customers c
+                WHERE CAST(c.date_created as DATE) BETWEEN '$startDate' AND '$endDate' 
+                
+                UNION
+                
+                SELECT
+                c.modified_by_user user_id,
+                2 as trans_key_id,
+                52 as trans_type_id,
+                concat('Modified Customer ',c.customer_name) message,
+                c.date_modified date
+                FROM
+                customers c
+                WHERE CAST(c.date_modified as DATE) BETWEEN '$startDate' AND '$endDate' 
+                
+                UNION 
+                
+                SELECT
+                c.deleted_by_user user_id,
+                3 as trans_key_id,
+                52 as trans_type_id,
+                concat('Deleted Customer ',c.customer_name) message,
+                c.date_deleted date 
+                
+                FROM
+                customers c
+                WHERE CAST(c.date_deleted  as DATE) BETWEEN '$startDate' AND '$endDate'
+
+
+                UNION 
+
+
+                SELECT
+                ua.posted_by_user user_id,
+                1 as trans_key_id,
+                43 as trans_type_id,
+                concat('Created User ',ua.user_fname, ' ', ua.user_lname) message,
+                ua.date_created date
+                FROM
+                user_accounts ua
+                WHERE CAST(ua.date_created  as DATE) BETWEEN '$startDate' AND '$endDate'
+                
+                UNION
+                
+                SELECT
+                ua.modified_by_user user_id,
+                2 as trans_key_id,
+                43 as trans_type_id,
+                concat('Modified User ',ua.user_fname, ' ', ua.user_lname) message,
+                ua.date_modified date
+                FROM
+                user_accounts ua
+                WHERE CAST(ua.date_modified  as DATE) BETWEEN '$startDate' AND '$endDate'
+                
+                UNION 
+                
+                SELECT
+                ua.deleted_by_user user_id,
+                3 as trans_key_id,
+                43 as trans_type_id,
+                concat('Deleted User ',ua.user_fname, ' ', ua.user_lname) message,
+                ua.date_deleted date
+                
+                FROM
+                user_accounts ua
+                WHERE CAST(ua.date_deleted  as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                ) as t
+                LEFT JOIN user_accounts ua ON ua.user_id = t.user_id
+                LEFT JOIN trans_key tk ON tk.trans_key_id = t.trans_key_id
+                LEFT JOIN trans_type tt ON tt.trans_type_id = t.trans_type_id
+
+                WHERE t.user_id != 0 AND t.user_id != 1
+                ".($trans_type_id==null?"":" AND t.trans_type_id = '$trans_type_id' ")."
+                ".($trans_key_id==null?"":" AND t.trans_key_id = '$trans_key_id' ")."
+                ".($user_id==null?"":" AND t.user_id = '$user_id' ")."
+                ORDER BY t.date DESC 
+                ";
+
+                return $this->db->query($sql)->result();
+    }
 
 function get_newsfeed() {
         $sql = "SELECT
