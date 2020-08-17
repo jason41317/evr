@@ -199,7 +199,7 @@
                     <th>Order Date</th>
                     <th>Time</th>
                     <th>Customer</th>
-                    <th width="25%">Remarks</th>
+                    <th width="15%">Remarks</th>
                     <th>Salesperson</th>
                     <th width="10%">Status</th>
                     <th style="text-align: left;">Action</th>
@@ -895,7 +895,7 @@ $(document).ready(function(){
                 { targets:[2],data: "date_order" },
                 { targets:[3],data: "time_created" },
                 { targets:[4],data: "customer_name" },
-                { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(60) },
+                { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(40) },
                 { targets:[6],data: "salesperson" },
                 { targets:[7],data: "order_status" },
                 {
