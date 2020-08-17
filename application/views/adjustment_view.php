@@ -1162,77 +1162,82 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.adjustment_id;
 
+            verifyInvoice().done(function(response){
+                if(response.is_locked == 1){
+                    showNotification(response);
+                    return false;
+                }else{
 
+                    $('input,textarea').each(function(){
+                        var _elem=$(this);
+                        $.each(data,function(name,value){
+                            if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                                _elem.val(value);
+                            }
 
-            $('input,textarea').each(function(){
-                var _elem=$(this);
-                $.each(data,function(name,value){
-                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                        _elem.val(value);
-                    }
-
-                });
-            });
-
-            $('#cbo_departments').select2('val',data.department_id);
-
-            $("#is_returns").prop('checked', false); 
-            $("#is_adjustment").prop('checked', false); 
-
-            if(data.adjustment_is_return == '1'){ // is return
-                $('input[id="is_returns"]').trigger('click');
-            }else if(data.adjustment_is_return == '0'){// is adjustment
-                $('input[id="is_adjustment"]').trigger('click');                
-            } 
-
-
-            $.ajax({
-                url : 'Adjustments/transaction/items/'+data.adjustment_id,
-                type : "GET",
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                beforeSend : function(){
-                    $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
-                },
-                success : function(response){
-                    var rows=response.data;
-                    $('#tbl_items > tbody').html('');
-
-                    $.each(rows,function(i,value){
-
-                        $('#tbl_items > tbody').append(newRowItem({
-                            adjust_qty : value.adjust_qty,
-                            product_code : value.product_code,
-                            unit_id : value.unit_id,
-                            unit_name : value.unit_name,
-                            product_id: value.product_id,
-                            product_desc : value.product_desc,
-                            adjust_line_total_discount : value.adjust_line_total_discount,
-                            tax_exempt : false,
-                            adjust_tax_rate : value.adjust_tax_rate,
-                            adjust_price : value.adjust_price,
-                            adjust_discount : value.adjust_discount,
-                            tax_type_id : null,
-                            adjust_line_total_price : value.adjust_line_total_price,
-                            adjust_non_tax_amount: value.adjust_non_tax_amount,
-                            adjust_tax_amount:value.adjust_tax_amount,
-                            exp_date:value.expiration,
-                            batch_no:value.batch_no
-                        }));
+                        });
                     });
 
-                    reInitializeExpireDate();
-                    reComputeTotal();
+                    $('#cbo_departments').select2('val',data.department_id);
+
+                    $("#is_returns").prop('checked', false); 
+                    $("#is_adjustment").prop('checked', false); 
+
+                    if(data.adjustment_is_return == '1'){ // is return
+                        $('input[id="is_returns"]').trigger('click');
+                    }else if(data.adjustment_is_return == '0'){// is adjustment
+                        $('input[id="is_adjustment"]').trigger('click');                
+                    } 
+
+
+                    $.ajax({
+                        url : 'Adjustments/transaction/items/'+data.adjustment_id,
+                        type : "GET",
+                        cache : false,
+                        dataType : 'json',
+                        processData : false,
+                        contentType : false,
+                        beforeSend : function(){
+                            $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                        },
+                        success : function(response){
+                            var rows=response.data;
+                            $('#tbl_items > tbody').html('');
+
+                            $.each(rows,function(i,value){
+
+                                $('#tbl_items > tbody').append(newRowItem({
+                                    adjust_qty : value.adjust_qty,
+                                    product_code : value.product_code,
+                                    unit_id : value.unit_id,
+                                    unit_name : value.unit_name,
+                                    product_id: value.product_id,
+                                    product_desc : value.product_desc,
+                                    adjust_line_total_discount : value.adjust_line_total_discount,
+                                    tax_exempt : false,
+                                    adjust_tax_rate : value.adjust_tax_rate,
+                                    adjust_price : value.adjust_price,
+                                    adjust_discount : value.adjust_discount,
+                                    tax_type_id : null,
+                                    adjust_line_total_price : value.adjust_line_total_price,
+                                    adjust_non_tax_amount: value.adjust_non_tax_amount,
+                                    adjust_tax_amount:value.adjust_tax_amount,
+                                    exp_date:value.expiration,
+                                    batch_no:value.batch_no
+                                }));
+                            });
+
+                            reInitializeExpireDate();
+                            reComputeTotal();
+                        }
+                    });
+
+
+
+
+                    showList(false);
                 }
             });
-
-
-
-
-            showList(false);
-
         });
 
         $('#tbl_issuances tbody').on('click','button[name="remove_info"]',function(){
@@ -1240,7 +1245,13 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.adjustment_id;
 
-            $('#modal_confirmation').modal('show');
+            verifyInvoice().done(function(response){
+                if(response.is_locked == 1){
+                    showNotification(response);
+                }else{
+                    $('#modal_confirmation').modal('show');
+                }
+            });
         });
 
 
@@ -1468,6 +1479,15 @@ $(document).ready(function(){
             "url":"Adjustments/transaction/update",
             "data":_data,
             "beforeSend": showSpinningProgress($('#btn_save'))
+        });
+    };
+
+    var verifyInvoice=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Transaction_lock/transaction/verify/4",
+            "data":{invoice_id : _selectedID}
         });
     };
 

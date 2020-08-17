@@ -71,6 +71,152 @@ class Templates extends CORE_Controller {
 
     function layout($layout=null,$filter_value=null,$type=null){
         switch($layout){
+
+            case 'transaction-invoice':
+
+                if($type==1){
+                        
+                        $m_delivery=$this->Delivery_invoice_model;
+                        $m_dr_items=$this->Delivery_invoice_item_model;
+                        $m_company=$this->Company_model;
+
+
+                        $info=$m_delivery->get_list(
+                            $filter_value,
+
+                            'delivery_invoice.*,purchase_order.po_no,CONCAT_WS(" ",delivery_invoice.terms,delivery_invoice.duration)as term_description,
+                            suppliers.supplier_name,suppliers.address,suppliers.email_address,suppliers.contact_no',
+
+                            array(
+                                array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left'),
+                                array('purchase_order','purchase_order.purchase_order_id=delivery_invoice.purchase_order_id','left')
+                            )
+                        );
+
+                        $company=$m_company->get_list();
+
+                        $data['delivery_info']=$info[0];
+                        $data['company_info']=$company[0];
+                        $data['dr_items']=$m_dr_items->get_list(
+                            array('dr_invoice_id'=>$filter_value),
+                            'delivery_invoice_items.*,products.product_desc,units.unit_name',
+                            array(
+                                array('products','products.product_id=delivery_invoice_items.product_id','left'),
+                                array('units','units.unit_id=delivery_invoice_items.unit_id','left')
+                            )
+                        );
+
+                    echo $this->load->view('template/dr_content',$data,TRUE);
+                }
+                else if($type==2){
+
+                    $m_sales_invoice=$this->Sales_invoice_model;
+                    $m_sales_invoice_items=$this->Sales_invoice_item_model;
+
+                    $_GET['category'] = 1;
+
+                    $info=$m_sales_invoice->get_list(
+                        $filter_value,
+                        'sales_invoice.*,departments.department_name,customers.customer_name, sales_invoice.address,sales_order.so_no,salesperson.*',
+                        array(
+                            array('departments','departments.department_id=sales_invoice.issue_to_department','left'),
+                            array('customers','customers.customer_id=sales_invoice.customer_id','left'),
+                            array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
+                            array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left')
+                        )
+                    );
+
+                    $company_info=$this->Company_model->get_list();
+
+                    $data['company_info']=$company_info[0];
+
+                    $data['sales_info']=$info[0];
+                    $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
+                        array('sales_invoice_items.sales_invoice_id'=>$filter_value),
+                        'sales_invoice_items.*,products.product_desc,products.size,units.unit_name',
+                        array(
+                            array('products','products.product_id=sales_invoice_items.product_id','left'),
+                            array('units','units.unit_id=sales_invoice_items.unit_id','left')
+                        )
+                    );
+
+                    echo $this->load->view('template/sales_invoice_content',$data,TRUE);
+
+                }
+                else if($type==3){
+
+                    $m_sales_invoice=$this->Sales_invoice_model;
+                    $m_sales_invoice_items=$this->Sales_invoice_item_model;
+
+                    $_GET['category'] = 2;
+
+                    $info=$m_sales_invoice->get_list(
+                        $filter_value,
+                        'sales_invoice.*,departments.department_name,customers.customer_name, sales_invoice.address,sales_order.so_no,salesperson.*',
+                        array(
+                            array('departments','departments.department_id=sales_invoice.issue_to_department','left'),
+                            array('customers','customers.customer_id=sales_invoice.customer_id','left'),
+                            array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
+                            array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left')
+                        )
+                    );
+
+                    $company_info=$this->Company_model->get_list();
+
+                    $data['company_info']=$company_info[0];
+
+                    $data['sales_info']=$info[0];
+                    $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
+                        array('sales_invoice_items.sales_invoice_id'=>$filter_value),
+                        'sales_invoice_items.*,products.product_desc,products.size,units.unit_name',
+                        array(
+                            array('products','products.product_id=sales_invoice_items.product_id','left'),
+                            array('units','units.unit_id=sales_invoice_items.unit_id','left')
+                        )
+                    );
+
+                    echo $this->load->view('template/sales_invoice_content_dr_view',$data,TRUE);
+
+                } 
+                else if($type==4 OR $type==5){
+                        $m_adjustment=$this->Adjustment_model;
+                        $m_adjustment_items=$this->Adjustment_item_model;
+                        $m_company=$this->Company_model;
+                        $type=$this->input->get('type',TRUE);
+                        $print=$this->input->get('print',TRUE);
+
+                        $info=$m_adjustment->get_list(
+                            $filter_value,
+                            'adjustment_info.*,departments.department_name,
+                                (SELECT COALESCE(customers.customer_name,"N/A") FROM sales_invoice 
+                                LEFT JOIN customers ON customers.customer_id = sales_invoice.customer_id
+                                WHERE sales_inv_no = adjustment_info.inv_no) as customer_name
+                            ',
+                            array(
+                                array('departments','departments.department_id=adjustment_info.department_id','left')
+                            )
+                        );
+
+                        $company=$m_company->get_list();
+
+                        $data['adjustment_info']=$info[0];
+                        $data['company_info']=$company[0];
+                        $data['adjustment_items']=$m_adjustment_items->get_list(
+                            array('adjustment_items.adjustment_id'=>$filter_value),
+                            'adjustment_items.*,products.product_desc,units.unit_name',
+                            array(
+                                array('products','products.product_id=adjustment_items.product_id','left'),
+                                array('units','units.unit_id=adjustment_items.unit_id','left')
+                            )
+                        );
+                        $data['print']=$print;
+
+                        echo $this->load->view('template/adjustment_content',$data,TRUE);
+                }
+
+
+                break;
+
             case 'po': //purchase order
                         $m_purchases=$this->Purchases_model;
                         $m_po_items=$this->Purchase_items_model;
