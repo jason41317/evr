@@ -226,7 +226,7 @@ class Adjustments extends CORE_Controller
 
 
                 $m_adjustment->begin();
-
+                $m_adjustment->set('date_modified','NOW()'); 
                 $m_adjustment->department_id=$this->input->post('department',TRUE);
                 $m_adjustment->remarks=$this->input->post('remarks',TRUE);
                 $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);

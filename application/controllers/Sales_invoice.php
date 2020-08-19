@@ -411,7 +411,7 @@ class Sales_invoice extends CORE_Controller
                     $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
 
                     $m_invoice->begin();
-
+                    $m_invoice->set('date_modified','NOW()');
                     $m_invoice->sales_inv_no=$sales_inv_no;
                     $m_invoice->department_id=$this->input->post('department',TRUE);
                     $m_invoice->remarks=$this->input->post('remarks',TRUE);
