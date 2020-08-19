@@ -290,7 +290,7 @@ class Deliveries extends CORE_Controller
                 $purchase_order_id=(count($arr_po_info)>0?$arr_po_info[0]->purchase_order_id:0);
 
                 $m_delivery_invoice->begin();
-
+                $m_delivery_invoice->set('date_modified','NOW()');
                 $m_delivery_invoice->purchase_order_id=$purchase_order_id;
                 //$m_delivery_invoice->dr_invoice_no=$this->input->post('dr_invoice_no',TRUE);
                 //$m_delivery_invoice->batch_no=$this->input->post('batch_no',TRUE);

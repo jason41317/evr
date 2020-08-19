@@ -296,6 +296,7 @@ class Purchases extends CORE_Controller
                     $m_purchases->begin();
 
                     //$m_purchases->po_no=$this->input->post('po_no',TRUE);
+                    $m_purchases->set('date_modified','NOW()'); //treat NOW() as function and not string
                     $m_purchases->terms=$this->input->post('terms',TRUE);
                     $m_purchases->duration=$this->input->post('duration',TRUE);
                     $m_purchases->deliver_to_address=$this->input->post('deliver_to_address',TRUE);
