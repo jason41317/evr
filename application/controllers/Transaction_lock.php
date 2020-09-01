@@ -19,6 +19,7 @@ class Transaction_lock extends CORE_Controller
         $this->load->model('Delivery_invoice_model');
         $this->load->model('Sales_invoice_model');
         $this->load->model('Adjustment_model');
+        $this->load->model('Trans_model');
         $this->load->library('email');
 
 
@@ -34,58 +35,13 @@ class Transaction_lock extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['_rights'] = $this->load->view('template/elements/rights', '', TRUE);
         $data['modules']=$this->Transaction_module_model->get_list();
-
-        $data['refproducts']=$this->Refproduct_model->get_list(
-            'is_deleted=FALSE'
-        );
-
-        //data required by active view
-        $data['departments']=$this->Departments_model->get_list(
-            array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
-        );
-
-        //data required by active view
-        $data['suppliers']=$this->Suppliers_model->get_list(
-            array('suppliers.is_active'=>TRUE,'suppliers.is_deleted'=>FALSE),
-            'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
-            array(
-                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
-            )
-        );
-
-
-        $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
-
-        $data['products']=$this->Products_model->get_list(
-                null, //no id filter
-                array(
-                           'products.product_id',
-                           'products.product_code',
-                           'products.product_desc',
-                           'products.product_desc1',
-                            'products.is_tax_exempt',
-                           'FORMAT(products.sale_price,2)as sale_price',
-                            'FORMAT(products.purchase_cost,2)as purchase_cost',
-                           'products.unit_id',
-                            'products.on_hand',
-                           'units.unit_name'
-                ),
-                array(
-                    // parameter (table to join(left) , the reference field)
-                    array('units','units.unit_id=products.unit_id','left'),
-                    array('categories','categories.category_id=products.category_id','left')
-
-                )
-
-            );
-
         $data['title'] = 'Transaction Lock';
 
         ($this->session->user_group_id != 1 ? redirect(base_url('dashboard')) : $this->load->view('transaction_lock_view', $data) );
 
     }
 
-    function transaction($txn=null,$filter_value=null,$type=null){
+    function transaction($txn=null,$filter_value=null,$type=null,$filter_value2=null){
         switch ($txn){
             case 'list':  //this returns JSON of Purchase Order to be rendered on Datatable
 
@@ -114,7 +70,6 @@ class Transaction_lock extends CORE_Controller
                     $m_purchase_invoice->modify(
                         "is_deleted = FALSE AND is_active = TRUE AND date_delivered BETWEEN '".$tsd."' AND '".$ted."'"
                     );
-                    $response['stat12'] = 'Success';
                 }
                 // Sales Invoice && Other Sales Invoice
                 else if($module_id == 2){
@@ -143,6 +98,17 @@ class Transaction_lock extends CORE_Controller
                         "is_deleted = FALSE AND is_active = TRUE AND adjustment_type = 'OUT' AND date_adjusted BETWEEN '".$tsd."' AND '".$ted."'"
                     );
                 }
+
+
+                $module = $this->Transaction_module_model->get_list($module_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=9; //CRUD
+                $m_trans->trans_type_id=100; // TRANS TYPE
+                $m_trans->trans_log='Locked '.$module[0]->module.' Transaction from '.date('m/d/Y',strtotime($this->input->post('tsd'))).' to '.date('m/d/Y',strtotime($this->input->post('ted')));
+                $m_trans->save();
 
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
@@ -181,6 +147,23 @@ class Transaction_lock extends CORE_Controller
 
                 }
 
+                $module = $this->Transaction_module_model->get_list($module_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=10; //CRUD
+                $m_trans->trans_type_id=100; // TRANS TYPE
+
+                if($type==1){
+                    $m_trans->trans_log='Unlocked '.$module[0]->module.' Transactions from '.date('m/d/Y',strtotime($this->input->post('tsd'))).' to '.date('m/d/Y',strtotime($this->input->post('ted')));
+                }else{
+                    $invoice_no = $this->input->post('invoice_no',TRUE);
+                    $m_trans->trans_log='Unlocked '.$module[0]->module.' Transaction (Invoice #'.$invoice_no.')';
+                }
+
+                $m_trans->save();
+
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
                 $response['msg'] = 'Transactions successfully unlocked.';
@@ -189,6 +172,16 @@ class Transaction_lock extends CORE_Controller
 
                 break;
 
+            case 'check':
+                $invoice_id = $this->input->post('invoice_id', TRUE);
+                $response['count'] = count($invoice_id);
+
+                $response['title'] = 'Error!';
+                $response['stat'] = 'error';
+                $response['msg'] = 'Please select a transaction.';
+
+                echo json_encode($response);
+                break;
 
             case 'verify':
 

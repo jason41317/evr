@@ -884,7 +884,7 @@
 
 
 $(document).ready(function(){
-    var dt; var dt_lock; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
+    var dt; var dt_lock; var _txnMode; var _selectedID; var _selectedInvoiceNo; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
     var _productType; var _cboDepartments; var _defCostType; var _cboTransactionModule; var _cboTransactionLockModule;
 
 
@@ -1326,12 +1326,14 @@ $(document).ready(function(){
 
         $('#btn_unlock_all').on('click', function(){
             var result = countChecked($('#tbl_transaction'), '.trans_chckbx');
-
-            if(result.checked > 0){
-                $('#modal_confirmation_transaction').modal('show');
-            }else{
-                showNotification({title:"Invalid",stat:"error",msg:"Please select a transaction."});
-            }
+            verifyTransactionList().done(function(response){
+                if(response.count > 0){
+                    $('#modal_confirmation_transaction').modal('show');
+                }else{
+                    showNotification(response);
+                    return false;
+                }
+            });
 
         });         
 
@@ -1357,6 +1359,7 @@ $(document).ready(function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.invoice_id;
+            _selectedInvoiceNo=data.invoice_no;
 
             $('#modal_confirmation_unlock').modal('show');
         });
@@ -1404,7 +1407,7 @@ $(document).ready(function(){
                 $('#select_all').prop('checked', false);
                 $('#tbl_transaction').DataTable().ajax.reload();
             }).always(function(){
-                $("#btn_unlock_all span").text('Unlock');
+                $("#btn_unlock_all span").text('Unlock Transaction');
                 $('#btn_unlock_all').attr('disabled',false);
             });
         });
@@ -1642,6 +1645,16 @@ $(document).ready(function(){
         });
     };
 
+    var verifyTransactionList=function(){
+        var _data = dt.$('input, select').serialize();
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Transaction_lock/transaction/check",
+            "data":_data
+        });
+    };
+
     var unlockTransactions=function(b){
         
         if(b==1){
@@ -1650,13 +1663,14 @@ $(document).ready(function(){
         }else{
             var _data=$('#').serializeArray();
             var module_id = $('#cbo_transaction_module').val();
-            _data.push({name : "invoice_id[]", value : _selectedID});   
+            _data.push({name : "invoice_id[]", value : _selectedID});  
+            _data.push({name : "invoice_no", value : _selectedInvoiceNo});   
         }
 
         return $.ajax({
             "dataType":"json",
             "type":"POST",
-            "url":"Transaction_lock/transaction/unlock/"+module_id,
+            "url":"Transaction_lock/transaction/unlock/"+module_id+"/"+b,
             "data":_data
         });
     };
