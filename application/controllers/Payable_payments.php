@@ -14,6 +14,7 @@ class Payable_payments extends CORE_Controller
         $this->load->model('Suppliers_model');
         $this->load->model('Payment_method_model');
         $this->load->model('Departments_model');
+        $this->load->model('Trans_model');        
     }
 
     public function index() {
@@ -123,7 +124,13 @@ class Payable_payments extends CORE_Controller
                 $m_suppliers->recalculate_supplier_payable($this->input->post('supplier_id',TRUE));
                 //******************************************************************************************
 
-
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=13; // TRANS TYPE
+                $m_trans->trans_log='Posted Payment No: '.$receipt_no.' to Record Payment';
+                $m_trans->save();
 
                 $m_payment->commit();
 
@@ -162,6 +169,14 @@ class Payable_payments extends CORE_Controller
                 $m_suppliers=$this->Suppliers_model;
                 $m_suppliers->recalculate_supplier_payable($supplier_id);
                 //******************************************************************************************
+                $payment_info=$m_payment->get_list($payment_id,'receipt_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=4; //CRUD
+                $m_trans->trans_type_id=13; // TRANS TYPE
+                $m_trans->trans_log='Cancelled Payment No: '.$payment_info[0]->receipt_no.' from Record Payment';
+                $m_trans->save();
 
                 $m_payment->commit();
 

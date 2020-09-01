@@ -16,6 +16,7 @@ class Sales_order extends CORE_Controller
         $this->load->model('Customers_model');
         $this->load->model('Products_model');
         $this->load->model('Refproduct_model');
+        $this->load->model('Trans_model');        
 
     }
 
@@ -290,6 +291,13 @@ class Sales_order extends CORE_Controller
                 $m_sales_order->so_no='SO-'.date('Ymd').'-'.$sales_order_id;
                 $m_sales_order->modify($sales_order_id);
 
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=16; // TRANS TYPE
+                $m_trans->trans_log='Created Sales Order No: SO-'.date('Ymd').'-'.$sales_order_id;
+                $m_trans->save();
 
 
                 $m_sales_order->commit();
@@ -380,6 +388,14 @@ class Sales_order extends CORE_Controller
                 }
 
 
+                $sal_info=$m_sales_order->get_list($sales_order_id,'so_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=16; // TRANS TYPE
+                $m_trans->trans_log='Updated Sales Order No: '.$sal_info[0]->so_no;
+                $m_trans->save();
 
                 $m_sales_order->commit();
 
@@ -409,6 +425,14 @@ class Sales_order extends CORE_Controller
                 $m_sales_order->is_deleted=1;//mark as deleted
                 $m_sales_order->modify($sales_order_id);
 
+                $sal_info=$m_sales_order->get_list($sales_order_id,'so_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=3; //CRUD
+                $m_trans->trans_type_id=16; // TRANS TYPE
+                $m_trans->trans_log='Deleted Sales Order No: '.$sal_info[0]->so_no;
+                $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
@@ -427,6 +451,14 @@ class Sales_order extends CORE_Controller
                 $m_sales_order->order_status_id=4;//mark as closed
                 $m_sales_order->modify($sales_order_id);
 
+                $sal_info=$m_sales_order->get_list($sales_order_id,'so_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=22; //CRUD
+                $m_trans->trans_type_id=16; // TRANS TYPE
+                $m_trans->trans_log='Closed Sales Order No: '.$sal_info[0]->so_no;
+                $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';

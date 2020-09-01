@@ -18,6 +18,7 @@ class Products extends CORE_Controller
         $this->load->model('Tax_model');
         $this->load->model('Sales_invoice_model');
         $this->load->model('Sales_invoice_item_model');
+        $this->load->model('Trans_model');        
     }
 
     public function index() {
@@ -129,6 +130,14 @@ class Products extends CORE_Controller
 
                 $product_id = $m_products->last_insert_id();
 
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=50; // TRANS TYPE
+                $m_trans->trans_log='Created a new Product: '.$this->input->post('product_desc', TRUE);
+                $m_trans->save();
+
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
                 $response['msg'] = 'Product Information successfully created.';
@@ -179,6 +188,14 @@ class Products extends CORE_Controller
 
                 $m_products->modify($product_id);
 
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=50; // TRANS TYPE
+                $m_trans->trans_log='Updated Product : '.$this->input->post('product_desc', TRUE).' ID('.$product_id.')';
+                $m_trans->save();
+
                 $response['title']='Success!';
                 $response['stat']='success';
                 $response['msg']='Product information successfully updated.';
@@ -197,6 +214,16 @@ class Products extends CORE_Controller
                 $m_products->deleted_by_user = $this->session->user_id;
                 $m_products->is_deleted=1;
                 if($m_products->modify($product_id)){
+
+                    $product_desc= $m_products->get_list($product_id,'product_desc');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=50; // TRANS TYPE
+                    $m_trans->trans_log='Deleted Product: '.$product_desc[0]->product_desc;
+                    $m_trans->save();
+                                        
                     $response['title']='Success!';
                     $response['stat']='success';
                     $response['msg']='Product information successfully deleted.';
