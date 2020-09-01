@@ -6,6 +6,7 @@ class Units extends CORE_Controller {
         parent::__construct('');
         $this->validate_session();
         $this->load->model('Units_model');
+        $this->load->model('Trans_model');      
     }
 
     public function index() {
@@ -38,6 +39,14 @@ class Units extends CORE_Controller {
 
                 $unit_id = $m_units->last_insert_id();
 
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=47; // TRANS TYPE
+                $m_trans->trans_log='Created  Unit: '.$this->input->post('unit_name', TRUE);
+                $m_trans->save();
+
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
                 $response['msg'] = 'unit information successfully created.';
@@ -57,6 +66,15 @@ class Units extends CORE_Controller {
                     $response['stat']='success';
                     $response['msg']='unit information successfully deleted.';
 
+                    $unit_name = $m_units->get_list($unit_id,'unit_name');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=47; // TRANS TYPE
+                    $m_trans->trans_log='Deleted Unit: '.$unit_name[0]->unit_name;
+                    $m_trans->save();
+
                     echo json_encode($response);
                 }
 
@@ -70,6 +88,15 @@ class Units extends CORE_Controller {
                 $m_units->unit_desc=$this->input->post('unit_desc',TRUE);
 
                 $m_units->modify($unit_id);
+
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=47; // TRANS TYPE
+                $m_trans->trans_log='Updated Unit: '.$this->input->post('unit_name',TRUE).' ID('.$unit_id.')';
+                $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';

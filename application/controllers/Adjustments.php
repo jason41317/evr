@@ -14,7 +14,7 @@ class Adjustments extends CORE_Controller
         $this->load->model('Departments_model');
         $this->load->model('Products_model');
         $this->load->model('Refproduct_model');
-
+        $this->load->model('Trans_model');
     }
 
     public function index() {
@@ -200,7 +200,13 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->adjustment_code='ADJ-'.date('Ymd').'-'.$adjustment_id;
                 $m_adjustment->modify($adjustment_id);
 
-
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=15; // TRANS TYPE
+                $m_trans->trans_log='Created Adjustment No: ADJ-'.date('Ymd').'-'.$adjustment_id;
+                $m_trans->save();
 
                 $m_adjustment->commit();
 
@@ -209,7 +215,7 @@ class Adjustments extends CORE_Controller
                 if($m_adjustment->status()===TRUE){
                     $response['title'] = 'Success!';
                     $response['stat'] = 'success';
-                    $response['msg'] = 'Items successfully issued.';
+                    $response['msg'] = 'Items successfully Adjusted.';
                     $response['row_added']=$this->response_rows($adjustment_id);
 
                     echo json_encode($response);
@@ -294,7 +300,14 @@ class Adjustments extends CORE_Controller
 
                 }
 
-
+                $adj_info=$m_adjustment->get_list($adjustment_id,'adjustment_code');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=15; // TRANS TYPE
+                $m_trans->trans_log='Updated Adjustment No: '.$adj_info[0]->adjustment_code;
+                $m_trans->save();
 
                 $m_adjustment->commit();
 
@@ -324,7 +337,14 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->is_deleted=1;//mark as deleted
                 $m_adjustment->modify($adjustment_id);
 
-
+                $adj_info=$m_adjustment->get_list($adjustment_id,'adjustment_code');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=3; //CRUD
+                $m_trans->trans_type_id=15; // TRANS TYPE
+                $m_trans->trans_log='Deleted Adjustment No: '.$adj_info[0]->adjustment_code;
+                $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
