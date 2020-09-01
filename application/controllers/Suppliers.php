@@ -9,6 +9,7 @@ class Suppliers extends CORE_Controller {
         $this->load->model('Suppliers_model');
         $this->load->model('Supplier_photos_model');
         $this->load->model('Tax_model');
+        $this->load->model('Trans_model');        
     }
 
     public function index() {
@@ -79,6 +80,15 @@ class Suppliers extends CORE_Controller {
                     )
 
                 );
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=51; // TRANS TYPE
+                $m_trans->trans_log='Created a Supplier: '.$this->input->post('supplier_name',TRUE);
+                $m_trans->save();
+                                
                 echo json_encode($response);
 
                 break;

@@ -8,6 +8,7 @@ class Categories extends CORE_Controller
         parent::__construct('');
         $this->validate_session();
         $this->load->model('Categories_model');
+        $this->load->model('Trans_model');        
     }
 
     public function index() {
@@ -40,6 +41,14 @@ class Categories extends CORE_Controller
 
                 $category_id = $m_categories->last_insert_id();
 
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=1; //CRUD
+                $m_trans->trans_type_id=45; // TRANS TYPE
+                $m_trans->trans_log='Created Category: '.$this->input->post('category_name', TRUE);
+                $m_trans->save();
+
                 $response['title'] = 'Success!';
                 $response['stat'] = 'success';
                 $response['msg'] = 'category information successfully created.';
@@ -59,6 +68,15 @@ class Categories extends CORE_Controller
                     $response['stat']='success';
                     $response['msg']='category information successfully deleted.';
 
+                    $category_name = $m_categories->get_list($category_id,'category_name');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=3; //CRUD
+                    $m_trans->trans_type_id=45; // TRANS TYPE
+                    $m_trans->trans_log='Deleted Category: '.$category_name[0]->category_name;
+                    $m_trans->save();                    
+
                     echo json_encode($response);
                 }
 
@@ -72,6 +90,14 @@ class Categories extends CORE_Controller
                 $m_categories->category_desc=$this->input->post('category_desc',TRUE);
 
                 $m_categories->modify($category_id);
+
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=45; // TRANS TYPE
+                $m_trans->trans_log='Updated Category: '.$this->input->post('category_name',TRUE).' ID('.$category_id.')';
+                $m_trans->save();
 
                 $response['title']='Success!';
                 $response['stat']='success';
