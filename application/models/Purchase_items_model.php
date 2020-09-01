@@ -86,6 +86,9 @@ class Purchase_items_model extends CORE_Model {
         INNER JOIN purchase_order_items as poi ON po.purchase_order_id=poi.purchase_order_id
         
         WHERE po.is_active=TRUE AND po.is_deleted=FALSE
+        AND (po.order_status_id=1 OR po.order_status_id=3)
+        AND po.is_closed = FALSE
+
         GROUP BY po.po_no,poi.product_id
 
         UNION ALL
@@ -131,6 +134,8 @@ class Purchase_items_model extends CORE_Model {
             FROM purchase_order as po
             INNER JOIN purchase_order_items as poi ON po.purchase_order_id=poi.purchase_order_id
             WHERE po.is_active=TRUE AND po.is_deleted=FALSE
+            AND (po.order_status_id=1 OR po.order_status_id=3)
+            AND po.is_closed = FALSE
             GROUP BY po.po_no,poi.product_id
 
             UNION ALL

@@ -157,8 +157,11 @@ class Rights_link_model extends CORE_Model{
                                           (79,'2','2-7','Purchase Invoice History'),
 
                                           -- Sales
-                                          (80,'3','3-5','Sales Invoice History')
+                                          (80,'3','3-5','Sales Invoice History'),
 
+                                          -- Purchase Cancel
+                                          (81,'20','20-5','Purchase Order Cancel')
+                                          
                                           ON DUPLICATE KEY UPDATE
 
                                           rights_links.parent_code=VALUES(rights_links.parent_code),
