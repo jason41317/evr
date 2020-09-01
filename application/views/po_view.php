@@ -234,7 +234,7 @@
                                     <th width="10%" class="align-center">Approved</th>
                                     <th width="10%" class="align-center">Status</th>
                                     <th width="5%" class="align-center">Sent</th>
-                                    <th width="15%" class="align-center"><center>Action</center></th>
+                                    <th width="12%" style="text-align: left;">Action</th>
                                     <th class="align-center">id</th>
                                 </tr>
                                 </thead>
@@ -501,6 +501,26 @@
     </div>
 </div><!---modal-->
 
+<div id="modal_confirmation_close" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Closing of Purchase Order</h4>
+
+            </div>
+
+            <div class="modal-body">
+                <p id="modal-body-message">Are you sure ?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_yes_close" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="modal_new_supplier" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-lg">
@@ -827,12 +847,16 @@ $(document).ready(function(){
                     }
 
                 },
-                { sClass:"align-center",
-                    targets:[7],
+                { targets:[7],data: null,
                     render: function (data, type, full, meta){
-                        var po_btn_message='<a href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm <?php echo (in_array('20-4',$this->session->user_rights)?'':'hidden'); ?>" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
+                        var po_btn_message = '<a href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-green btn-sm <?php echo (in_array('20-4',$this->session->user_rights)?'':'hidden'); ?>" name="message_po" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Message"><i class="fa fa-envelope-o"></i> </a>';
 
-                        return '<center>'+po_btn_edit+'&nbsp;'+po_btn_message+'&nbsp;'+po_btn_trash+'</center>';
+                        if(data.order_status_id == 1  || data.order_status_id == 3){
+                           return po_btn_edit+'&nbsp;'+po_btn_message+'&nbsp;'+po_btn_trash+'&nbsp;'+po_btn_mark_as_closed;
+                        }else{
+                            return po_btn_edit+'&nbsp;'+po_btn_message+'&nbsp;'+po_btn_trash;
+                        }
+                        
                     }
                 },
                 { visible:false, targets:[8],data: "purchase_order_id" },
@@ -1164,8 +1188,8 @@ $(document).ready(function(){
 
             $('#span_po_no').html(data.po_no);
 
-            if(getFloat(data.order_status_id)>1){
-                showNotification({"title":"Error!","stat":"error","msg":"Sorry, you cannot edit purchase order that is already been received."});
+            if(getFloat(data.order_status_id)!= '1'){    
+                showNotification({title:"Invalid",stat:"error",msg:"Only Open Purchases can be Edited."});
                 return;
             }
 
@@ -1237,12 +1261,25 @@ $(document).ready(function(){
         $('#tbl_purchases tbody').on('click','button[name="remove_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
+            
+            if(data.order_status_id != '1' ){
+                showNotification({title:"Invalid",stat:"error",msg:"Only Open Purchases can be Deleted."});
+            }else {
+
             _selectedID=data.purchase_order_id;
 
             $('#modal_confirmation').modal('show');
+            }
+
         });
 
+        $('#tbl_purchases tbody').on('click','button[name="mark_as_closed"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.purchase_order_id;
 
+            $('#modal_confirmation_close').modal('show');
+        });
 
         //track every changes on numeric fields
         $('#tbl_items tbody').on('keyup','input.numeric,input.number',function(){
@@ -1296,6 +1333,16 @@ $(document).ready(function(){
 
                 });
             //}
+        });
+
+        $('#btn_yes_close').click(function(){
+            MarkRecordAsClosed().done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                }
+
+            });
         });
 
 
@@ -1464,6 +1511,15 @@ $(document).ready(function(){
             "data":{purchase_order_id : _selectedID}
         });
     };
+
+    var MarkRecordAsClosed=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Purchases/transaction/close",
+            "data":{purchase_order_id : _selectedID}
+        });
+    };    
 
     var showList=function(b){
         if(b){

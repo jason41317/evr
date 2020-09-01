@@ -491,7 +491,8 @@ class Deliveries extends CORE_Controller
                 'CONCAT_WS(" ",CAST(delivery_invoice.terms AS CHAR),delivery_invoice.duration)as term_description',
                 'suppliers.supplier_name',
                 'tax_types.tax_type',
-                'purchase_order.po_no'
+                'purchase_order.po_no',
+                'purchase_order.order_status_id'
             ),
             array(
                 array('suppliers','suppliers.supplier_id=delivery_invoice.supplier_id','left'),
