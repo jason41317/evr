@@ -1481,7 +1481,12 @@ $(document).ready(function(){
                     showNotification(response);
                     return false;
                 }else{
-                                        //make sure save button is disabled
+
+                    if(data.order_status_id == 4){
+                        showNotification({title:"Purchase Order Already Marked As Closed",stat:"warning",msg:"Editing this invoice will reopen the Purchase Order."});
+                    }
+
+                    //make sure save button is disabled
                     $('#btn_save').addClass('disabled');
 
                     $('textarea[name="remarks"]').html(data.remarks);

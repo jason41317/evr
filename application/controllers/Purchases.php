@@ -388,6 +388,26 @@ class Purchases extends CORE_Controller
                     }
                     break;
 
+                case 'close':
+                    $m_purchase_order=$this->Purchases_model;
+                    $purchase_order_id=$this->input->post('purchase_order_id',TRUE);
+
+                    $m_purchase_order->set('date_closed','NOW()'); //treat NOW() as function and not string
+                    $m_purchase_order->closed_by_user=$this->session->user_id;//user that closed the record
+                    $m_purchase_order->is_closed=1;//mark as closed
+                    $m_purchase_order->order_status_id=4;//mark as closed
+                    $m_purchase_order->modify($purchase_order_id);
+
+
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Record successfully marked as closed.';
+                    $response['row_updated']=$this->row_response($purchase_order_id);
+                    echo json_encode($response);
+
+                    break;
+
+
 
                 case 'mark-approved': //called on DASHBOARD when approved button is clicked
                     $m_purchases=$this->Purchases_model;
@@ -459,7 +479,8 @@ class Purchases extends CORE_Controller
                 'suppliers.supplier_name',
                 'tax_types.tax_type',
                 'approval_status.approval_status',
-                'order_status.order_status'
+                'purchase_order.order_status_id',
+                'order_status.order_status',
             ),
             array(
                 array('suppliers','suppliers.supplier_id=purchase_order.supplier_id','left'),
