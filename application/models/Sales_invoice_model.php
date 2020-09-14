@@ -168,9 +168,9 @@ class Sales_invoice_model extends CORE_Model
                 LEFT JOIN (
                 SELECT 
                     ai.inv_no,
-                    group_concat(ai.adjustment_code) as return_invoices,
+                    group_concat(DISTINCT(ai.adjustment_code)) as return_invoices,
                     aii.product_id, 
-                    SUM(aii.adjust_price) AS return_srp,
+                    aii.adjust_price,
                     SUM(aii.adjust_qty) as return_qty,
                     SUM(aii.adjust_line_total_price) return_line_total_price,
                     SUM(aii.adjust_tax_amount) return_tax_amount,
@@ -183,7 +183,7 @@ class Sales_invoice_model extends CORE_Model
                     AND ai.is_deleted = FALSE AND ai.is_active = TRUE
                     GROUP BY ai.inv_no, aii.product_id , aii.adjust_price
                 
-                ) as returns ON returns.inv_no = si.sales_inv_no AND returns.product_id = sii.product_id AND returns.return_srp = sii.inv_price
+                ) as returns ON returns.inv_no = si.sales_inv_no AND returns.product_id = sii.product_id AND returns.adjust_price = sii.inv_price
                 
                 WHERE si.date_invoice BETWEEN '$start' AND '$end' AND si.is_active=TRUE AND si.is_deleted=FALSE
 
