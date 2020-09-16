@@ -73,7 +73,8 @@ class Open_sales extends CORE_Controller
                 $excel->getActiveSheet()->getColumnDimension('D')->setWidth(50);
                 $excel->getActiveSheet()->getColumnDimension('E')->setWidth(25);
                 $excel->getActiveSheet()->getColumnDimension('F')->setWidth(25);
-                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+                $excel->getActiveSheet()->getColumnDimension('G')->setWidth(25);
+                $excel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
 
                 $excel->getActiveSheet()->setCellValue('A1',$company_info->company_name)
                                         ->mergeCells('A1:D1')
@@ -94,17 +95,17 @@ class Open_sales extends CORE_Controller
                     ));
 
                     $excel->getActiveSheet()->setCellValue('A5')
-                                            ->mergeCells('A5:G5')
-                                            ->getStyle('A5:G5')->applyFromArray($border_bottom);
+                                            ->mergeCells('A5:H5')
+                                            ->getStyle('A5:H5')->applyFromArray($border_bottom);
 
                     $excel->getActiveSheet()
-                            ->getStyle('A6:G6')
+                            ->getStyle('A6:H6')
                             ->getAlignment()
                             ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
                     $excel->getActiveSheet()->setCellValue('A6','OPEN SALES')
-                                            ->mergeCells('A6:G6')
-                                            ->getStyle('A6:G6')->getFont()->setBold(True)
+                                            ->mergeCells('A6:H6')
+                                            ->getStyle('A6:H6')->getFont()->setBold(True)
                                             ->setSize(14);
 
                 $i=8;
@@ -112,13 +113,13 @@ class Open_sales extends CORE_Controller
                 foreach ($item as $batchNo) {
 
                 $excel->getActiveSheet()
-                    ->getStyle('A'.$i.':'.'G'.$i)
+                    ->getStyle('A'.$i.':'.'H'.$i)
                     ->getFill()
                     ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setARGB('FF9900');
 
-                $excel->getActiveSheet()->mergeCells('A'.$i.':'.'G'.$i);
+                $excel->getActiveSheet()->mergeCells('A'.$i.':'.'H'.$i);
                 $excel->getActiveSheet()->setCellValue('A'.$i,'SO #: '.$batchNo->so_no)
                                         ->getStyle('A'.$i)->getFont()->setBold(TRUE);
                 $i++;
@@ -131,12 +132,14 @@ class Open_sales extends CORE_Controller
                                         ->getStyle('C'.$i)->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('D'.$i,'Product Description')
                                         ->getStyle('D'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E'.$i,'Order Qty')
+                $excel->getActiveSheet()->setCellValue('E'.$i,'Product Type')
                                         ->getStyle('E'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F'.$i,'Delivered Qty')
+                $excel->getActiveSheet()->setCellValue('F'.$i,'Order Qty')
                                         ->getStyle('F'.$i)->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('G'.$i,'Balance')
+                $excel->getActiveSheet()->setCellValue('G'.$i,'Delivered Qty')
                                         ->getStyle('G'.$i)->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('H'.$i,'Balance')
+                                        ->getStyle('H'.$i)->getFont()->setBold(TRUE);
 
                 $i++;
 
@@ -146,9 +149,10 @@ class Open_sales extends CORE_Controller
                             $excel->getActiveSheet()->setCellValue('B'.$i,$so->last_invoice_date);
                             $excel->getActiveSheet()->setCellValue('C'.$i,$so->product_code);
                             $excel->getActiveSheet()->setCellValue('D'.$i,$so->product_desc);
-                            $excel->getActiveSheet()->setCellValue('E'.$i,$so->SoQtyTotal);
-                            $excel->getActiveSheet()->setCellValue('F'.$i,$so->SoQtyDelivered);
-                            $excel->getActiveSheet()->setCellValue('G'.$i,$so->SoQtyBalance);
+                            $excel->getActiveSheet()->setCellValue('E'.$i,$so->product_type);
+                            $excel->getActiveSheet()->setCellValue('F'.$i,$so->SoQtyTotal);
+                            $excel->getActiveSheet()->setCellValue('G'.$i,$so->SoQtyDelivered);
+                            $excel->getActiveSheet()->setCellValue('H'.$i,$so->SoQtyBalance);
                             $i++;                                                                                                                                                                                                                                  
                         }
                     }         
