@@ -45,12 +45,13 @@
 <table  width="100%" cellpadding="3" cellspacing="0" border="1">
 <thead>
 <tr>
-<td colspan="7"><strong>SO # : </strong><?php echo $batchNo->so_no; ?></strong></td>
+<td colspan="8"><strong>SO # : </strong><?php echo $batchNo->so_no; ?></strong></td>
 </tr>
 	<th width="10%" align="left">Sales Order No</th>
 	<th width="10%" align="left">Date</th>
 	<th  width="10%" align="left">Product Code</th>
 	<th  width="30%" align="left">Product Description</th>
+	<th  width="15%" align="left">Product Type</th>
 	<th  width="10%" align="left">Order Qty</th>
 	<th width="10%" align="left">Delivered Qty</th>
 	<th  width="5%" align="left">Balance</th>
@@ -69,6 +70,7 @@
 <td width="10%"><?php echo $so->last_invoice_date; ?></td>
 <td width="10%"><?php echo $so->product_code; ?> </td> 
 <td width="30%"><?php echo $so->product_desc; ?> </td>
+<td width="15%"><?php echo $so->product_type; ?> </td>
 <td width="10%"><?php echo $so->SoQtyTotal; ?></td>
 <td width="10%"><?php echo $so->SoQtyDelivered; ?> </td>
 <td width="5%"><?php echo $so->SoQtyBalance; ?> </td>
