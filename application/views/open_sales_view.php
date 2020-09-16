@@ -235,6 +235,7 @@
                     <th>Date</th>
                     <th>Product Code</th>
                     <th>Product Desription</th>
+                    <th>Product Type</th>
                     <th>Order QTY</th>
                     <th>Delivered</th>
                     <th>Balance</th>
@@ -335,9 +336,10 @@ $(document).ready(function(){
                 { targets:[1],data: "last_invoice_date" },
                 { targets:[2],data: "product_code" },
                 { targets:[3],data: "product_desc" },
-                { targets:[4],data: "SoQtyTotal" },
-                { targets:[5],data: "SoQtyDelivered" },
-                { targets:[6],data: "SoQtyBalance" }
+                { targets:[4],data: "product_type" },
+                { targets:[5],data: "SoQtyTotal" },
+                { targets:[6],data: "SoQtyDelivered" },
+                { targets:[7],data: "SoQtyBalance" }
 
 
             ],
@@ -351,7 +353,7 @@ $(document).ready(function(){
                         api.column(0, {page:'current'} ).data().each( function ( group, i ) {
                             if ( last !== group ) {
                                 $(rows).eq( i ).before(
-                                    '<tr class="group"><td colspan="7" style="background-color:orange;"><strong>'+'Sales Order #: <i>'+group+'</i></strong></td></tr>'
+                                    '<tr class="group"><td colspan="8" style="background-color:orange;"><strong>'+'Sales Order #: <i>'+group+'</i></strong></td></tr>'
                                 );
 
                                 last = group;

@@ -75,7 +75,7 @@ class Sales_order_item_model extends CORE_Model
                 (SELECT n.*
 
                 FROM
-                (SELECT main.*,p.product_code,p.product_desc FROM
+                (SELECT main.*,p.product_code,p.product_desc,rp.product_type FROM
 
                 (
                 SELECT
@@ -114,6 +114,7 @@ class Sales_order_item_model extends CORE_Model
 
 
                 LEFT JOIN products as p ON main.product_id=p.product_id
+                LEFT JOIN refproduct as rp ON rp.refproduct_id=p.refproduct_id
               )as n) as o";
 
 
