@@ -290,8 +290,8 @@
                                                             <thead class="">
                                                             <tr>
                                                                 <th width="10%">Qty</th>
-                                                                <th width="15%">UM</th>
-                                                                <th width="40%">Item</th>
+                                                                <th width="7%">UM</th>
+                                                                <th width="20%">Item</th>
                                                                 <th width="10%" style="text-align: right;">Unit Price</th>
                                                                 <th style="text-align: right; display: none;">Discount</th>
                                                                 <th style="display: none;">T.D</th> <!-- total discount -->
@@ -299,6 +299,8 @@
                                                                 <th width="15%" style="text-align: right;">Total</th>
                                                                 <th style="display: none;">V.I</th> <!-- vat input -->
                                                                 <th style="display: none;">N.V</th> <!-- net of vat -->
+                                                                <th width="13%">Batch No</th> <!-- net of vat -->
+                                                                <th width="10%">Exp Date</th> <!-- net of vat -->
                                                                 <th style="display: none;">Item ID</th><!-- product id -->
                                                                 <th width="10%"><center><strong>Action</strong></center></th>
                                                             </tr>
@@ -309,18 +311,18 @@
 
                                                             <tfoot>
                                                             <tr>
-                                                                <td colspan="7" style="height: 50px;">&nbsp;</td>
+                                                                <td colspan="8" style="height: 50px;">&nbsp;</td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
+                                                                <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
                                                                 <td align="right" colspan="1" id="td_discount color="red">0.00</td>
-                                                                <td colspan="2" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
+                                                                <td colspan="3" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                                                 <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
                                                             </tr>
                                                             <tr>
-                                                                <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                                                                <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                                                                 <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                                                                <td colspan="2" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                                                <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                                                                 <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                                                             </tr>
                                                             </tfoot>
@@ -1283,8 +1285,8 @@
                 '<td style="display: none;"><input name="adjust_tax_amount[]" type="text" class="numeric form-control" value="'+ d.adjust_tax_amount+'" readonly></td>'+
                 '<td style="display: none;"><input name="adjust_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.adjust_non_tax_amount+'" readonly></td>'+
                 '<td style="display: none;"><input name="product_id[]" type="text" class="form-control" value="'+ d.product_id +'" readonly></td>'+
-                '<td style="display: none;"><input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no+'" readonly></td>'+
-                '<td style="display:none;"><input name="exp_date[]" type="text" class="numeric form-control" value="'+ d.exp_date+'" readonly></td>'+
+                '<td style=""><input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no+'"></td>'+
+                '<td style=""><input name="exp_date[]" type="text" class="date-expire form-control" value="'+ d.exp_date+'"></td>'+
                 '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
                 '</tr>';
         };
