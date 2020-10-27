@@ -21,7 +21,10 @@ class Account_classes extends CORE_Controller
 
         $data['account_types']=$this->Account_type_model->get_list('');
 
-        $this->load->view('account_classes_view', $data);
+        (in_array('4-5',$this->session->user_rights)? 
+        $this->load->view('account_classes_view', $data)
+        :redirect(base_url('dashboard')));   
+
     }
 
     function transaction($txn = null) {

@@ -160,7 +160,11 @@ class Rights_link_model extends CORE_Model{
                                           (80,'3','3-5','Sales Invoice History'),
 
                                           -- Purchase Cancel
-                                          (81,'20','20-5','Purchase Order Cancel')
+                                          (81,'20','20-5','Purchase Order Cancel'),
+                                          -- Purchase Cancel
+                                          (82,'4','4-5','Account Classification')
+
+
                                           
                                           ON DUPLICATE KEY UPDATE
 
