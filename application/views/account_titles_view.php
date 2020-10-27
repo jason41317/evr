@@ -280,7 +280,7 @@
                     </div>
                     <div class="form-group">
                         <label><strong>* Account type :</strong></label>
-                        <select name="account_type" id="cbo_account_type" data-error-msg="Account type is required." required>
+                        <select name="account_type_id" id="cbo_account_type" data-error-msg="Account type is required." required>
                             <?php foreach($types as $type){ ?>
                                 <option value="<?php echo $type->account_type_id; ?>"><?php echo $type->account_type; ?></option>
                             <?php } ?>
