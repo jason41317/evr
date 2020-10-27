@@ -161,7 +161,7 @@ class Rights_link_model extends CORE_Model{
 
                                           -- Purchase Cancel
                                           (81,'20','20-5','Purchase Order Cancel'),
-                                          -- Purchase Cancel
+
                                           (82,'4','4-5','Account Classification')
 
 
