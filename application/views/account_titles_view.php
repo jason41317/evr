@@ -122,7 +122,11 @@
                                         </div>
                                     </div>
                                     <div class="col-xs-12 col-lg-8">
-                                        
+                                        <div style="float: right;">
+                                            <button class="btn btn-success "  id="btn_print" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" title="Print" > Print</button>
+                                            <button class="btn btn-success "  id="" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"  title="Export To Excel" > <a href="Account_titles/Export" style="text-decoration: none;color: white;">Export</a></button>
+                                       </div>
+                                       <br/><br/>
                                             <table id="tbl_accounts" class="table table-striped" cellspacing="0" width="100%">
                                                 <thead class="">
                                                 <tr>
@@ -490,6 +494,14 @@ $(document).ready(function(){
             _txnMode="new";
             $('#account_add_title').text('New Account Information');
             showList(false);
+        });
+
+        $('#btn_print').click(function(){
+              window.open('Account_titles/transaction/print');
+        });
+        
+        $('#btn_excel').click(function(){
+              window.open('Account_titles/Export');
         });
 
         $('#btn_create_account_class').click(function(){

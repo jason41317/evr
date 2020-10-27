@@ -54,6 +54,7 @@
 
                         <li class="<?php echo (in_array('4',$this->session->parent_rights)?'':'hidden'); ?>"><a href="#"><i class="ti ti-view-list-alt"></i><span>References</span></a>
                             <ul class="acc-menu">
+                                <li  class="<?php echo (in_array('4-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Account_classes">Account Classification</a></li>
                                 <li  class="<?php echo (in_array('4-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="categories">Category Management</a></li>
                                 <li  class="<?php echo (in_array('4-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="departments">Branch Management</a></li>
                                 <li  class="<?php echo (in_array('4-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="units">Unit Management</a></li>
