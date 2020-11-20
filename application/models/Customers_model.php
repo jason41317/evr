@@ -52,7 +52,7 @@ class Customers_model extends CORE_Model{
     }
 
     //returns list of sales invoice of customer that are unpaid
-    function get_customer_receivable_list($customer_id) {
+    function get_customer_receivable_list($customer_id,$start_date,$end_date) {
         $sql="SELECT unp.*,IFNULL(pay.sales_payment_amount,0) as sales_payment_amount,
                 (IFNULL(unp.total_sales_amount,0)-IFNULL(pay.sales_payment_amount,0))as net_receivable
                 FROM
@@ -62,6 +62,7 @@ class Customers_model extends CORE_Model{
                 LEFT JOIN customers as s ON si.customer_id=s.customer_id)
                 WHERE si.is_active=TRUE AND si.is_deleted=FALSE AND si.is_paid=FALSE
                 AND si.customer_id=$customer_id
+                AND si.date_due BETWEEN '".$start_date."' AND '".$end_date."'
                 )as unp
 
                 LEFT JOIN

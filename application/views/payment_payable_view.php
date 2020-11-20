@@ -84,9 +84,17 @@
 
         .custom_frame{
             background-color: white;
-            border: 1px solid lightgray;
             margin: 0% 1% 1% 0%;
             padding: 0%;
+            border-top: 5px solid rgb(33, 150, 243); 
+            border-right: 1px solid lightgray;
+            border-left: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+            padding:1%;
+            border-radius:5px;   
+            -webkit-box-shadow: 0px 0px 13px 1px rgba(153,153,153,1)!important;
+            -moz-box-shadow: 0px 0px 13px 1px rgba(153,153,153,1)!important;
+            box-shadow: 0px 0px 13px 1px rgba(153,153,153,1)!important;
 
         }
 
@@ -169,21 +177,19 @@
             <table id="tbl_payments" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
-                    <th></th>
-                    <th>Receipt #</th>
-                    <th>Supplier</th>
-                    <th>Remarks</th>
+                    <!-- <th></th> -->
+                    <th width="15%">Receipt #</th>
+                    <th >Supplier</th>
+                    <th width="25%">Remarks</th>
                     <th>Posted by</th>
                     <th>Date Paid</th>
                     <th>Amount</th>
                     <th>Status</th>
                     <th><center>Action</center></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
-
-
-
                 </tbody>
             </table>
         </div>
@@ -200,10 +206,10 @@
 
 <div id="div_payment_fields" style="display: none;">
 
-    <div class="row custom_frame" style="border: 3px solid #2196f3;padding:1%;border-radius:5px;">
+    <div class="row custom_frame">
 
         <form id="frm_payments" role="form" class="form-horizontal">
-            <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;">
+            <div style="border: 1px solid lightgray;padding: 1%;border-radius: 5px;">
                 <div class="row">
 
                     <div class="col-lg-6">
@@ -270,7 +276,7 @@
                         </div>
 
 
-                        <div  id="div_check_details" class="row" style="display: none;border-radius: 6px; border:1px solid gray;margin: 1%;padding: 1%;padding-bottom: 7%;">
+                        <div  id="div_check_details" class="row" style="display: none;border-radius: 6px; border:1px solid lightgray;margin: 1%;padding: 1%;padding-bottom: 7%;">
 
 
                             <div class="col-lg-12">
@@ -317,9 +323,30 @@
 
         <form id="frm_payment_items">
 
-            <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;">
+            <div style="border: 1px solid lightgray;padding: 1%;border-radius: 5px;">
                 <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                        <label><strong>Start Date :</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                 <i class="fa fa-calendar"></i>
+                            </span>
+                            <input type="text" name="start_date" id="start_date" class="date-picker form-control"  value="<?php echo '01/01/'.date("Y"); ?>" placeholder="Start Date">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                        <label><strong>End Date :</strong></label>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                 <i class="fa fa-calendar"></i>
+                            </span>
+                            <input type="text" name="end_date" id="end_date" class="date-picker form-control" value="<?php echo '12/'.date("t/Y"); ?>" placeholder="End Date">
+                        </div>                        
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                         <label><strong>Please select Supplier :</strong></label>
                         <select name="supplier_id" id="cbo_suppliers" data-error-msg="Supplier is required." required>
                             <?php foreach($suppliers as $supplier){ ?>
@@ -336,10 +363,11 @@
                     <table id="tbl_payables" class="table table-striped" cellspacing="0" width="100%" style="">
                         <thead class="">
                         <tr>
-                            <th width="12%">Invoice #</th>
-                            <th width="12%">Due Date</th>
-                            <th width="12%">Terms</th>
-                            <th width="30%">Remarks</th>
+                            <th width="16%">Invoice #</th>
+                            <th width="10%">Due Date</th>
+                            <th width="10%">Terms</th>
+                            <th width="10%">External Ref</th>
+                            <th width="20%">Remarks</th>
                             <th width="12%" style="text-align: right;">Payable</th>
                             <th width="14%">Payment</th>
                             <th width="5%">Action</th>
@@ -351,10 +379,10 @@
                         <tfoot>
 
                         <tr>
-                            <td colspan="7" style="height: 50px;">&nbsp;</td>
+                            <td colspan="8" style="height: 50px;">&nbsp;</td>
                         </tr>
                         <tr>
-                            <td colspan="4" align="right"><b>Total : </b></td>
+                            <td colspan="5" align="right"><b>Total : </b></td>
                             <td id="td_total_payables" align="right"><b>0.00</b></td>
                             <td id="td_total_payments" align="right"><b>0.00</b></td>
                             <td></td>
@@ -517,7 +545,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
-    var _cboPaymentMethod;
+    var _cboPaymentMethod; var _totalPayment=0;
 
 
     var oTableItems={
@@ -545,23 +573,24 @@ $(document).ready(function(){
         dt=$('#tbl_payments').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
+            "order": [[ 8, "desc" ]],
             "ajax" : "Payable_payments/transaction/list",
             "columns": [
+                // {
+                //     "targets": [0],
+                //     "class":          "details-control",
+                //     "orderable":      false,
+                //     "data":           null,
+                //     "defaultContent": ""
+                // },
+                { targets:[0],data: "receipt_no" },
+                { targets:[1],data: "supplier_name" },
+                { targets:[2],data: "remarks" },
+                { targets:[3],data: "posted_by_user" },
+                { targets:[4],data: "date_paid" },
+                { targets:[5],data: "total_paid_amount" },
                 {
-                    "targets": [0],
-                    "class":          "details-control",
-                    "orderable":      false,
-                    "data":           null,
-                    "defaultContent": ""
-                },
-                { targets:[1],data: "receipt_no" },
-                { targets:[2],data: "supplier_name" },
-                { targets:[3],data: "remarks" },
-                { targets:[4],data: "posted_by_user" },
-                { targets:[5],data: "date_paid" },
-                { targets:[6],data: "total_paid_amount" },
-                {
-                    targets:[7],data: "is_active",
+                    targets:[6],data: "is_active",
                     render: function (data, type, full, meta){
                         if(data=="1"){
                             _attribute='class="fa fa-check-circle" style="color:green;"';
@@ -572,15 +601,16 @@ $(document).ready(function(){
                     }
                 },
                 {
-                    targets:[8],data: null,
+                    targets:[7],data: null,
                     render: function (data, type, full, meta){
                         return '<center><button type="button" class="btn btn-default btn_cancel_or"><i class="fa fa-times-circle"></i></button></center>';
                     }
 
-                }
+                },
+                { visible:false, targets:[8],data: "payment_id" }
             ],
             "createdRow": function ( row, data, index ) {
-                $('td:eq(6)',row).attr('align','right');
+                $('td:eq(5)',row).attr('align','right');
             }
         });
 
@@ -608,7 +638,7 @@ $(document).ready(function(){
 
         _cboSuppliers=$("#cbo_suppliers").select2({
             placeholder: "Please select supplier to record payment.",
-            allowClear: true
+            allowClear: false
         });
 
         _cboSuppliers.select2('val',null);
@@ -653,7 +683,7 @@ $(document).ready(function(){
                 $.ajax({
                     "dataType":"html",
                     "type":"POST",
-                    "url":"Templates/layout/po/" + d.purchase_order_id,
+                    "url":"Templates/layout/po/" + d.dr_invoice_id,
                     "beforeSend" : function(){
                         row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                     }
@@ -673,6 +703,8 @@ $(document).ready(function(){
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_payments'));
             _cboSuppliers.select2('val',null);
+            resetSummaryDetails();
+
             showList(false);
         });
 
@@ -703,16 +735,15 @@ $(document).ready(function(){
             }
         });
 
-
-
-        _cboSuppliers.on("select2:select", function (e) {
-            var supplier_id=$(this).select2('val');
-
+        var getSupplierPayables = function(){
+            var supplier_id=_cboSuppliers.select2('val');
+            var start_date=$('#start_date').val();
+            var end_date=$('#end_date').val();
 
             $.ajax({
                 "dataType":"html",
                 "type":"GET",
-                "url":"Suppliers/transaction/payables?id="+supplier_id,
+                "url":"Suppliers/transaction/payables?id="+supplier_id+"&start_date="+start_date+"&end_date="+end_date,
                 "beforeSend": function(){
                     var obj=$("#tbl_payables");
                     showTableLoader(obj);
@@ -723,14 +754,22 @@ $(document).ready(function(){
                 reInitializeNumeric();
                 reComputeDetails();
             });
+        };
 
 
+        _cboSuppliers.on("select2:select", function (e) {
+            getSupplierPayables();
         });
 
+        $('#start_date').on("change", function(){
+            getSupplierPayables();
+        });
 
+        $('#end_date').on("change", function(){
+            getSupplierPayables();
+        });
 
         $('#btn_save').click(function(){
-
             if(validateRequiredFields($('#frm_payments'))){
                 if(_txnMode=="new"){
                     postPurchaseInvoicePayment().done(function(response){
@@ -795,27 +834,34 @@ $(document).ready(function(){
         var stat=true;
 
         $('div.form-group').removeClass('has-error');
-        $('input[required],textarea[required],select[required]',f).each(function(){
 
-            if($(this).is('select')){
-                if($(this).select2('val')==0||$(this).select2('val')==null){
-                    showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
-                    $(this).closest('div.form-group').addClass('has-error');
-                    $(this).focus();
-                    stat=false;
-                    return false;
-                }
-            }else{
-                if($(this).val()==""){
-                    showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
-                    $(this).closest('div.form-group').addClass('has-error');
-                    $(this).focus();
-                    stat=false;
-                    return false;
-                }
-            }
+        if(_totalPayment <= 0){
+            showNotification({title:"Warning!",stat:"error",msg:'Payment must be greater than 0.'});
+            stat=false;
+            return false;
+        }else{
+            $('input[required],textarea[required],select[required]',f).each(function(){
 
-        });
+                if($(this).is('select')){
+                    if($(this).select2('val')==0||$(this).select2('val')==null){
+                        showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
+                        $(this).closest('div.form-group').addClass('has-error');
+                        $(this).focus();
+                        stat=false;
+                        return false;
+                    }
+                }else{
+                    if($(this).val()==""){
+                        showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
+                        $(this).closest('div.form-group').addClass('has-error');
+                        $(this).focus();
+                        stat=false;
+                        return false;
+                    }
+                }
+
+            });
+        }
 
         return stat;
     };
@@ -908,6 +954,7 @@ $(document).ready(function(){
         $('#td_total_payments').html('<b>'+accounting.formatNumber(total_payment,2)+'</b>');
         $('#td_total_payables').html('<b>'+accounting.formatNumber(total_payable,2)+'</b>');
 
+        _totalPayment = total_payment;
     };
 
     var resetSummaryDetails=function(){

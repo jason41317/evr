@@ -986,13 +986,15 @@ $(document).ready(function(){
         vat_input : 'td:eq(8)',
         net_vat : 'td:eq(9)',
         batch_no : 'td:eq(11)',
-        exp_date : 'td:eq(13)'
+        exp_date : 'td:eq(13)',
+        srp_cost : 'td:eq(15)'
 
     };
 
     var oTableSearch={
         sBatch : 'td:eq(2)',
         sExpDate : 'td:eq(3)',
+        sCost : 'td:eq(10)',
 
 
     };
@@ -1159,7 +1161,7 @@ $(document).ready(function(){
             name: 'products',
             display: 'product_code',
             limit : 10000,
-                source: products,
+            source: products,
             templates: {
                 header: [
                     '<table class="tt-head"><tr>'+
@@ -1955,6 +1957,9 @@ $(document).ready(function(){
             var row=$(this).closest('tr');
             _selectRowTblItems.find(oTableItems.batch_no).find('input').val(row.find(oTableSearch.sBatch).text());
             _selectRowTblItems.find(oTableItems.exp_date).find('input').val(row.find(oTableSearch.sExpDate).text());
+            _selectRowTblItems.find(oTableItems.srp_cost).find('input').val(row.find(oTableSearch.sCost).text());
+
+
             $('#modal_search_list').modal('hide');
         });
 

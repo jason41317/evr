@@ -1870,19 +1870,23 @@
         };
 
         function reInitializeDropDownAccounts(tbl,bClear=true){
-            var obj=tbl.find('select.selectpicker');
+            // var obj=tbl.find('select.selectpicker');
 
-            obj.select2({
+            // obj.select2({
+            //     placeholder: "Please select account.",
+            //     allowClear: false
+            // });
+
+            // if(bClear){
+            //     $.each(obj,function(){
+            //         $(this).select2('val',null);
+            //     });
+            // }
+
+            tbl.find('select.selectpicker').select2({
                 placeholder: "Please select account.",
                 allowClear: false
-            });
-
-            if(bClear){
-                $.each(obj,function(){
-                    $(this).select2('val',null);
-                });
-            }
-
+            });            
         };
 
 
@@ -2027,6 +2031,7 @@
 
                 reInitializeNumeric();
                 reInitializeDropDownAccounts(tbl);
+
 
             });
 

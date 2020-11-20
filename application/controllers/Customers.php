@@ -184,9 +184,12 @@ class Customers extends CORE_Controller {
 
             case 'receivables':
                 $customer_id=$this->input->get('id',TRUE);
+                $start_date=date('Y-m-d',strtotime($this->input->get('start_date',TRUE)));
+                $end_date=date('Y-m-d',strtotime($this->input->get('end_date',TRUE)));
+
                 $m_customers=$this->Customers_model;
 
-                $data['receivables']=$m_customers->get_customer_receivable_list($customer_id);
+                $data['receivables']=$m_customers->get_customer_receivable_list($customer_id,$start_date,$end_date);
                 $structured_content=$this->load->view('template/customer_receivable_list',$data,TRUE);
                 echo $structured_content;
 

@@ -26,17 +26,18 @@ class Suppliers_model extends CORE_Model {
     }
 
     //returns list of purchase invoice of supplier that are unpaid
-    function get_supplier_payable_list($supplier_id) {
+    function get_supplier_payable_list($supplier_id,$start_date,$end_date) {
         $sql="SELECT unp.*,IFNULL(pay.dr_payment_amount,0) as dr_payment_amount,
                 (IFNULL(unp.total_dr_amount,0)-IFNULL(pay.dr_payment_amount,0))as net_payable
                 FROM
-                (SELECT di.dr_invoice_id,di.dr_invoice_no,date_due,di.remarks,di.supplier_id,s.supplier_name,
+                (SELECT di.dr_invoice_id,di.dr_invoice_no,date_due,di.external_ref_no,di.remarks,di.supplier_id,s.supplier_name,
                 CONCAT_WS(' ',di.terms,di.duration)as term_description,
                 (di.total_after_tax)As total_dr_amount
                 FROM (delivery_invoice as di
                 LEFT JOIN suppliers as s ON di.supplier_id=s.supplier_id)
                 WHERE di.is_active=TRUE AND di.is_deleted=FALSE AND di.is_paid=FALSE
                 AND di.supplier_id=$supplier_id
+                AND di.date_due BETWEEN '".$start_date."' AND '".$end_date."'
                 )as unp
 
                 LEFT JOIN

@@ -762,14 +762,15 @@
             vat_input : 'td:eq(8)',
             net_vat : 'td:eq(9)',
             batch_no : 'td:eq(11)',
-            exp_date : 'td:eq(13)'
+            exp_date : 'td:eq(13)',
+            srp_cost : 'td:eq(15)'
 
         };
 
         var oTableSearch={
             sBatch : 'td:eq(2)',
             sExpDate : 'td:eq(3)',
-
+            sCost : 'td:eq(10)',
 
         };
         var oTableDetails={
@@ -1032,7 +1033,7 @@
                         exp_date:suggestion.exp_date,
                         max_qty:suggestion.on_hand_per_batch,
                         orig_so_price: 0,
-                        cost_upon_invoice:suggestion.purchase_cost
+                        cost_upon_invoice:suggestion.srp_cost
 
                     }));
                 } else {
@@ -1259,6 +1260,7 @@
                 var row=$(this).closest('tr');
                 _selectRowTblItems.find(oTableItems.batch_no).find('input').val(row.find(oTableSearch.sBatch).text());
                 _selectRowTblItems.find(oTableItems.exp_date).find('input').val(row.find(oTableSearch.sExpDate).text());
+                _selectRowTblItems.find(oTableItems.srp_cost).find('input').val(row.find(oTableSearch.sCost).text());
                 $('#modal_search_list').modal('hide');
             });
 
@@ -1384,7 +1386,7 @@
                                 batch_no : '',
                                 exp_date : '',
                                 orig_so_price : value.so_price,
-                                cost_upon_invoice : value.purchase_cost
+                                cost_upon_invoice : value.srp_cost
                             }));
                         });
 

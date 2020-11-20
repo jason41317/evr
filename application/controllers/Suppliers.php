@@ -175,9 +175,12 @@ class Suppliers extends CORE_Controller {
                 break;
             case 'payables':
                 $supplier_id=$this->input->get('id',TRUE);
+                $start_date=date('Y-m-d',strtotime($this->input->get('start_date',TRUE)));
+                $end_date=date('Y-m-d',strtotime($this->input->get('end_date',TRUE)));
+
                 $m_suppliers=$this->Suppliers_model;
 
-                $data['payables']=$m_suppliers->get_supplier_payable_list($supplier_id);
+                $data['payables']=$m_suppliers->get_supplier_payable_list($supplier_id,$start_date,$end_date);
                 $structured_content=$this->load->view('template/supplier_payables_list',$data,TRUE);
                 echo $structured_content;
 
