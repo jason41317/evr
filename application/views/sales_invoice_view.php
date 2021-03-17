@@ -995,8 +995,6 @@ $(document).ready(function(){
         sBatch : 'td:eq(2)',
         sExpDate : 'td:eq(3)',
         sCost : 'td:eq(10)',
-
-
     };
 
 

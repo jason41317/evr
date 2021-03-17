@@ -39,8 +39,23 @@ class Account_title_model extends CORE_Model{
         $this->db->query($sql);
     }
 
-  function get_account_types(){
+    function validate_account_no($account_no,$account_id=null){
+        $sql="SELECT * FROM account_titles 
+            WHERE is_deleted = FALSE AND is_active = TRUE AND
+            account_no = '".$account_no."'
+            ".($account_id==null?"":" AND account_id!=".$account_id)."";
+        return $this->db->query($sql)->result();
+    }   
 
+    function validate_account_title($account_title,$account_id=null){
+        $sql="SELECT * FROM account_titles 
+            WHERE is_deleted = FALSE AND is_active = TRUE AND
+            account_title = '".$account_title."'
+            ".($account_id==null?"":" AND account_id!=".$account_id)."";
+        return $this->db->query($sql)->result();
+    }   
+
+    function get_account_types(){
         $sql="SELECT * FROM account_types  
         order by account_type_id ASC";
         return $this->db->query($sql)->result();

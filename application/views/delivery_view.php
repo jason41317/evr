@@ -174,7 +174,9 @@
         background-color: transparent!important; 
         } 
 
-
+        .error{
+            border: 1px solid red!important;
+        }
     </style>
 </head>
 
@@ -865,7 +867,10 @@ $(document).ready(function(){
         tax : 'td:eq(6)',
         total : 'td:eq(7)',
         vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)'
+        net_vat : 'td:eq(9)',
+        product_id : 'td:eq(10)',
+        exp_date : 'td:eq(11)',
+        batch_no : 'td:eq(12)'
 
     };
 
@@ -1626,10 +1631,43 @@ $(document).ready(function(){
 
         });
 
+        $('#tbl_items tbody').on('change','input.date-expire,input.batch-code',function(){
+            var row=$(this).closest('tr');
+
+            var product_id=parseFloat(accounting.unformat(row.find(oTableItems.product_id).find('input').val()));
+            var exp_date=row.find(oTableItems.exp_date).find('input').val();
+            var batch_no=row.find(oTableItems.batch_no).find('input').val();
+
+            if(!(checkProduct(product_id,exp_date,batch_no))){ 
+                showNotification({title: 'Warning',stat:"error",msg: "Item is Already Added. No duplicate expiration date and batch no."});
+                $(this).val("");
+                return;
+            }
+
+        });
 
 
+        var checkProduct= function(check_id,exp_date,batch_no){
+            var prodstat=true;
+            var i=0;
+            var rowcheck=$('#tbl_items > tbody tr');
+            $.each(rowcheck,function(){
 
+                item = parseFloat(accounting.unformat($(oTableItems.product_id,$(this)).find('input').val()));
+                expiration = $(oTableItems.exp_date,$(this)).find('input').val();
+                batch = $(oTableItems.batch_no,$(this)).find('input').val();
 
+                if(check_id == item && expiration == exp_date && batch == batch_no){
+                    i++;
+                }
+            });
+
+            if(i > 1){  
+                prodstat=false;
+            }
+
+            return prodstat;  
+        };
 
 
         $('#btn_yes').click(function(){
@@ -1681,41 +1719,42 @@ $(document).ready(function(){
         $('#btn_save').click(function(){
             
             if(validateRequiredFields($('#frm_deliveries'))){
-                if(_txnMode=="new"){
-                    createDeliverInvoice().done(function(response){
-                        showNotification(response);
-                        if(response.stat=="success") {
-                            dt.row.add(response.row_added[0]).draw();
-                            clearFields($('#frm_deliveries'));
-                            showList(true);
-                        }
+                if(validateRequiredFields($('#frm_items'))){
+                    if(_txnMode=="new"){
+                        createDeliverInvoice().done(function(response){
+                            showNotification(response);
+                            if(response.stat=="success") {
+                                dt.row.add(response.row_added[0]).draw();
+                                clearFields($('#frm_deliveries'));
+                                showList(true);
+                            }
 
-                        if (response.current_row_index != undefined) {
-                            var rowObj=$('#tbl_items > tbody tr:eq('+response.current_row_index+')');
-                            rowHighlight(rowObj);
-                        }
+                            if (response.current_row_index != undefined) {
+                                var rowObj=$('#tbl_items > tbody tr:eq('+response.current_row_index+')');
+                                rowHighlight(rowObj);
+                            }
 
-                    }).always(function(){
-                        showSpinningProgress($('#btn_save'));
-                    });
-                }else{
-                    updatePurchaseOrder().done(function(response){
-                        showNotification(response);
-                        if(response.stat=="success") {
-                            dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
-                            clearFields($('#frm_deliveries'));
-                            showList(true);
-                        }
+                        }).always(function(){
+                            showSpinningProgress($('#btn_save'));
+                        });
+                    }else{
+                        updatePurchaseOrder().done(function(response){
+                            showNotification(response);
+                            if(response.stat=="success") {
+                                dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                                clearFields($('#frm_deliveries'));
+                                showList(true);
+                            }
 
-                        if (response.current_row_index != undefined) {
-                            var rowObj=$('#tbl_items > tbody tr:eq('+response.current_row_index+')');
-                            rowHighlight(rowObj);
-                        }
-                    }).always(function(){
-                        showSpinningProgress($('#btn_save'));
-                    });
+                            if (response.current_row_index != undefined) {
+                                var rowObj=$('#tbl_items > tbody tr:eq('+response.current_row_index+')');
+                                rowHighlight(rowObj);
+                            }
+                        }).always(function(){
+                            showSpinningProgress($('#btn_save'));
+                        });
+                    }
                 }
-
             }
 
         });
@@ -1782,12 +1821,13 @@ $(document).ready(function(){
                     return false;
                 }
             }else{
-                if($(this).val()==""){
+                if($(this).val()=="" || $(this).val()==null){
                     showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                     $(this).closest('div.form-group').addClass('has-error');
                     $(this).focus();
                     stat=false;
                     return false;
+
                 }
             }
         });
@@ -1852,6 +1892,23 @@ $(document).ready(function(){
             "type":"POST",
             "url":"Deliveries/transaction/delete",
             "data":{dr_invoice_id : _selectedID}
+        });
+    };
+
+    var checkProduct=function(product_id,exp_date,batch_no,id){
+        var _data=$('#').serializeArray();
+
+        _data.push({name : "product_id" ,value : product_id});
+        _data.push({name : "exp_date" ,value : exp_date});
+        _data.push({name : "batch_no" ,value : batch_no});
+        _data.push({name : "dr_invoice_id" ,value : id});
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Deliveries/transaction/checkProduct",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save'))
         });
     };
 
@@ -1934,7 +1991,7 @@ $(document).ready(function(){
         '<td style="display: none;"><input name="dr_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.dr_non_tax_amount+'" readonly></td>'+
         '<td style="display: none;"><input name="product_id[]" type="text" class="form-control" value="'+ d.product_id +'" readonly></td>'+
         '<td><input type="text" name="exp_date[]" class="date-expire form-control" placeholder="mm/dd/yyyy" data-error-msg="Expiration Date is required!" value="'+ (d.exp_date == undefined ? '' : d.exp_date) +'" required></td>' +
-            '<td><input name="batch_code[]" type="text" class="form-control" value="'+d.batch_no+'"></td>'+
+            '<td><input name="batch_code[]" data-error-msg="Batch # is required!" type="text" class="form-control batch-code" value="'+d.batch_no+'" required></td>'+
             '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
         '</tr>';
     };

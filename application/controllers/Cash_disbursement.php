@@ -25,7 +25,8 @@ class Cash_disbursement extends CORE_Controller
                 'Accounting_period_model',
                 'Journal_template_info_model',
                 'Journal_template_entry_model',
-                'Company_model'
+                'Company_model',
+                'Banks_model'
             )
         );
 
@@ -46,7 +47,7 @@ class Cash_disbursement extends CORE_Controller
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');
         $data['payment_methods']=$this->Payment_method_model->get_list('is_deleted=0');
         $data['layouts']=$this->Check_layout_model->get_list('is_deleted=0');
-        $data['banks']=$this->Journal_info_model->get_list('is_active=1 AND is_deleted=0 AND payment_method_id=2',null,null,null,'bank');
+        $data['banks']=$this->Banks_model->get_list(array("is_active"=>TRUE, "is_deleted"=>FALSE));
 
         $data['title'] = 'Disbursement Journal';
         (in_array('1-2',$this->session->user_rights)? 
@@ -61,7 +62,13 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal=$this->Journal_info_model;
                 $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
-                $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted'";
+                $department_id = $this->input->get('department_id', TRUE);
+                $department_filter="";
+                if($department_id>0){
+                    $department_filter = ' AND journal_info.department_id='.$department_id;
+                }
+
+                $additional = " AND DATE(journal_info.date_txn) BETWEEN '$tsd' AND '$ted'".$department_filter;
                 $response['data']=$this->get_response_rows(null,$additional);
                 echo json_encode($response);
                 break;
@@ -105,11 +112,13 @@ class Cash_disbursement extends CORE_Controller
                         'journal_info.*',
                         'IF(journal_info.check_status=1,"Yes","No") as status',
                         's.supplier_name',
-                        'UPPER(journal_info.bank)as bank',
-                        'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date'
+                        'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y")as check_date',
+                        'banks.*',
+                        'UPPER(banks.bank_name) as bank'
                     ),
                     array(
-                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left')
+                        array('suppliers as s','s.supplier_id=journal_info.supplier_id','left'),
+                        array('banks','banks.bank_id=journal_info.bank_id','left')
                     )
                 );
                 echo json_encode($response);
@@ -177,7 +186,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->book_type='CDJ';
                 $m_journal->department_id=$this->input->post('department_id');
                 $m_journal->payment_method_id=$this->input->post('payment_method');
-                $m_journal->bank=$this->input->post('bank');
+                $m_journal->bank_id=$this->input->post('bank_id');
                 $m_journal->check_no=$this->input->post('check_no');
                 $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 $m_journal->ref_type=$this->input->post('ref_type');
@@ -258,7 +267,7 @@ class Cash_disbursement extends CORE_Controller
                 $m_journal->book_type='CDJ';
                 $m_journal->department_id=$this->input->post('department_id');
                 $m_journal->payment_method_id=$this->input->post('payment_method');
-                $m_journal->bank=$this->input->post('bank');
+                $m_journal->bank_id=$this->input->post('bank_id');
                 $m_journal->check_no=$this->input->post('check_no');
                 $m_journal->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));
                 $m_journal->ref_type=$this->input->post('ref_type');
@@ -348,7 +357,7 @@ class Cash_disbursement extends CORE_Controller
                 'journal_info.customer_id',
                 'journal_info.payment_method_id',
                 'payment_methods.payment_method',
-                'journal_info.bank',
+                'banks.*',
                 'journal_info.check_no',
                 'DATE_FORMAT(journal_info.check_date,"%m/%d/%Y") as check_date',
                 'journal_info.ref_type',
@@ -360,6 +369,7 @@ class Cash_disbursement extends CORE_Controller
             array(
                 array('customers','customers.customer_id=journal_info.customer_id','left'),
                 array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
+                array('banks','banks.bank_id=journal_info.bank_id','left'),
                 array('departments','departments.department_id=journal_info.department_id','left'),
                 array('user_accounts','user_accounts.user_id=journal_info.created_by_user','left'),
                 array('payment_methods','payment_methods.payment_method_id=journal_info.payment_method_id','left')

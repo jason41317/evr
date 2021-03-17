@@ -222,7 +222,7 @@
                                     <div class="col-lg-6">
                                         <i class="fa fa-code"></i> <b> OR/AR # : </b><b><?php echo $payment_info->receipt_no; ?></b><br />
                                         <i class="fa fa-calendar"></i> <b> Payment Date :</b> <?php echo $payment_info->payment_date; ?><br />
-                                        <i class="fa fa-caret-square-o-left"></i> <b> Receipt type :</b> <?php echo $payment_info->receipt_type; ?><br /><br />
+                                        <i class="fa fa-caret-square-o-left"></i> <b> Receipt Type :</b> <?php echo $payment_info->receipt_type; ?><br /><br />
                                         <i class="fa fa-bookmark"></i> <b> Department : </b><?php echo $payment_info->department_name; ?><br />
                                         <i class="fa fa-users"></i> <b> Customer : </b><?php echo $payment_info->customer_name; ?><br /><br />
                                     </div>

@@ -107,6 +107,12 @@ class Sales_order extends CORE_Controller
 
                             array(
                                 'products.*',
+                                'FORMAT(products.dealer_price,4) as dealer_price',
+                                'FORMAT(products.distributor_price,4) as distributor_price',
+                                'FORMAT(products.public_price,4) as public_price',
+                                'FORMAT(products.discounted_price,4) as discounted_price',
+                                'FORMAT(products.purchase_cost,4) as purchase_cost',
+                                'FORMAT(products.sale_price,4) as sale_price',
                                 'IFNULL(tax_types.tax_rate,0) as tax_rate',
                                 'units.unit_name'
                             ),

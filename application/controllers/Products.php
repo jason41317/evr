@@ -74,18 +74,12 @@ class Products extends CORE_Controller
                 $refproduct_id = $this->input->post('refproduct_id', TRUE);
                 $get = "";
 
-                if($refproduct_id == 1){
-                    $get = array('products.refproduct_id'=>$refproduct_id,'products.is_deleted'=>FALSE);
-                }
-
-                elseif($refproduct_id == 2){
-                    $get = array('products.refproduct_id'=>$refproduct_id,'products.is_deleted'=>FALSE);
-                }
-
-                else {
+                if($refproduct_id == 3){
                     $get = array('products.is_deleted'=>FALSE);
+                }else{
+                    $get = array('products.refproduct_id'=>$refproduct_id,'products.is_deleted'=>FALSE);
                 }
-
+                
                 $response['data'] = $this->response_rows($get);
                 echo json_encode($response);
                 break;
@@ -106,6 +100,11 @@ class Products extends CORE_Controller
                 $m_products->item_type_id = $this->input->post('item_type_id', TRUE);
                 $m_products->income_account_id = $this->input->post('income_account_id', TRUE);
                 $m_products->expense_account_id = $this->input->post('expense_account_id', TRUE);
+                $m_products->cos_account_id = $this->input->post('cos_account_id', TRUE);
+                $m_products->sales_return_account_id = $this->input->post('sales_return_account_id', TRUE);
+                $m_products->sd_account_id = $this->input->post('sd_account_id', TRUE);
+                $m_products->po_return_account_id = $this->input->post('po_return_account_id', TRUE);
+                $m_products->pd_account_id = $this->input->post('pd_account_id', TRUE);
                 $m_products->unit_id = $this->input->post('unit_id', TRUE);
 
                 $m_products->tax_type_id = $this->input->post('tax_type_id', TRUE);
@@ -165,6 +164,11 @@ class Products extends CORE_Controller
                 $m_products->item_type_id = $this->input->post('item_type_id', TRUE);
                 $m_products->income_account_id = $this->input->post('income_account_id', TRUE);
                 $m_products->expense_account_id = $this->input->post('expense_account_id', TRUE);
+                $m_products->cos_account_id = $this->input->post('cos_account_id', TRUE);
+                $m_products->sales_return_account_id = $this->input->post('sales_return_account_id', TRUE);
+                $m_products->sd_account_id = $this->input->post('sd_account_id', TRUE);
+                $m_products->po_return_account_id = $this->input->post('po_return_account_id', TRUE);
+                $m_products->pd_account_id = $this->input->post('pd_account_id', TRUE);
                 $m_products->unit_id = $this->input->post('unit_id', TRUE);
                 $m_products->tax_type_id = $this->input->post('tax_type_id', TRUE);
                 //$m_products->is_inventory = $this->input->post('inventory',TRUE);

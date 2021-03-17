@@ -9,6 +9,7 @@ class receivable_payments extends CORE_Controller
 
         $this->validate_session();
 
+        $this->load->model('Receipt_types_model');
         $this->load->model('Receivable_payment_model');
         $this->load->model('Receivable_payment_list_model');
         $this->load->model('Customers_model');
@@ -32,6 +33,7 @@ class receivable_payments extends CORE_Controller
         $data['customers']=$this->Customers_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         $data['methods']=$this->Payment_method_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
         $data['departments']=$this->Departments_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+        $data['receipts']=$this->Receipt_types_model->get_list();
 
         $data['title'] = 'AR Payment';
         (in_array('3-3',$this->session->user_rights)? 
@@ -88,7 +90,8 @@ class receivable_payments extends CORE_Controller
                 $m_payment->receipt_no=$receipt_no;
                 $m_payment->customer_id=$this->input->post('customer_id',TRUE);
                 $m_payment->department_id=$this->input->post('department',TRUE);
-
+                $m_payment->receipt_type_id=$this->input->post('receipt_type_id',TRUE);
+                
                 $payment_method_id=$this->input->post('payment_method',TRUE);
                 $m_payment->payment_method_id=$payment_method_id;
 

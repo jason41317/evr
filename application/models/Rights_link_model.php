@@ -155,17 +155,21 @@ class Rights_link_model extends CORE_Model{
 
                                           -- Purchasing
                                           (79,'2','2-7','Purchase Invoice History'),
-
                                           -- Sales
                                           (80,'3','3-5','Sales Invoice History'),
-
                                           -- Purchase Cancel
                                           (81,'20','20-5','Purchase Order Cancel'),
+                                          (82,'4','4-5','Account Classification'),
+                                          (83,'4','4-6','Bank Management'),
+                                          (84,'1','1-6','Petty Cash Journal'),
+                                          (85,'1','1-7','Check Summary'),
+                                          (86,'9','9-11','T-Accounts'),
+                                          (87,'9','9-12','General Ledger'),
+                                          (88,'9','9-13','Replenishment Report'),
+                                          (89,'9','9-14','Replenishment Batch'),
+                                          (90,'10','10-1','Treasury'),
+                                          (91,'6','6-10','SOA Settings')
 
-                                          (82,'4','4-5','Account Classification')
-
-
-                                          
                                           ON DUPLICATE KEY UPDATE
 
                                           rights_links.parent_code=VALUES(rights_links.parent_code),

@@ -253,6 +253,55 @@
 
 
                         <br >
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Adjustment Details</strong></span></h4>
+
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> *  Adjustment Supplier :</label>
+                            <div class="col-md-7">
+                                <select name="adj_supplier_id"  class="cbo_accounts" data-error-msg="Supplier is required." required>
+                                    <option value="0" <?php echo ($current_accounts->adj_supplier_id==0?'selected':''); ?>>None</option>
+                                    <?php foreach($suppliers as $supplier){ ?>
+                                        <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($current_accounts->adj_supplier_id==$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                <span class="help-block m-b-none">Please Choose a default Supplier for Adjusting Inventory.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Debit Account :</label>
+                            <div class="col-md-7">
+                                <select name="adj_debit_id"  class="cbo_accounts" data-error-msg="Supplier is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->adj_debit_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                <span class="help-block m-b-none">Please Choose Debit Account for the Adjustment OUT of Inventory</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Credit Account :</label>
+                            <div class="col-md-7">
+                                <select name="adj_credit_id"  class="cbo_accounts" data-error-msg="Supplier is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->adj_credit_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                <span class="help-block m-b-none">Please Choose Credit Account for the Adjustment IN of Inventoryy</span>
+                            </div>
+                        </div>
+
+
+
+
+                        <br >
                         <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Retained Earnings Account</strong></span></h4>
                         <div class="form-group">
                             <label class="col-md-3 control-label"> * Retained Earnings :</label>
@@ -267,6 +316,43 @@
                                 <span class="help-block m-b-none">Please select the account where net income will be forwarded.</span>
                             </div>
                         </div>
+
+                        <br >
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> Petty Cash Account</strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * Petty Cash :</label>
+                            <div class="col-md-7">
+                                <select name="petty_cash_account_id"  class="cbo_accounts" data-error-msg="Petty cash account is required." required>
+
+                                    <?php foreach($accounts as $account){ ?>
+                                        <option value="<?php echo $account->account_id; ?>" <?php echo ($current_accounts->petty_cash_account_id==$account->account_id?'selected':''); ?>><?php echo $account->account_title; ?></option>
+                                    <?php } ?>
+                                </select>
+
+                                <span class="help-block m-b-none">Please select the account where petty cash will be forwarded.</span>
+                            </div>
+                        </div>
+
+                        <br >
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> CHECK VOUCHER</strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * CV No Start :</label>
+                            <div class="col-md-7">
+                            <input type="text" name="cv_start_no" class="form-control" value="<?php echo $current_accounts->cv_start_no ?>">
+                                <span class="help-block m-b-none">Please select the Starting Incremental number for Check Vouchers.</span>
+                            </div>
+                        </div>
+
+
+                        <br >
+                        <h4><span style="margin-left: 1%"><strong><i class="fa fa-gear"></i> JOURNAL VOUCHER</strong></span></h4>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label"> * JV No Start :</label>
+                            <div class="col-md-7">
+                            <input type="text" name="jv_start_no" class="form-control" value="<?php echo $current_accounts->jv_start_no ?>">
+                                <span class="help-block m-b-none">Please select the Starting Incremental number for Journal Vouchers.</span>
+                            </div>
+                        </div>                        
 
 
                         <hr />

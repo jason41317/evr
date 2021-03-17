@@ -17,6 +17,7 @@ class Deliveries extends CORE_Controller
         $this->load->model('Departments_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Sales_invoice_item_model');
+        $this->load->model('Adjustment_model');
         $this->load->model('Trans_model'); 
 
     }
@@ -95,6 +96,33 @@ class Deliveries extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+            case 'list-for-purchase-returns': 
+                $supplier_id = $this->input->get('supplier_id');
+                $m_adjustment=$this->Adjustment_model;
+                $response['data']=$m_adjustment->list_per_supplier($supplier_id);
+                echo json_encode($response);
+                break;
+
+            case 'checkProduct': 
+                $product_id = $this->input->post('product_id');
+                $exp_date = date('Y-m-d',strtotime($this->input->post('exp_date')));
+                $batch_no = $this->input->post('batch_no');
+                $dr_invoice_id = $this->input->post('dr_invoice_id');
+
+                $m_delivery=$this->Delivery_invoice_model;
+                $response['data']=$m_delivery->check_product($product_id,$exp_date,$batch_no,$dr_invoice_id);
+
+                if(count($response['data'])>0){
+
+                    $response['title'] = $response['data'][0]->product_desc;
+                    $response['stat'] = 'error';
+                    $response['msg'] = 'Expiration Date of '.$response['data'][0]->exp_date.' with batch # : '.$response['data'][0]->batch_no.' is already exisiting in invoice # : '.$response['data'][0]->dr_invoice_no;
+
+                }
+
+                echo json_encode($response);
+                break;
+
             ////****************************************items/products of selected purchase invoice***********************************************
             case 'items': //items on the specific PO, loads when edit button is called
                 //check if this invoice is already posted
@@ -155,6 +183,26 @@ class Deliveries extends CORE_Controller
                     'purchase_order.purchase_order_id'
                 );
                 $purchase_order_id=(count($arr_po_info)>0?$arr_po_info[0]->purchase_order_id:0);
+
+                $prod_id=$this->input->post('product_id',TRUE);
+                $exp_date = $this->input->post('exp_date',TRUE);
+                $batch_code= $this->input->post('batch_code',TRUE);
+
+                // for($a=0;$a<count($prod_id);$a++){
+
+                //     $m_delivery=$this->Delivery_invoice_model;
+                //     $data=$m_delivery->check_product($prod_id[$a],date('Y-m-d', strtotime($exp_date[$a])),$batch_code[$a]);
+
+                //     if(count($data)>0){
+
+                //         $response['title'] = $data[0]->product_desc;
+                //         $response['stat'] = 'error';
+                //         $response['msg'] = 'Expiration Date of '.$data[0]->exp_date.' with batch # : '.$data[0]->batch_no.' is already exisiting in invoice # : '.$data[0]->dr_invoice_no;
+
+                //         echo json_encode($response);
+                //         exit;
+                //     }
+                // }
 
                 $m_delivery_invoice->begin();
 
@@ -221,9 +269,7 @@ class Deliveries extends CORE_Controller
 
                         die(json_encode($response));
                     }
-
-
-
+                    
                     //$m_dr_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
 
                     //unit id retrieval is change, because of TRIGGER restriction
@@ -296,6 +342,26 @@ class Deliveries extends CORE_Controller
                     'purchase_order.purchase_order_id'
                 );
                 $purchase_order_id=(count($arr_po_info)>0?$arr_po_info[0]->purchase_order_id:0);
+
+                $prod_id=$this->input->post('product_id',TRUE);
+                $exp_date = $this->input->post('exp_date',TRUE);
+                $batch_code= $this->input->post('batch_code',TRUE);
+
+                // for($a=0;$a<count($prod_id);$a++){
+
+                //     $m_delivery=$this->Delivery_invoice_model;
+                //     $data=$m_delivery->check_product($prod_id[$a],date('Y-m-d', strtotime($exp_date[$a])),$batch_code[$a],$dr_invoice_id);
+
+                //     if(count($data)>0){
+
+                //         $response['title'] = $data[0]->product_desc;
+                //         $response['stat'] = 'error';
+                //         $response['msg'] = 'Expiration Date of '.$data[0]->exp_date.' with batch # : '.$data[0]->batch_no.' is already exisiting in invoice # : '.$data[0]->dr_invoice_no;
+
+                //         echo json_encode($response);
+                //         exit;
+                //     }
+                // }
 
                 $m_delivery_invoice->begin();
                 $m_delivery_invoice->set('date_modified','NOW()');
@@ -407,7 +473,6 @@ class Deliveries extends CORE_Controller
                 $m_trans->save();
 
                 $m_delivery_invoice->commit();
-
 
 
                 if($m_delivery_invoice->status()===TRUE){

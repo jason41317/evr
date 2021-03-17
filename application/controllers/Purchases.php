@@ -104,8 +104,7 @@ class Purchases extends CORE_Controller
                     $description=$this->input->get('description',TRUE);
 
                     //not 3 means show all product type
-                    echo json_encode(
-                        $m_products->get_list(
+                    $data=$m_products->get_list(
                                 "(products.product_code LIKE '".$description."%' OR products.product_desc LIKE '%".$description."%' OR products.product_desc1 LIKE '%".$description."%') AND products.is_deleted=FALSE ".($supplier_id>0?" AND products.supplier_id=".$supplier_id:"").($type_id==1||$type_id==2?" AND products.refproduct_id=".$type_id:""),
 
                             array(
@@ -119,8 +118,9 @@ class Purchases extends CORE_Controller
                                 array('tax_types','tax_types.tax_type_id=products.tax_type_id','left'),
                                 array('units','units.unit_id=products.unit_id','left')
                             )
-                        )
-                    );
+                        );
+                        
+                    echo json_encode($data);
                     break;
 
                 case 'po-for-approved':  //is called on DASHBOARD, returns PO list for approval

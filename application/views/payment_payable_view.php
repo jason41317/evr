@@ -102,7 +102,10 @@
             text-align: right;
         }
 
-
+        .required{
+            font-family: bold;
+            color: red;
+        }
 
         @media screen and (max-width: 480px) {
 
@@ -144,9 +147,7 @@
 
 ?>
 
-
 <div class="static-content-wrapper white-bg">
-
 
 <div class="static-content"  >
 <div class="page-content"><!-- #page-content -->
@@ -155,29 +156,19 @@
     <li><a href="Dashboard">Dashboard</a></li>
     <li><a href="Payable_payments">AP Payments</a></li>
 </ol>
-
-
 <div class="container-fluid"">
 <div data-widget-group="group1">
 <div class="row">
 <div class="col-md-12">
-
 <div id="div_payment_list">
-
-
-
-
     <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
-
 <!--         <a data-toggle="collapse" data-parent="#accordionA" href="#collapseTwo"><div class="panel-heading" style="background: #2ecc71;border-bottom: 1px solid lightgrey;"><b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i> Payment History</b></div></a> -->
-
-
         <div class="panel-body table-responsive">
             <h2 class="h2-panel-heading">Payment History</h2><hr>
             <table id="tbl_payments" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
-                    <!-- <th></th> -->
+                    <th></th>
                     <th width="15%">Receipt #</th>
                     <th >Supplier</th>
                     <th width="25%">Remarks</th>
@@ -193,40 +184,36 @@
                 </tbody>
             </table>
         </div>
-
-
-
-
-
         <div class="panel-footer"></div>
     </div>
-
 </div>
 
-
 <div id="div_payment_fields" style="display: none;">
-
     <div class="row custom_frame">
-
         <form id="frm_payments" role="form" class="form-horizontal">
             <div style="border: 1px solid lightgray;padding: 1%;border-radius: 5px;">
                 <div class="row">
-
                     <div class="col-lg-6">
                         <div class="row">
                             <div class="col-lg-6">
-                                Receipt/Voucher type * : <br />
+                                <span class="required">*</span> Receipt/Voucher type : <br />
                                 <select id="cbo_receipt_type" name="receipt_type" class="form-control">
                                     <option value="1" selected>CV</option>
                                     <option value="2">JV</option>
                                 </select>
                             </div>
+                            <div class="col-lg-6">
+                                <span class="required">*</span> Method : <br />
+                                <select id="cbo_payment_method" name="payment_method" class="form-control">
+                                    <?php foreach($methods as $method){ ?>
+                                        <option value="<?php echo $method->payment_method_id; ?>"><?php echo $method->payment_method; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
                         </div>
-
-
                         <div class="row">
                             <div class="col-lg-12">
-                                Branch * : <br />
+                                <span class="required">*</span> Branch : <br />
                                 <select id="cbo_branch" name="department" class="form-control">
                                     <?php foreach($departments as $department){ ?>
                                         <option value="<?php echo $department->department_id; ?>" selected><?php echo $department->department_name; ?></option>
@@ -234,10 +221,9 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-lg-6">
-                                Receipt # * : <br />
+                                <span class="required">*</span> Receipt # : <br />
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                         <i class="fa fa-code"></i>
@@ -246,7 +232,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                Payment Date * : <br />
+                                <span class="required">*</span> Payment Date : <br />
                                 <div class="input-group">
                                     <span class="input-group-addon">
                                          <i class="fa fa-calendar"></i>
@@ -254,66 +240,49 @@
                                     <input type="text" name="date_paid" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date of Payment" data-error-msg="Payment Date is required!" required>
                                 </div>
                             </div>
-
                         </div>
-
-
-
                     </div>
-
-
-                    <div class="col-lg-3 col-lg-offset-3">
-
-                        <div class="row" style="">
+                    <div class="col-lg-5 col-lg-offset-1">
+                        <div  id="div_check_details" class="row">
                             <div class="col-lg-12">
-                                Method  * : <br />
-                                <select id="cbo_payment_method" name="payment_method" class="form-control">
-                                    <?php foreach($methods as $method){ ?>
-                                        <option value="<?php echo $method->payment_method_id; ?>"><?php echo $method->payment_method; ?></option>
-                                    <?php } ?>
+                                <div style="float: right;">
+                                    <label class="radio-inline"><input type="radio" name="check_date_type" value="1" checked>Dated</label>
+                                    <label class="radio-inline"><input type="radio" name="check_date_type" value="2">Posted Dated</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <span class="check_panel required">*</span> Bank : <br />
+                                <select class="form-control check" name="bank_id" id="cbo_banks" data-error-msg="Bank is required!">
+                                    <option value="0">None</option>
+                                    <?php foreach($banks as $bank){ ?>
+                                        <option value="<?php echo $bank->bank_id; ?>">
+                                            <?php echo $bank->bank_name.' - ('.$bank->account_no.')'; ?>
+                                        </option>
+                                    <?php }?>
                                 </select>
                             </div>
-                        </div>
-
-
-                        <div  id="div_check_details" class="row" style="display: none;border-radius: 6px; border:1px solid lightgray;margin: 1%;padding: 1%;padding-bottom: 7%;">
-
-
-                            <div class="col-lg-12">
-                                <label class="radio-inline"><input type="radio" name="check_date_type" value="1" checked>Dated</label>
-                                <label class="radio-inline"><input type="radio" name="check_date_type" value="2">Posted Dated</label>
-                            </div>
-
-                            <div class="col-lg-12">
-                                Check #  * : <br />
+                            <div class="col-lg-6">
+                                <br/>
+                                <span class="check_panel required">*</span> Check Date : <br />
                                 <div class="input-group">
-                                    <input type="text" name="check_no" class="form-control">
-                                                                     <span class="input-group-addon">
-                                                                        <i class="fa fa-code"></i>
-                                                                    </span>
+                                    <span class="input-group-addon">
+                                         <i class="fa fa-calendar"></i>
+                                    </span>
+                                    <input type="text" name="check_date" class="date-picker form-control check" value="<?php echo date("m/d/Y"); ?>" placeholder="Date of Check" data-error-msg="Check Date is required!">
                                 </div>
                             </div>
-
-
-
-                            <div class="col-lg-12">
-                                Check Date  * : <br />
+                            <div class="col-lg-6">
+                                <br/>
+                                <span class="check_panel required">*</span> Check # : <br />
                                 <div class="input-group">
-                                                                    <span class="input-group-addon">
-                                                                         <i class="fa fa-calendar"></i>
-                                                                    </span>
-                                    <input type="text" name="check_date" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date of Payment" data-error-msg="Payment Date is required!" required>
+                                    <input type="text" name="check_no" class="form-control check" data-error-msg="Check # is required!">
+                                     <span class="input-group-addon">
+                                        <i class="fa fa-code"></i>
+                                    </span>
                                 </div>
                             </div>
-
-
-
-
                         </div>
-
                     </div>
-
-
                 </div>
             </div>
         </form>
@@ -545,8 +514,7 @@
 
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboSuppliers; var _cboTaxType;
-    var _cboPaymentMethod; var _totalPayment=0;
-
+    var _cboPaymentMethod; var _totalPayment=0; var _cboBanks;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -573,24 +541,24 @@ $(document).ready(function(){
         dt=$('#tbl_payments').DataTable({
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             "ajax" : "Payable_payments/transaction/list",
             "columns": [
-                // {
-                //     "targets": [0],
-                //     "class":          "details-control",
-                //     "orderable":      false,
-                //     "data":           null,
-                //     "defaultContent": ""
-                // },
-                { targets:[0],data: "receipt_no" },
-                { targets:[1],data: "supplier_name" },
-                { targets:[2],data: "remarks" },
-                { targets:[3],data: "posted_by_user" },
-                { targets:[4],data: "date_paid" },
-                { targets:[5],data: "total_paid_amount" },
                 {
-                    targets:[6],data: "is_active",
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "receipt_no" },
+                { targets:[2],data: "supplier_name" },
+                { targets:[3],data: "remarks" },
+                { targets:[4],data: "posted_by_user" },
+                { targets:[5],data: "date_paid" },
+                { targets:[6],data: "total_paid_amount" },
+                {
+                    targets:[7],data: "is_active",
                     render: function (data, type, full, meta){
                         if(data=="1"){
                             _attribute='class="fa fa-check-circle" style="color:green;"';
@@ -601,13 +569,13 @@ $(document).ready(function(){
                     }
                 },
                 {
-                    targets:[7],data: null,
+                    targets:[8],data: null,
                     render: function (data, type, full, meta){
                         return '<center><button type="button" class="btn btn-default btn_cancel_or"><i class="fa fa-times-circle"></i></button></center>';
                     }
 
                 },
-                { visible:false, targets:[8],data: "payment_id" }
+                { visible:false, targets:[9],data: "payment_id" }
             ],
             "createdRow": function ( row, data, index ) {
                 $('td:eq(5)',row).attr('align','right');
@@ -642,6 +610,13 @@ $(document).ready(function(){
         });
 
         _cboSuppliers.select2('val',null);
+
+        _cboBanks=$("#cbo_banks").select2({
+            placeholder: "Please select a bank.",
+            allowClear: false
+        });
+
+        _cboBanks.select2('val',0);
 
         $('.date-picker').datepicker({
             todayBtn: "linked",
@@ -683,7 +658,7 @@ $(document).ready(function(){
                 $.ajax({
                     "dataType":"html",
                     "type":"POST",
-                    "url":"Templates/layout/po/" + d.dr_invoice_id,
+                    "url":"Templates/layout/payment-history/" + d.payment_id,
                     "beforeSend" : function(){
                         row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
                     }
@@ -702,6 +677,7 @@ $(document).ready(function(){
             _txnMode="new";
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_payments'));
+            checkPanel(false);
             _cboSuppliers.select2('val',null);
             resetSummaryDetails();
 
@@ -724,14 +700,29 @@ $(document).ready(function(){
             showList(true);
         });
 
+        var checkPanel = function(b=false){
+            
+            if(b == true){
+                $('.check_panel').show();
+                $("input.check").prop("required", true);
+                $("input.check").prop("readonly", false);
+                $('#cbo_banks').prop("disabled", false);
 
+            }else{
+                _cboBanks.select2('val',0);
+                $('.check_panel').hide();
+                $("input.check").prop("readonly", true);
+                $("input.check").prop("required", false);
+                $('#cbo_banks').prop("disabled", true);
+            }
+        };
 
         _cboPaymentMethod.on("select2:select", function (e) {
             var method_id=$(this).select2('val');
             if(method_id==2){
-                $('#div_check_details').show();
+               checkPanel(true);
             }else{
-                $('#div_check_details').hide();
+               checkPanel(false);
             }
         });
 

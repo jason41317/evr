@@ -41,841 +41,6 @@
     <script src="assets/plugins/formatter/autoNumeric.js" type="text/javascript"></script>
     <script src="assets/plugins/formatter/accounting.js" type="text/javascript"></script>
 
-    <script>
-
-$(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _selectedProductType; var _isTaxExempt=0;
-    
-    $(document).ready(function(){
-        $('#modal_filter').modal('show');
-        showList(false);
-    });
-
-    var getProduct=function(){
-        dt=$('#tbl_products').DataTable({
-            "dom": '<"toolbar">frtip',
-            "bLengthChange":false,
-            "pageLength":15,
-            "ajax": {
-            "url": "Products/transaction/getproduct",
-            "type": "POST",
-            "bDestroy": true,
-            "data": function ( d ) {
-                    return $.extend( {}, d, {
-                        "refproduct_id": _selectedProductType//id of product type
-                        });
-                }
-            },
-            "columns": [
-                {
-                    "targets": [0],
-                    "class":          "details-control",
-                    "orderable":      false,
-                    "data":           null,
-                    "defaultContent": ""
-                },
-                { targets:[1],data: "product_code" ,  render: $.fn.dataTable.render.ellipsis(20)},
-                { targets:[2],data: "product_desc",  render: $.fn.dataTable.render.ellipsis(150) },
-                { targets:[3],data: "product_type" },
-                { targets:[4],data: "category_name" },
-                {
-                    targets:[5],data: "on_hand",
-                    render: function (data, type, full, meta) {
-                        if(data=="na"){
-                            return data;
-                        }else{
-                            return accounting.formatNumber(data,2);
-                        }
-
-                    }
-                },
-                {
-                    targets:[6],
-                    render: function (data, type, full, meta){
-                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
-                        var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
-
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
-                    }
-                }
-            ],
-
-            language: {
-                         searchPlaceholder: "Search Product Name"
-                     },
-            "rowCallback":function( row, data, index ){
-
-                $(row).find('td').eq(5).attr({
-                    "align": "left"
-                });
-            }
-
-
-        });
-    
-        $('.numeric').autoNumeric('init',{mDec:4});
-
-        $('#mobile_no').keypress(validateNumber);
-
-        $('#landline').keypress(validateNumber);
-
-        // NEW PRODUCT CATEGORY
-        $("#product_category").on("change", function () {        
-            $modal = $('#modal_category_group');
-            if($(this).val() === 'cat'){
-                $modal.modal('show');
-                $('#modal_create_product').modal('toggle');
-                //clearFieldsModal($('#frm_category_group'));
-                clearFieldsCategory($('#frm_category_group'));
-            }
-        });
-
-        $('#btn_close_category_group').click(function(){
-            $('#modal_category_group').modal('toggle');
-            $('#modal_create_product').modal('show');
-            //clearFields($('#frm_unit_group'));
-
-        });
-        // END HERE
-
-        var pid="";
-        var refno="";
-        var expdate="";
-        var bid="";
-
-        $(document).on('click','a.force_adjust_cost',function(e){
-            e.preventDefault();
-
-
-            pid=$(this).attr('data-prod-id');
-            refno=$(this).attr('data-ref-no');
-            expdate=$(this).attr('data-exp-date');
-            bid=$(this).attr('data-batch-id');
-
-            var _data=[];
-            _data.push({name:"pid",value:pid});
-            _data.push({name:"refno",value:refno});
-            _data.push({name:"expdate",value:expdate});
-            _data.push({name:"bid",value:bid});
-            _data.push({name:"cost",value:$('#txt_cost_upon_invoice').val()});
-
-
-            $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Products/transaction/get-current-invoice-cost",
-                "data":_data
-            }).done(function(response){
-                $('#txt_cost_upon_invoice').val(response.cost);
-                $('#modal_ref_no').html(refno);
-                $('#modal_update_cost').modal('show');
-            });
-
-
-
-
-        });
-
-        $('#btn_update_cost').click(function(){
-            var _data=[];
-            _data.push({name:"pid",value:pid});
-            _data.push({name:"refno",value:refno});
-            _data.push({name:"expdate",value:expdate});
-            _data.push({name:"bid",value:bid});
-            _data.push({name:"cost",value:$('#txt_cost_upon_invoice').val()});
-
-            $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Products/transaction/update-cost",
-                "data":_data,
-                "beforeSend": showSpinningProgress($('#btn_update_cost'))
-            }).done(function(response){
-                showNotification(response);
-                $('#modal_update_cost').modal('hide');
-            });
-        });
-
-        // NEW PRODUCT UNIT
-        $("#product_unit").on("change", function () {        
-            $modal = $('#modal_unit_group');
-            if($(this).val() === 'unt'){
-                $modal.modal('show');
-                $('#modal_create_product').modal('toggle')
-                //clearFieldsModal($('#frm_unit_group'));
-                clearFieldsUnit($('#frm_unit_group'));
-            }
-        });
-
-        $('#btn_close_unit_group').click(function(){
-            $('#modal_unit_group').modal('toggle');
-            $('#modal_create_product').modal('show');
-            //clearFields($('#frm_unit_group'));
-        });
-        // END HERE
-
-
-
-        $('#tbl_products').on('click','button.btn-export',function(){
-
-            var _parent=$(this).closest('div#div_product_history_menu');
-            var id=$(this).data('product-id');
-            var start=_parent.find('.date-start').val();
-            var end=_parent.find('.date-end').val();
-
-            window.open('Products/transaction/export-product-history?id='+id+'&start=0&end=0');
-
-
-        });
-
-
-
-        // NEW PRODUCT TYPE
-        $("#product_type_modal").on("change", function () {        
-            $modal = $('#modal_product_type');
-            if($(this).val() === 'prodtype'){
-                $modal.modal('show');
-                $('#modal_create_product').modal('toggle');
-                //clearFieldsModal($('#frm_product_type'));
-                clearFieldsProductType($('#frm_product_type'));
-            }
-        });
-
-        $('#btn_close_product_type').click(function(){
-            $('#modal_product_type').modal('toggle');
-            $('#modal_create_product').modal('show');
-            //clearFields($('#frm_product_type'));
-
-        });
-        // END HERE
-
-        // NEW SUPPLIER
-        $("#new_supplier").on("change", function () {        
-            $modal = $('#modal_new_supplier');
-            if($(this).val() === 'sup'){
-                $modal.modal('show');
-                $('#modal_create_product').modal('toggle')
-                //clearFieldsModal($('#frm_unit_group'));
-                clearFieldsModal($('#frm_suppliers_new'));
-            }
-        });
-
-        $('#btn_close_new_supplier').click(function(){
-            $('#modal_new_supplier').modal('toggle');
-            $('#modal_create_product').modal('show');
-            //clearFields($('#frm_product_type'));
-
-        });
-        // END HERE
-};
-    
-
-
-        /*_product_unit=$("#product_unit").select2({
-            placeholder: "Please select Unit",
-            allowClear: true
-        });
-        _product_unit.select2('val', null);
-
-        _cboItemTypes=$("#cbo_item_type").select2({
-            placeholder: "Please select item type.",
-            allowClear: false
-        });
-
-
-        _cboAccounts=$("#cbo_accounts").select2({
-            placeholder: "Please select link account.",
-            allowClear: false
-        });
-        _cboAccounts.select2('val', 0);
-
-        var _cboAccountExpenses=$("#cbo_accounts_expense").select2({
-            placeholder: "Please select link account.",
-            allowClear: false
-        });
-        _cboAccountExpenses.select2('val', 0);
-
-        _product_unit.on("select2:select", function (e) {
-
-            var i=$(this).select2('val');
-            if(i==0){
-                $(this).select2('val',null)
-                $('#modal_unit_group').modal('show');
-                clearFields($('#modal_unit_group').find('form'));
-            }
-
-
-        });*/
-    
-    $('#btn_create_category_group').click(function(){
-
-        var btn=$(this);
-
-        if(validateRequiredFields($('#frm_category_group'))){
-            var data=$('#frm_category_group').serializeArray();
-
-            $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Categories/transaction/create",
-                "data":data,
-                "beforeSend" : function(){
-                    showSpinningProgress(btn);
-                }
-            }).done(function(response){
-                showNotification(response);
-                $('#modal_category_group').modal('hide');
-                $('#modal_create_product').modal('show');
-
-                var _group=response.row_added[0];
-                $('#product_category').append('<option value="'+_group.category_id+'" selected>'+_group.category_name+'</option>');
-                // TEMPORARY COMMENT --> $('#product_category').select2('val',_group.category_id);
-
-            }).always(function(){
-                showSpinningProgress(btn);
-            });
-        }
-    });
-
-    $('#btn_create_unit_group').click(function(){
-
-        var btn=$(this);
-
-        if(validateRequiredFields($('#frm_unit_group'))){
-            var data=$('#frm_unit_group').serializeArray();
-
-            $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Units/transaction/create",
-                "data":data,
-                "beforeSend" : function(){
-                    showSpinningProgress(btn);
-                }
-            }).done(function(response){
-                showNotification(response);
-                $('#modal_unit_group').modal('hide');
-                $('#modal_create_product').modal('show');
-
-                var _group=response.row_added[0];
-                $('#product_unit').append('<option value="'+_group.unit_id+'" selected>'+_group.unit_name+'</option>');
-                // TEMPORARY COMMENT --> $('#product_unit').select2('val',_group.unit_id);
-
-            }).always(function(){
-                showSpinningProgress(btn);
-            });
-        }
-    });
-
-    $('#btn_create_product_type').click(function(){
-
-        var btn=$(this);
-
-        if(validateRequiredFields($('#frm_product_type'))){
-            var data=$('#frm_product_type').serializeArray();
-
-            $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Refproducts/transaction/create",
-                "data":data,
-                "beforeSend" : function(){
-                    showSpinningProgress(btn);
-                }
-            }).done(function(response){
-                showNotification(response);
-                $('#modal_product_type').modal('hide');
-                $('#modal_create_product').modal('show');
-
-                var _group=response.row_added[0];
-                $('#product_type_modal').append('<option value="'+_group.refproduct_id+'" selected>'+_group.product_type+'</option>');
-                // TEMPORARY COMMENT --> $('#product_type_modal').select2('val',_group.unit_id);
-
-            }).always(function(){
-                showSpinningProgress(btn);
-            });
-        }
-    });
-
-    $('#btn_create_new_supplier').click(function(){
-
-        var btn=$(this);
-
-        if(validateRequiredFields($('#frm_suppliers_new'))){
-            var data=$('#frm_suppliers_new').serializeArray();
-            data.push({name : "photo_path" ,value : $('img[name="img_user"]').attr('src')});
-
-            $.ajax({
-                "dataType":"json",
-                "type":"POST",
-                "url":"Suppliers/transaction/create",
-                "data":data,
-                "beforeSend" : function(){
-                    showSpinningProgress(btn);
-                }
-            }).done(function(response){
-                showNotification(response);
-                $('#modal_new_supplier').modal('hide');
-                $('#modal_create_product').modal('show');
-
-                var _suppliers=response.row_added[0];
-                $('#new_supplier').append('<option value="'+_suppliers.supplier_id+'" selected>'+_suppliers.supplier_name+'</option>');
-                /*$('#cbo_suppliers').select2('val',_suppliers.supplier_id);
-                $('#cbo_tax_type').select2('val',_suppliers.tax_type_id);*/
-
-            }).always(function(){
-                showSpinningProgress(btn);
-            });
-        }
-    });
-
-    var bindEventHandlers=(function(){
-        var detailRows = [];
-
-        $('#tbl_products tbody').on( 'click', 'tr td.details-control', function () {
-            var tr = $(this).closest('tr');
-            var row = dt.row( tr );
-            var idx = $.inArray( tr.attr('id'), detailRows );
-
-            if ( row.child.isShown() ) {
-                tr.removeClass( 'details' );
-                row.child.hide();
-
-                detailRows.splice( idx, 1 );
-            }
-            else {
-                tr.addClass( 'details' );
-                var d=row.data();
-                $.ajax({
-                    "dataType":"html",
-                    "type":"POST",
-                    "url":"Products/transaction/product-history?id="+ d.product_id,
-                    "beforeSend" : function(){
-                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
-                    }
-                }).done(function(response){
-                    row.child( response ).show();
-                    reInitializeDatePicker();
-
-                    // Add to the 'open' array
-                    if ( idx === -1 ) {
-                        detailRows.push( tr.attr('id') );
-                    }
-
-
-                });
-            }
-        } );
-
-        $('#btn_new').click(function(){
-            _txnMode="new";
-            $('#modal_create_product').modal('show');
-            clearFields($('#frm_product'));
-            $('#is_tax_exempt').attr('checked', false);
-            $('#income_account_id').val(63);
-            $('#expense_account_id').val(9);
-        });
-
-        $('#tbl_products tbody').on('click','button[name="edit_info"]',function(){
-            _txnMode="edit";
-
-            $('#modal_create_product').modal('show');
-            _selectRowObj=$(this).closest('tr');
-            var data=dt.row(_selectRowObj).data();
-            _selectedID=data.product_id;
-
-
-             $('input,textarea,select').each(function(){
-                var _elem=$(this);
-                $.each(data,function(name,value){
-                    if(_elem.attr('name')==name){
-                        _elem.val(value);
-                    }
-                });
-            });
-
-
-            $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
-
-        });
-
-
-        $('input[name="purchase_cost"],input[name="markup_percent"],input[name="sale_price"]').keyup(function(){
-            reComputeSRP();
-        });
-
-        $('#tbl_products tbody').on('click','button[name="remove_info"]',function(){
-            $('#modal_confirmation').modal('show');
-            _selectRowObj=$(this).closest('tr');
-            var data=dt.row(_selectRowObj).data();
-            _selectedID=data.product_id;
-
-        });
-        
-
-        $('#btn_yes').click(function(){
-            removeProduct().done(function(response){
-                showNotification(response);
-                dt.row(_selectRowObj).remove().draw();
-            });
-        });
-
-
-        $('#btn_cancel').click(function(){
-            showList(true);
-        });
-
-        $('#btn_save').click(function(){
-            if(validateRequiredFields($('#frm_product'))){
-                if(_txnMode=="new"){
-                    createProduct().done(function(response){
-                        showNotification(response);
-                        dt.row.add(response.row_added[0]).draw();
-                        clearFields($('#frm_product'))
-                        showList(true);
-                    }).always(function(){
-                        $('#modal_create_product').modal('toggle');
-                        showSpinningProgress($('#btn_save'));
-                    });
-                    return;
-                }
-                if(_txnMode==="edit"){
-                    updateProduct().done(function(response){
-                        showNotification(response);
-                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
-                    }).always(function(){
-                        $('#modal_create_product').modal('toggle');
-                        showSpinningProgress($('#btn_save'));
-                    });
-                    return;
-                }
-            }
-        });
-
-        $('#btn_browse').click(function(event){
-            event.preventDefault();
-            $('input[name="file_upload[]"]').click();
-        });
-
-        $('#btn_remove_photo').click(function(event){
-            event.preventDefault();
-            $('img[name="img_user"]').attr('src','assets/img/anonymous-icon.png');
-        });
-
-        $('input[name="file_upload[]"]').change(function(event){
-            var _files=event.target.files;
-            /*$('#div_img_product').hide();
-            $('#div_img_loader').show();*/
-            var data=new FormData();
-            $.each(_files,function(key,value){
-                data.append(key,value);
-            });
-            console.log(_files);
-            $.ajax({
-                url : 'Suppliers/transaction/upload',
-                type : "POST",
-                data : data,
-                cache : false,
-                dataType : 'json',
-                processData : false,
-                contentType : false,
-                success : function(response){
-                    $('img[name="img_user"]').attr('src',response.path);
-                }
-            });
-        });
-    })();
-
-    var validateRequiredFields=function(f){
-        var stat=true;
-
-        $('div.form-group').removeClass('has-error');
-        $('input[required],textarea[required],select[required]',f).each(function(){
-
-                if($(this).is('select')){
-                if($(this).val()==0){
-                    showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
-                    $(this).closest('div.form-group').addClass('has-error');
-                    $(this).focus();
-                    stat=false;
-                    return false;
-                }
-            
-                }else{
-                if($(this).val()==""){
-                    showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
-                    $(this).closest('div.form-group').addClass('has-error');
-                    $(this).focus();
-                    stat=false;
-                    return false;
-                }
-            }
-        });
-
-        return stat;
-    };
-
-    var createProduct=function(){
-        var _data=$('#frm_product').serializeArray();
-       // _data.push({name : "is_tax_exempt" ,value : _isTaxExempt});
-
-        return $.ajax({
-            "dataType":"json",
-            "type":"POST",
-            "url":"Products/transaction/create",
-            "data":_data,
-            "beforeSend": showSpinningProgress($('#btn_save'))
-        });
-    };
-
-    var updateProduct=function(){
-        var _data=$('#frm_product').serializeArray();
-        //_data.push({name : "is_tax_exempt" ,value : _isTaxExempt});
-        _data.push({name : "product_id" ,value : _selectedID});
-
-        return $.ajax({ 
-            "dataType":"json",
-            "type":"POST",
-            "url":"Products/transaction/update",
-            "data":_data,
-            "beforeSend": showSpinningProgress($('#btn_save'))
-        });
-    };
-
-    var removeProduct=function(){
-        return $.ajax({
-            "dataType":"json",
-            "type":"POST",
-            "url":"Products/transaction/delete",
-            "data":{product_id : _selectedID}
-        });
-    };
-
-    var showList=function(b){
-        if(b){
-            $('#div_product_list').show();
-            $('#div_product_fields').hide();
-        }else{
-            $('#div_product_list').hide();
-            $('#div_product_fields').show();
-        }
-    };
-
-    var showNotification=function(obj){
-        PNotify.removeAll();
-        new PNotify({
-            title:  obj.title,
-            text:  obj.msg,
-            type:  obj.stat
-        });
-    };
-
-    var showSpinningProgress=function(e){
-        $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
-    };
-
-    /*var clearFields=function(f){
-        $('input,textarea',f).val('');
-        //$(f).find('select').select2('val',null);
-        $(f).find('input:first').focus();
-    };*/
-
-    var clearFields=function(f){
-        $('input,textarea,select',f).val('');
-        $(f).find('input:first').focus();
-        $('#is_tax_exempt',f).prop('checked', false);
-        $('#img_user').attr('src','assets/img/anonymous-icon.png');
-    };
-
-    var clearFieldsModal=function(f){
-        $('input,textarea,select',f).val('');
-        $(f).find('input:first').focus();
-        $('#img_user').attr('src','assets/img/anonymous-icon.png');
-    };
-
-    var clearFieldsCategory=function(f){
-        $('#category_name').val('');
-        $('#category_desc').val('');
-        $(f).find('select:first').focus();
-    };
-
-    var clearFieldsUnit=function(f){
-        $('#unit_name').val('');
-        $('#unit_desc').val('');
-        $(f).find('select:first').focus();
-    };
-
-    var clearFieldsProductType=function(f){
-        $('#product_type').val('');
-        $('#description').val('');
-        $(f).find('select:first').focus();
-    };
-
-    var reInitializeDatePicker=function(){
-        $('.date-picker').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: false,
-            calendarWeeks: true,
-            autoclose: true
-        });
-    };
-
-    function validateNumber(event) {
-        var key = window.event ? event.keyCode : event.which;
-
-        if (event.keyCode === 8 || event.keyCode === 46
-            || event.keyCode === 37 || event.keyCode === 39) {
-            return true;
-        }
-        else if ( key < 48 || key > 57 ) {
-            return false;
-        }
-        else return true;
-    };
-
-    function format ( d ) {
-        return '<br /><table style="margin-left:10%;width: 80%;">' +
-        '<thead>' +
-        '</thead>' +
-        '<tbody>' +
-        '<tr>' +
-        '<td width="20%">Product Code : </td><td width="50%"><b>'+ d.product_code+'</b></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Product Name : </td><td>'+ d.product_desc+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Product Description : </td><td>'+ d.product_desc1+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Supplier : </td><td>'+ d.supplier_name+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Product Type : </td><td>'+ d.product_type+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Category : </td><td>'+ d.category_name+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Department : </td><td>na</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Unit of Measurement : </td><td>'+ d.unit_name+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Pack Size : </td><td>'+ d.size+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Vat Exempt : </td><td>'+ d.is_tax_exempt+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Equivalent Points : </td><td>'+ d.equivalent_points+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Warn Qty : </td><td>'+ d.product_warn+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Ideal : </td><td>'+ d.product_ideal+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Purchase Cost : </td><td>'+ accounting.formatNumber(d.purchase_cost,2)+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Markup Percent : </td><td>'+ d.markup_percent+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Sale Price : </td><td>'+ accounting.formatNumber(d.sale_price,2)+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Whole Sale Price : </td><td>'+ accounting.formatNumber(d.whole_sale,2)+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Retailer Price : </td><td>'+ accounting.formatNumber(d.retailer_price,2)+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Special Discount Price : </td><td>'+ accounting.formatNumber(d.special_disc,2)+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Valued Customer Price : </td><td>'+ accounting.formatNumber(d.valued_customer,2)+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Discount Price : </td><td>'+ accounting.formatNumber(d.discounted_price,2)+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Dealer Price : </td><td>'+ accounting.formatNumber(d.dealer_price,2)+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Distributor Price : </td><td>'+ accounting.formatNumber(d.distributor_price,2)+'</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td>Public Price : </td><td>'+ accounting.formatNumber(d.public_price,2)+'</td>' +
-        '</tr>' +
-        '</tbody></table><br />';
-    };
-
-    // MARKUP + PURCHASE COST
-    /*var reComputeSRP=function(){
-        var markupPercent=getFloat($('input[name="markup_percent"]').val());
-        var purchaseAmount=getFloat($('input[name="purchase_cost"]').val());
-
-        if(markupPercent>0){
-            var markupDecimal=markupPercent/100;
-            var newAmount=purchaseAmount*markupDecimal;
-            var srpAmount=purchaseAmount+newAmount;
-            $('input[name="sale_price"]').val(accounting.formatNumber(srpAmount,2));
-        }
-
-    };*/
-
-    var getFloat=function(f){
-        return parseFloat(accounting.unformat(f));
-    };
-
-
-
-    $('#btn_filter').click(function(){
-        if(validateRequiredFields($('#frm_filter'))){
-            showSpinningProgress($('#btn_filter'));
-            showProduct();
-            getProduct();
-            $('#modal_filter').modal('toggle');
-        }
-    });
-
-    var showProduct=function(){
-        $('#div_product_list').show();
-    };
-
-    var hideProduct=function(){
-        $('#div_product_list').hide();
-        $('#modal_filter').modal('toggle');
-    };
-
-    $('#btn_backtofilter').click(function(){
-        hideProduct();
-        $('#tbl_products').dataTable().fnDestroy();
-        $('#tbl_products').fnClearTable();
-    });
-
-    $('#refproduct_id').change(function() {
-        _selectedProductType=$(this).val();
-        //alert(_selectedProductType);
-    });
-
-   /* $('.i-checks').iCheck({
-        checkboxClass: 'icheckbox_square-green',
-        radioClass: 'iradio_square-green',
-    });*/
-
-
-    // apply input changes, which were done outside the plugin
-    //$('input:radio').iCheck('update');
-
-});
-
-</script>
-
     <style>
 
         .toolbar{
@@ -981,6 +146,15 @@ $(document).ready(function(){
             padding-bottom: 15px;
         }
 
+        #tbl_products_filter{
+            display: none;
+        }
+
+        .required{
+            color: red;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 
@@ -1010,29 +184,353 @@ $(document).ready(function(){
                                     <div id="div_product_list">
                                         <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
                                             <div class="panel-body table-responsive">
-                                                <button class="btn btn-default btn-back" id="btn_backtofilter" title="Go back to filter">
-                                                    <span class="fa fa-arrow-left" style="color: #9E9E9E;"></span>
-                                                </button>
                                                 <h2 style="margin-top: 0px !important;margin-bottom: 0px !important;">Products</h2><hr>
-                                                <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New product" ><i class="fa fa-plus-circle"></i> Create New Product</button>
-                                                <table id="tbl_products" class="table table-striped" cellspacing="0" width="100%">
-                                                    <thead class="">
-                                                    <tr>    
-                                                        <th width="3%"></th>
-                                                        <th width="10%">PLU</th>
-                                                        <th width="42%">Product Description</th>
-                                                        <th width="15%">Product Type</th>
-                                                        <th width="10%">Category</th>
-                                                        <th width="10%">On Hand</th>
-                                                        <th width="10%"><center>Action</center></th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-
-                                                    </tbody>
-                                                </table>
+                                                
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <br/>
+                                                        <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New product" ><i class="fa fa-plus-circle"></i> Create New Product</button>
+                                                    </div>
+                                                    <div class="col-md-2"></div>
+                                                    <div class="col-md-3">
+                                                        Product Type :<br />
+                                                        <select name="refproduct_id" id="refproduct_id" class="form-control">
+                                                            <?php foreach($refproduct as $row) {?>
+                                                                <option value="<?php echo $row->refproduct_id;?>">
+                                                                    <?php echo $row->product_type;?>
+                                                                </option>
+                                                            <?php }?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        Search :<br />
+                                                         <input type="text" id="searchbox" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div>
+                                                    <table id="tbl_products" class="table table-striped" cellspacing="0" width="100%">
+                                                        <thead class="">
+                                                        <tr>    
+                                                            <th width="3%"></th>
+                                                            <th width="10%">PLU</th>
+                                                            <th width="42%">Product Description</th>
+                                                            <th width="15%">Product Type</th>
+                                                            <th width="10%">Category</th>
+                                                            <th width="10%">On Hand</th>
+                                                            <th width="10%"><center>Action</center></th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                             <div class="panel-footer"></div>
+                                        </div>
+                                    </div>
+                                    <div id="div_product_fields" style="display: none;">
+                                        <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
+                                            <div class="panel-body table-responsive">
+                                                <form id="frm_product">
+                                                <div class="row">
+                                                <div class="col-lg-4">
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <label class=""><span class="required">*</span> PLU :</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-file-code-o"></i>
+                                                            </span>
+                                                            <input type="text" name="product_code" class="form-control" value="" data-error-msg="PLU is required." required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <label class=""><span class="required">*</span> Product Description :</label>
+                                                        <textarea name="product_desc" class="form-control" data-error-msg="Product Description is required." required></textarea>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <label class="">Other Description :</label>
+                                                        <textarea name="product_desc1" class="form-control"></textarea>
+                                                    </div>
+
+
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <label class=""><span class="required">*</span> Product Type :</label>
+                                                        <select name="refproduct_id" id="cbo_product_type" class="form-control" data-error-msg="Product type is required." required>
+                                                            <option value="">Please Select...</option>
+                                                            <option value="prodtype">[ Create Product Type ]</option>
+                                                            <?php
+                                                            foreach($refproduct as $row)
+                                                            {
+                                                                echo '<option value="'.$row->refproduct_id.'">'.$row->product_type.'</option>';
+                                                            }
+                                                            ?>
+                                                        </select>
+
+                                                    </div>
+
+
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <label class=""><span class="required">*</span> Supplier :</label>
+                                                        <select name="supplier_id" id="new_supplier" class="form-control" data-error-msg="Supplier is required." required>
+                                                            <option value="">Please Select...</option>
+                                                            <option value="sup">[ Create Supplier ]</option>
+                                                            <?php
+                                                            foreach($suppliers as $row)
+                                                            {
+                                                                echo '<option value="'.$row->supplier_id.'">'.$row->supplier_name.'</option>';
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <label class=""><span class="required">*</span> Category :</label>
+                                                        <select name="category_id" id="product_category" class="form-control" data-error-msg="Category is required." required>
+                                                            <option value="">Please Select...</option>
+                                                            <option value="cat">[ Create Category ]</option>
+                                                            <?php
+                                                            foreach($categories as $row)
+                                                            {
+                                                                echo '<option value="'.$row->category_id.'">'.$row->category_name.'</option>';
+                                                            }
+                                                            ?>
+                                                        </select>
+                                                    </div>
+
+
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <label class=""><span class="required">*</span> Tax :</label>
+                                                        <select name="tax_type_id" id="cbo_tax" class="form-control" data-error-msg="Tax type is required." required>
+                                                            <option value="">Please Select...</option>
+                                                            <?php foreach($tax_types as $tax_type) { ?>
+                                                                <option value="<?php echo $tax_type->tax_type_id; ?>"><?php echo $tax_type->tax_type; ?></option>
+                                                            <?php    } ?>
+
+
+                                                        </select>
+                                                    </div>
+
+
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <label class=""><span class="required">*</span> Inventory type :</label>
+
+                                                        <select name="item_type_id" id="cbo_item_type" class="form-control" data-error-msg="Item type is required." required>
+                                                            <option value="">None</option>
+                                                            <?php foreach($item_types as $item_type){ ?>
+                                                                <option value="<?php echo $item_type->item_type_id ?>"><?php echo $item_type->item_type; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:0px;">
+                                                        <label class=""><span class="required">*</span> Unit of Measurement :</label>
+                                                        <select name="unit_id" id="product_unit" class="form-control" data-error-msg="Unit is required." required>
+                                                            <option value="">Please Select...</option>
+                                                            <option value="unt">[ Create Unit ]</option>
+                                                            <?php
+                                                            foreach($units as $row)
+                                                            {
+                                                                echo '<option value="'.$row->unit_id.'">'.$row->unit_name.'</option>';
+                                                            }
+                                                            ?>
+                                                        </select>
+
+                                                    </div>
+
+                                                </div>
+
+
+
+                                                <div class="col-lg-4" style="margin:0px;">
+
+
+
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Pack Size :</label>
+                                                        <input type="text" name="size" class="form-control">
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Suggested Retail Price (SRP) :</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-toggle-off"></i>
+                                                            </span>
+                                                            <input type="text" name="sale_price" class="form-control numeric">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Discounted Price :</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-toggle-off"></i>
+                                                            </span>
+                                                            <input type="text" name="discounted_price" class="form-control numeric">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Dealer's Price :</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                            <i class="fa fa-toggle-off"></i>
+                                                            </span>
+                                                            <input type="text" name="dealer_price" class="form-control numeric">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Distributor's Price :</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-toggle-off"></i>
+                                                            </span>
+                                                            <input type="text" name="distributor_price" class="form-control numeric">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Public Price :</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-toggle-off"></i>
+                                                            </span>
+                                                            <input type="text" name="public_price" class="form-control numeric">
+                                                        </div>
+                                                    </div>
+                                                 <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Purchase Cost 1 (Luzon Area):</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-toggle-off"></i>
+                                                            </span>
+                                                            <input type="text" name="purchase_cost" class="form-control numeric">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Purchase Cost 2 (Viz-Min Area):</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-toggle-off"></i>
+                                                            </span>
+                                                            <input type="text" name="purchase_cost_2" class="form-control numeric">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Tax Exempt ?</label><br>
+                                                        <input type="checkbox" name="is_tax_exempt" class="form-control" id="is_tax_exempt">
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-4">
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Warning Quantity :</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-toggle-off"></i>
+                                                            </span>
+                                                            <input type="text" name="product_warn" class="form-control numeric">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Ideal Quantity :</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-toggle-off"></i>
+                                                            </span>
+                                                            <input type="text" name="product_ideal" class="form-control numeric">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Link to Credit Account :</label>
+
+                                                        <select name="income_account_id" id="income_account_id" class="form-control" data-error-msg="Link to Account is required.">
+                                                            <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                            <option value="0">None</option>
+                                                            <?php foreach($accounts as $account){ ?>
+                                                                <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="form-group" style="margin-bottom:3px;">
+                                                        <label class="">Link to Debit Account :</label>
+                                                        <select name="expense_account_id" id="expense_account_id" class="form-control" data-error-msg="Link to Account is required.">
+                                                            <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                            <option value="0">None</option>
+                                                            <?php foreach($accounts as $account){ ?>
+                                                                <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </div>
+                                                <div class="form-group" style="margin-bottom:3px;">
+                                                    <label class="">Cost of Sales Account:</label>
+                                                    <select name="cos_account_id" id="cos_account_id" data-error-msg="Link to Cost of sales account is required.">
+                                                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                        <option value="0">None</option>
+                                                        <?php foreach($accounts as $account){ ?>
+                                                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group" style="margin-bottom:3px;">
+                                                    <label class="">Sales Return Account:</label>
+                                                    <select name="sales_return_account_id" id="sales_return_account_id" data-error-msg="Link to sales return account is required.">
+                                                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                        <option value="0">None</option>
+                                                        <?php foreach($accounts as $account){ ?>
+                                                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group" style="margin-bottom:3px;">
+                                                    <label class="">Sales Discount Account:</label>
+                                                    <select name="sd_account_id" id="sd_account_id" data-error-msg="Link to sales discount account is required." required>
+                                                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                        <option value="0">None</option>
+                                                        <?php foreach($accounts as $account){ ?>
+                                                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group" style="margin-bottom:3px;">
+                                                    <label class="">Purchase Return Account:</label>
+                                                    <select name="po_return_account_id" id="po_return_account_id" data-error-msg="Link to purchase return account is required.">
+                                                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                        <option value="0">None</option>
+                                                        <?php foreach($accounts as $account){ ?>
+                                                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>            
+                                                <div class="form-group" style="margin-bottom:3px;">
+                                                    <label class="">Purchase Discount Account:</label>
+                                                    <select name="pd_account_id" id="pd_account_id" data-error-msg="Link to purchase discount account is required.">
+                                                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
+                                                        <option value="0">None</option>
+                                                        <?php foreach($accounts as $account){ ?>
+                                                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>  
+                                                </div>
+                                                </div>
+                                                </form>
+                                            </div>
+                                             <div class="panel-footer" style="text-align: right;">
+                                                 <div class="col-md-12">
+                                                    <button id="btn_save" type="button" class="btn btn-primary">Save</button>
+                                                    <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                                                </div>
+                                             </div>
                                         </div>
                                     </div>
 
@@ -1323,7 +821,7 @@ $(document).ready(function(){
                             <button id="btn_create_new_supplier" type="button" class="btn"  style="background-color:#2ecc71;color:white;"><span class=""></span> Save</button>
                             <button id="btn_close_new_supplier" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                         </div>
-                    </div><!---content---->
+                    </div><!---content-->
                 </div>
             </div><!---modal-->
 
@@ -1351,320 +849,9 @@ $(document).ready(function(){
                             <button id="btn_update_cost" type="button" class="btn" style="background-color:#2ecc71;color:white;">Update</button>
                             <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal" style="padding: 2px 7px!important;">Cancel</button>
                         </div>
-                    </div><!---content---->
+                    </div><!---content-->
                 </div>
             </div><!---modal-->
-
-
-            <div id="modal_create_product" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
-            <div class="modal-dialog" style="width: 75%;">
-            <div class="modal-content">
-            <div class="modal-header" style="background-color:#2ecc71;">
-                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                <h4 class="modal-title" style="color:#ecf0f1;"><span id="modal_mode"> </span>Product Information</h4>
-            </div>
-
-            <div class="modal-body">
-            <form id="frm_product">
-            <div class="row">
-            <div class="col-lg-4">
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">PLU * :</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-file-code-o"></i>
-                                                    </span>
-                        <input type="text" name="product_code" class="form-control" value="" data-error-msg="PLU is required." required>
-                    </div>
-                </div>
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Product Description * :</label>
-                    <textarea name="product_desc" class="form-control" data-error-msg="Product Description is required." required></textarea>
-                </div>
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Other Description :</label>
-                    <textarea name="product_desc1" class="form-control"></textarea>
-                </div>
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Product Type * :</label>
-                    <select name="refproduct_id" id="product_type_modal" class="form-control" data-error-msg="Product type is required." required>
-                        <option value="">Please Select...</option>
-                        <option value="prodtype">[ Create Product Type ]</option>
-                        <?php
-                        foreach($refproduct as $row)
-                        {
-                            echo '<option value="'.$row->refproduct_id.'">'.$row->product_type.'</option>';
-                        }
-                        ?>
-                    </select>
-
-                </div>
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Supplier * :</label>
-                    <select name="supplier_id" id="new_supplier" class="form-control" data-error-msg="Supplier is required." required>
-                        <option value="">Please Select...</option>
-                        <option value="sup">[ Create Supplier ]</option>
-                        <?php
-                        foreach($suppliers as $row)
-                        {
-                            echo '<option value="'.$row->supplier_id.'">'.$row->supplier_name.'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Category * :</label>
-                    <select name="category_id" id="product_category" class="form-control" data-error-msg="Category is required." required>
-                        <option value="">Please Select...</option>
-                        <option value="cat">[ Create Category ]</option>
-                        <?php
-                        foreach($categories as $row)
-                        {
-                            echo '<option value="'.$row->category_id.'">'.$row->category_name.'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Tax * :</label>
-                    <select name="tax_type_id" id="cbo_tax" class="form-control" data-error-msg="Category is required." required>
-                        <option value="">Please Select...</option>
-                        <?php foreach($tax_types as $tax_type) { ?>
-                            <option value="<?php echo $tax_type->tax_type_id; ?>"><?php echo $tax_type->tax_type; ?></option>
-                        <?php    } ?>
-
-
-                    </select>
-                </div>
-
-
-
-            </div>
-
-
-
-            <div class="col-lg-4" style="margin:0px;">
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Inventory type * :</label>
-
-                    <select name="item_type_id" id="cbo_item_type" class="form-control" data-error-msg="Item type is required." required>
-                        <option value="">None</option>
-                        <?php foreach($item_types as $item_type){ ?>
-                            <option value="<?php echo $item_type->item_type_id ?>"><?php echo $item_type->item_type; ?></option>
-                        <?php } ?>
-                    </select>
-
-                </div>
-
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Unit of Measurement * :</label>
-                    <select name="unit_id" id="product_unit" class="form-control" data-error-msg="Unit is required." required>
-                        <option value="">Please Select...</option>
-                        <option value="unt">[ Create Unit ]</option>
-                        <?php
-                        foreach($units as $row)
-                        {
-                            echo '<option value="'.$row->unit_id.'">'.$row->unit_name.'</option>';
-                        }
-                        ?>
-                    </select>
-
-                </div>
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Pack Size :</label>
-                    <input type="text" name="size" class="form-control">
-                </div>
-
-
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Suggested Retail Price (SRP) :</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-toggle-off"></i>
-                                                    </span>
-                        <input type="text" name="sale_price" class="form-control numeric">
-                    </div>
-                </div>
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Discounted Price :</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-toggle-off"></i>
-                                                    </span>
-                        <input type="text" name="discounted_price" class="form-control numeric">
-                    </div>
-                </div>
-
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Dealer's Price :</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-toggle-off"></i>
-                                                    </span>
-                        <input type="text" name="dealer_price" class="form-control numeric">
-                    </div>
-                </div>
-
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Distributor's Price :</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-toggle-off"></i>
-                                                    </span>
-                        <input type="text" name="distributor_price" class="form-control numeric">
-                    </div>
-                </div>
-
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Public Price :</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-toggle-off"></i>
-                                                    </span>
-                        <input type="text" name="public_price" class="form-control numeric">
-                    </div>
-                </div>
-
-
-
-
-
-            </div>
-
-
-
-
-            <div class="col-lg-4">
-
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Purchase Cost 1 (Luzon Area):</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-toggle-off"></i>
-                                                    </span>
-                        <input type="text" name="purchase_cost" class="form-control numeric">
-                    </div>
-
-                </div>
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Purchase Cost 2 (Viz-Min Area):</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-toggle-off"></i>
-                                                    </span>
-                        <input type="text" name="purchase_cost_2" class="form-control numeric">
-                    </div>
-
-                </div>
-
-
-                <div class="form-group">
-                    <label class="">Warning Quantity :</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-toggle-off"></i>
-                                                    </span>
-                        <input type="text" name="product_warn" class="form-control numeric">
-                    </div>
-                </div>
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Ideal Quantity :</label>
-                    <div class="input-group">
-                                                    <span class="input-group-addon">
-                                                        <i class="fa fa-toggle-off"></i>
-                                                    </span>
-                        <input type="text" name="product_ideal" class="form-control numeric">
-                    </div>
-                </div>
-
-
-
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Link to Credit Account :</label>
-
-                    <select name="income_account_id" id="income_account_id" class="form-control" data-error-msg="Link to Account is required." required>
-                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
-                        <option value="">None</option>
-                        <?php foreach($accounts as $account){ ?>
-                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
-                        <?php } ?>
-                    </select>
-
-                </div>
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Link to Debit Account :</label>
-
-                    <select name="expense_account_id" id="expense_account_id" class="form-control" data-error-msg="Link to Account is required." required>
-                        <optgroup label="Please select NONE if this will not be recorded on Journal."></optgroup>
-                        <option value="">None</option>
-                        <?php foreach($accounts as $account){ ?>
-                            <option value="<?php echo $account->account_id; ?>"><?php echo $account->account_title; ?></option>
-                        <?php } ?>
-                    </select>
-
-                </div>
-
-
-                <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Tax Exempt ?</label><br>
-                    <input type="checkbox" name="is_tax_exempt" class="form-control" id="is_tax_exempt">
-
-                </div>
-
-
-
-
-
-            </div>
-
-
-
-            </div>
-            </form>
-            </div>
-
-            <div class="modal-footer">
-                <button id="btn_save" type="button" class="btn" style="background-color:#2ecc71;color:white;">Save</button>
-                <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-            </div>
-            </div><!---content---->
-            </div>
-            </div><!---modal-->
-
 
             <div id="modal_filter" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
                 <div class="modal-dialog modal-md">
@@ -1684,17 +871,6 @@ $(document).ready(function(){
                                                 <span class="input-group-addon">
                                                     <i class="fa fa-file-code-o"></i>
                                                 </span>
-                                                <select name="refproduct_id" id="refproduct_id" class="form-control">
-                                                    <option value="">View all products</option>
-                                                    
-                                                    <?php
-                                                    foreach($refproduct as $row)
-                                                    {
-                                                        echo '<option value="'.$row->refproduct_id.'">'.$row->product_type.'</option>';
-                                                    }
-                                                    ?>
-
-                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -1745,9 +921,857 @@ $(document).ready(function(){
     </div>
 </div>
 
+    <script>
+
+$(document).ready(function(){
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _isTaxExempt=0;
+    var _cboProductTypesFilter; var _cboSuppliers; var _cboCategories; var _cboTaxTypes; var _cboInventoryTypes; var _cboUnits; var _cboSalesAccount; var _cboInventoryAccount;
+    var _cboProductTypes; var _cboCOSAccounts; var _cboSRAccounts; var _cboSDAccounts; var _cboPRAccounts; var _cboPDAccounts;
+
+    var initializeControls=function() {
+
+        _cboProductTypesFilter=$('#refproduct_id').select2({
+            placeholder: "Please select product type.",
+            allowClear: false
+        });
+
+        _cboProductTypesFilter.select2('val',3);
+
+        dt=$('#tbl_products').DataTable({
+            "dom": '<"toolbar">frtip',
+            "bLengthChange":false,
+            "pageLength":15,
+            "ajax": {
+            "url": "Products/transaction/getproduct",
+            "type": "POST",
+            "bDestroy": true,
+            "data": function ( d ) {
+                    return $.extend( {}, d, {
+                        "refproduct_id": _cboProductTypesFilter.select2('val')//id of product type
+                        });
+                }
+            },
+            "columns": [
+                {
+                    "targets": [0],
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
+                { targets:[1],data: "product_code" ,  render: $.fn.dataTable.render.ellipsis(20)},
+                { targets:[2],data: "product_desc",  render: $.fn.dataTable.render.ellipsis(150) },
+                { targets:[3],data: "product_type" },
+                { targets:[4],data: "category_name" },
+                {
+                    sClass: "text-right", targets:[5],data: "on_hand",
+                    render: function (data, type, full, meta) {
+                        if(data=="na"){
+                            return data;
+                        }else{
+                            return accounting.formatNumber(data,2);
+                        }
+
+                    }
+                },
+                {
+                    targets:[6],
+                    render: function (data, type, full, meta){
+                        var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
+                        var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
+
+                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                    }
+                }
+            ],
+
+            language: {
+                         searchPlaceholder: "Search Product Name"
+                     },
+            "rowCallback":function( row, data, index ){
+
+                $(row).find('td').eq(5).attr({
+                    "align": "left"
+                });
+            }
+
+        });
+        
+        $('.numeric').autoNumeric('init',{mDec:4});
+
+        _cboProductTypes=$('#cbo_product_type').select2({
+            placeholder: "Please select a product type.",
+            allowClear: false
+        });
+
+        _cboProductTypes.select2('val',null);
+
+
+        _cboSuppliers=$('#new_supplier').select2({
+            placeholder: "Please select a supplier.",
+            allowClear: false
+        });
+
+        _cboSuppliers.select2('val',null);
+
+        _cboCategories=$('#product_category').select2({
+            placeholder: "Please select a category.",
+            allowClear: false
+        });
+
+        _cboCategories.select2('val',null);
+
+        _cboTaxTypes=$('#cbo_tax').select2({
+            placeholder: "Please select a tax type.",
+            allowClear: false
+        });
+
+        _cboTaxTypes.select2('val',null);
+
+        _cboInventoryTypes=$('#cbo_item_type').select2({
+            placeholder: "Please select an inventory type.",
+            allowClear: false
+        });
+
+        _cboInventoryTypes.select2('val',null);
+
+        _cboUnits=$('#product_unit').select2({
+            placeholder: "Please select a unit.",
+            allowClear: false
+        });
+
+        _cboUnits.select2('val',null);
+
+        _cboSalesAccount=$('#income_account_id').select2({
+            placeholder: "Please select an account.",
+            allowClear: false
+        });
+
+        _cboSalesAccount.select2('val',0);
+
+        _cboInventoryAccount=$('#expense_account_id').select2({
+            placeholder: "Please select an account.",
+            allowClear: false
+        });
+
+        _cboInventoryAccount.select2('val',0);
+
+        _cboCOSAccounts=$('#cos_account_id').select2({
+            placeholder: "Please select an account.",
+            allowClear: false
+        });
+
+        _cboCOSAccounts.select2('val',0);
+
+        _cboSRAccounts=$('#sales_return_account_id').select2({
+            placeholder: "Please select an account.",
+            allowClear: false
+        });
+
+        _cboSRAccounts.select2('val',0);
+
+        _cboSDAccounts=$('#sd_account_id').select2({
+            placeholder: "Please select an account.",
+            allowClear: false
+        });
+
+        _cboSDAccounts.select2('val',0);
+
+        _cboPRAccounts=$('#po_return_account_id').select2({
+            placeholder: "Please select an account.",
+            allowClear: false
+        });
+
+        _cboPRAccounts.select2('val',0);
+
+        _cboPDAccounts=$('#pd_account_id').select2({
+            placeholder: "Please select an account.",
+            allowClear: false
+        });
+
+        _cboPDAccounts.select2('val',0);
+
+    }();
+        
+    var bindEventHandlers=(function(){
+        var detailRows = [];
+
+        _cboProductTypesFilter.on("select2:select", function (e) {
+            $('#tbl_products').DataTable().ajax.reload();
+        });
+
+        $("#searchbox").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+        $('#mobile_no').keypress(validateNumber);
+        $('#landline').keypress(validateNumber);
+
+        $("#product_category").on("change", function () {        
+            $modal = $('#modal_category_group');
+            if($(this).val() === 'cat'){
+                $modal.modal('show');
+                _cboCategories.select2('val',null);
+                clearFieldsCategory($('#frm_category_group'));
+            }
+        });
+
+        var pid="";
+        var refno="";
+        var expdate="";
+        var bid="";
+
+        $(document).on('click','a.force_adjust_cost',function(e){
+            e.preventDefault();
+
+
+            pid=$(this).attr('data-prod-id');
+            refno=$(this).attr('data-ref-no');
+            expdate=$(this).attr('data-exp-date');
+            bid=$(this).attr('data-batch-id');
+
+            var _data=[];
+            _data.push({name:"pid",value:pid});
+            _data.push({name:"refno",value:refno});
+            _data.push({name:"expdate",value:expdate});
+            _data.push({name:"bid",value:bid});
+            _data.push({name:"cost",value:$('#txt_cost_upon_invoice').val()});
+
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Products/transaction/get-current-invoice-cost",
+                "data":_data
+            }).done(function(response){
+                $('#txt_cost_upon_invoice').val(response.cost);
+                $('#modal_ref_no').html(refno);
+                $('#modal_update_cost').modal('show');
+            });
+
+
+        });
+
+        $('#btn_update_cost').click(function(){
+            var _data=[];
+            _data.push({name:"pid",value:pid});
+            _data.push({name:"refno",value:refno});
+            _data.push({name:"expdate",value:expdate});
+            _data.push({name:"bid",value:bid});
+            _data.push({name:"cost",value:$('#txt_cost_upon_invoice').val()});
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Products/transaction/update-cost",
+                "data":_data,
+                "beforeSend": showSpinningProgress($('#btn_update_cost'))
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_update_cost').modal('hide');
+            });
+        });
+
+
+        $('#tbl_products').on('click','button.btn-export',function(){
+            var _parent=$(this).closest('div#div_product_history_menu');
+            var id=$(this).data('product-id');
+            var start=_parent.find('.date-start').val();
+            var end=_parent.find('.date-end').val();
+            window.open('Products/transaction/export-product-history?id='+id+'&start=0&end=0');
+        });
+
+        // NEW PRODUCT UNIT
+        $("#product_unit").on("change", function () {        
+            $modal = $('#modal_unit_group');
+            if($(this).val() === 'unt'){
+                $modal.modal('show');
+                _cboUnits.select2('val',null);
+                clearFieldsUnit($('#frm_unit_group'));
+            }
+        });
+
+        $("#cbo_product_type").on("change", function () {        
+            $modal = $('#modal_product_type');
+            if($(this).val() === 'prodtype'){
+                $modal.modal('show');
+                _cboProductTypes.select2('val',null);
+                clearFieldsProductType($('#frm_product_type'));
+            }
+        });
+
+        $("#new_supplier").on("change", function () {        
+            $modal = $('#modal_new_supplier');
+            if($(this).val() === 'sup'){
+                $modal.modal('show');
+                _cboSuppliers.select2('val',null);
+                clearFieldsModal($('#frm_suppliers_new'));
+            }
+        });
+    
+        $('#btn_create_category_group').click(function(){
+
+        var btn=$(this);
+
+        if(validateRequiredFields($('#frm_category_group'))){
+            var data=$('#frm_category_group').serializeArray();
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Categories/transaction/create",
+                "data":data,
+                "beforeSend" : function(){
+                    showSpinningProgress(btn);
+                }
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_category_group').modal('hide');
+
+                var _group=response.row_added[0];
+                $('#product_category').append('<option value="'+_group.category_id+'" selected>'+_group.category_name+'</option>');
+                $('#product_category').select2('val',_group.category_id);
+
+            }).always(function(){
+                showSpinningProgress(btn);
+            });
+        }
+    });
+
+    $('#btn_create_unit_group').click(function(){
+
+        var btn=$(this);
+
+        if(validateRequiredFields($('#frm_unit_group'))){
+            var data=$('#frm_unit_group').serializeArray();
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Units/transaction/create",
+                "data":data,
+                "beforeSend" : function(){
+                    showSpinningProgress(btn);
+                }
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_unit_group').modal('hide');
+
+                var _group=response.row_added[0];
+                $('#product_unit').append('<option value="'+_group.unit_id+'" selected>'+_group.unit_name+'</option>');
+                $('#product_unit').select2('val',_group.unit_id);
+
+            }).always(function(){
+                showSpinningProgress(btn);
+            });
+        }
+    });
+
+    $('#btn_create_product_type').click(function(){
+
+        var btn=$(this);
+
+        if(validateRequiredFields($('#frm_product_type'))){
+            var data=$('#frm_product_type').serializeArray();
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Refproducts/transaction/create",
+                "data":data,
+                "beforeSend" : function(){
+                    showSpinningProgress(btn);
+                }
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_product_type').modal('hide');
+
+                var _group=response.row_added[0];
+                $('#cbo_product_type').append('<option value="'+_group.refproduct_id+'" selected>'+_group.product_type+'</option>');
+                $('#cbo_product_type').select2('val', _group.refproduct_id);
+
+            }).always(function(){
+                showSpinningProgress(btn);
+            });
+        }
+    });
+
+    $('#btn_create_new_supplier').click(function(){
+
+        var btn=$(this);
+
+        if(validateRequiredFields($('#frm_suppliers_new'))){
+            var data=$('#frm_suppliers_new').serializeArray();
+            data.push({name : "photo_path" ,value : $('img[name="img_user"]').attr('src')});
+
+            $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Suppliers/transaction/create",
+                "data":data,
+                "beforeSend" : function(){
+                    showSpinningProgress(btn);
+                }
+            }).done(function(response){
+                showNotification(response);
+                $('#modal_new_supplier').modal('hide');
+
+                var _suppliers=response.row_added[0];
+                $('#new_supplier').append('<option value="'+_suppliers.supplier_id+'" selected>'+_suppliers.supplier_name+'</option>');
+                $('#new_supplier').select2('val', _suppliers.supplier_id);
+
+            }).always(function(){
+                showSpinningProgress(btn);
+            });
+        }
+    });
+
+
+        $('#tbl_products tbody').on( 'click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dt.row( tr );
+            var idx = $.inArray( tr.attr('id'), detailRows );
+
+            if ( row.child.isShown() ) {
+                tr.removeClass( 'details' );
+                row.child.hide();
+
+                detailRows.splice( idx, 1 );
+            }
+            else {
+                tr.addClass( 'details' );
+                var d=row.data();
+                $.ajax({
+                    "dataType":"html",
+                    "type":"POST",
+                    "url":"Products/transaction/product-history?id="+ d.product_id,
+                    "beforeSend" : function(){
+                        row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                    }
+                }).done(function(response){
+                    row.child( response ).show();
+                    reInitializeDatePicker();
+
+                    // Add to the 'open' array
+                    if ( idx === -1 ) {
+                        detailRows.push( tr.attr('id') );
+                    }
+
+
+                });
+            }
+        } );
+
+        $('#btn_new').click(function(){
+            _txnMode="new";
+            clearFields($('#frm_product'));
+            $('#is_tax_exempt').attr('checked', false);
+
+            _cboProductTypes.select2('val',null);
+            _cboSuppliers.select2('val',null);
+            _cboCategories.select2('val',null);
+            _cboTaxTypes.select2('val',null);
+            _cboInventoryTypes.select2('val',null);
+            _cboUnits.select2('val',null);
+            _cboSalesAccount.select2('val',63);
+            _cboInventoryAccount.select2('val',17);
+            _cboCOSAccounts.select2('val',64);
+            _cboSRAccounts.select2('val',232);
+            _cboSDAccounts.select2('val',288);
+            _cboPRAccounts.select2('val',0);
+            _cboPDAccounts.select2('val',0);
+            showList(false);
+
+        });
+
+        $('#tbl_products tbody').on('click','button[name="edit_info"]',function(){
+            _txnMode="edit";
+
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.product_id;
+
+             $('input,textarea,select').each(function(){
+                var _elem=$(this);
+                $.each(data,function(name,value){
+                    if(_elem.attr('name')==name){
+                        _elem.val(value);
+                    }
+                });
+            });
+
+            $('#is_tax_exempt').prop('checked', (data.is_tax_exempt==1?true:false));
+
+            _cboProductTypes.select2('val',data.refproduct_id);
+            _cboSuppliers.select2('val',data.supplier_id);
+            _cboCategories.select2('val',data.category_id);
+            _cboTaxTypes.select2('val',data.tax_type_id);
+            _cboInventoryTypes.select2('val',data.item_type_id);
+            _cboUnits.select2('val',data.unit_id);
+            _cboSalesAccount.select2('val',data.income_account_id);
+            _cboInventoryAccount.select2('val',data.expense_account_id);
+            _cboCOSAccounts.select2('val',data.cos_account_id);
+            _cboSRAccounts.select2('val',data.sales_return_account_id);
+            _cboSDAccounts.select2('val',data.sd_account_id);
+            _cboPRAccounts.select2('val',data.po_return_account_id);
+            _cboPDAccounts.select2('val',data.pd_account_id);
+            showList(false);
+        });
+
+        $('input[name="purchase_cost"],input[name="markup_percent"],input[name="sale_price"]').keyup(function(){
+            reComputeSRP();
+        });
+
+        $('#tbl_products tbody').on('click','button[name="remove_info"]',function(){
+            $('#modal_confirmation').modal('show');
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.product_id;
+
+        });
+        
+        $('#btn_yes').click(function(){
+            removeProduct().done(function(response){
+                showNotification(response);
+                dt.row(_selectRowObj).remove().draw();
+            });
+        });
+
+        $('#btn_cancel').click(function(){
+            showList(true);
+        });
+
+        $('#btn_save').click(function(){
+            if(validateRequiredFields($('#frm_product'))){
+                if(_txnMode=="new"){
+                    createProduct().done(function(response){
+                        showNotification(response);
+                        if(response.stat == 'success'){
+                            dt.row.add(response.row_added[0]).draw();
+                            clearFields($('#frm_product'))
+                            showList(true);
+                        }
+                    }).always(function(){
+                        showSpinningProgress($('#btn_save'));
+                    });
+                    return;
+                }
+                if(_txnMode==="edit"){
+                    updateProduct().done(function(response){
+                        showNotification(response);
+                        if(response.stat == 'success'){
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                            showList(true);
+                        }
+                    }).always(function(){
+                        showSpinningProgress($('#btn_save'));
+                    });
+                    return;
+                }
+            }
+        });
+
+        $('#btn_browse').click(function(event){
+            event.preventDefault();
+            $('input[name="file_upload[]"]').click();
+        });
+
+        $('#btn_remove_photo').click(function(event){
+            event.preventDefault();
+            $('img[name="img_user"]').attr('src','assets/img/anonymous-icon.png');
+        });
+
+        $('input[name="file_upload[]"]').change(function(event){
+            var _files=event.target.files;
+            $('#div_img_product').hide();
+            $('#div_img_loader').show();
+            var data=new FormData();
+            $.each(_files,function(key,value){
+                data.append(key,value);
+            });
+            console.log(_files);
+            $.ajax({
+                url : 'Suppliers/transaction/upload',
+                type : "POST",
+                data : data,
+                cache : false,
+                dataType : 'json',
+                processData : false,
+                contentType : false,
+                success : function(response){
+                    $('img[name="img_user"]').attr('src',response.path);
+                }
+            });
+        });
+    })();
+
+    var validateRequiredFields=function(f){
+        var stat=true;
+
+        $('div.form-group').removeClass('has-error');
+        $('input[required],textarea[required],select[required]',f).each(function(){
+
+                if($(this).is('select')){
+                if($(this).val()==0){
+                    showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
+                    $(this).closest('div.form-group').addClass('has-error');
+                    $(this).focus();
+                    stat=false;
+                    return false;
+                }
+            
+                }else{
+                if($(this).val()==""){
+                    showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
+                    $(this).closest('div.form-group').addClass('has-error');
+                    $(this).focus();
+                    stat=false;
+                    return false;
+                }
+            }
+        });
+
+        return stat;
+    };
+
+    var createProduct=function(){
+        var _data=$('#frm_product').serializeArray();
+       // _data.push({name : "is_tax_exempt" ,value : _isTaxExempt});
+
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/create",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save'))
+        });
+    };
+
+    var updateProduct=function(){
+        var _data=$('#frm_product').serializeArray();
+        //_data.push({name : "is_tax_exempt" ,value : _isTaxExempt});
+        _data.push({name : "product_id" ,value : _selectedID});
+
+        return $.ajax({ 
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/update",
+            "data":_data,
+            "beforeSend": showSpinningProgress($('#btn_save'))
+        });
+    };
+
+    var removeProduct=function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/delete",
+            "data":{product_id : _selectedID}
+        });
+    };
+
+    var showList=function(b){
+        if(b){
+            $('#div_product_list').show();
+            $('#div_product_fields').hide();
+        }else{
+            $('#div_product_list').hide();
+            $('#div_product_fields').show();
+        }
+    };
+
+    var showNotification=function(obj){
+        PNotify.removeAll();
+        new PNotify({
+            title:  obj.title,
+            text:  obj.msg,
+            type:  obj.stat
+        });
+    };
+
+    var showSpinningProgress=function(e){
+        $(e).find('span').toggleClass('glyphicon glyphicon-refresh spinning');
+    };
+
+    var clearFields=function(f){
+        $('input,textarea,select',f).val('');
+        $(f).find('input:first').focus();
+        $('#is_tax_exempt',f).prop('checked', false);
+        $('#img_user').attr('src','assets/img/anonymous-icon.png');
+    };
+
+    var clearFieldsModal=function(f){
+        $('input,textarea,select',f).val('');
+        $(f).find('input:first').focus();
+        $('#img_user').attr('src','assets/img/anonymous-icon.png');
+    };
+
+    var clearFieldsCategory=function(f){
+        $('#category_name').val('');
+        $('#category_desc').val('');
+        $(f).find('select:first').focus();
+    };
+
+    var clearFieldsUnit=function(f){
+        $('#unit_name').val('');
+        $('#unit_desc').val('');
+        $(f).find('select:first').focus();
+    };
+
+    var clearFieldsProductType=function(f){
+        $('#product_type').val('');
+        $('#description').val('');
+        $(f).find('select:first').focus();
+    };
+
+    var reInitializeDatePicker=function(){
+        $('.date-picker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true
+        });
+    };
+
+    function validateNumber(event) {
+        var key = window.event ? event.keyCode : event.which;
+
+        if (event.keyCode === 8 || event.keyCode === 46
+            || event.keyCode === 37 || event.keyCode === 39) {
+            return true;
+        }
+        else if ( key < 48 || key > 57 ) {
+            return false;
+        }
+        else return true;
+    };
+
+    function format ( d ) {
+        return '<br /><table style="margin-left:10%;width: 80%;">' +
+        '<thead>' +
+        '</thead>' +
+        '<tbody>' +
+        '<tr>' +
+        '<td width="20%">Product Code : </td><td width="50%"><b>'+ d.product_code+'</b></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Product Name : </td><td>'+ d.product_desc+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Product Description : </td><td>'+ d.product_desc1+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Supplier : </td><td>'+ d.supplier_name+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Product Type : </td><td>'+ d.product_type+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Category : </td><td>'+ d.category_name+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Department : </td><td>na</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Unit of Measurement : </td><td>'+ d.unit_name+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Pack Size : </td><td>'+ d.size+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Vat Exempt : </td><td>'+ d.is_tax_exempt+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Equivalent Points : </td><td>'+ d.equivalent_points+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Warn Qty : </td><td>'+ d.product_warn+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Ideal : </td><td>'+ d.product_ideal+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Purchase Cost : </td><td>'+ accounting.formatNumber(d.purchase_cost,2)+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Markup Percent : </td><td>'+ d.markup_percent+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Sale Price : </td><td>'+ accounting.formatNumber(d.sale_price,2)+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Whole Sale Price : </td><td>'+ accounting.formatNumber(d.whole_sale,2)+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Retailer Price : </td><td>'+ accounting.formatNumber(d.retailer_price,2)+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Special Discount Price : </td><td>'+ accounting.formatNumber(d.special_disc,2)+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Valued Customer Price : </td><td>'+ accounting.formatNumber(d.valued_customer,2)+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Discount Price : </td><td>'+ accounting.formatNumber(d.discounted_price,2)+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Dealer Price : </td><td>'+ accounting.formatNumber(d.dealer_price,2)+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Distributor Price : </td><td>'+ accounting.formatNumber(d.distributor_price,2)+'</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Public Price : </td><td>'+ accounting.formatNumber(d.public_price,2)+'</td>' +
+        '</tr>' +
+        '</tbody></table><br />';
+    };
+
+    // MARKUP + PURCHASE COST
+    /*var reComputeSRP=function(){
+        var markupPercent=getFloat($('input[name="markup_percent"]').val());
+        var purchaseAmount=getFloat($('input[name="purchase_cost"]').val());
+
+        if(markupPercent>0){
+            var markupDecimal=markupPercent/100;
+            var newAmount=purchaseAmount*markupDecimal;
+            var srpAmount=purchaseAmount+newAmount;
+            $('input[name="sale_price"]').val(accounting.formatNumber(srpAmount,2));
+        }
+
+    };*/
+
+    var getFloat=function(f){
+        return parseFloat(accounting.unformat(f));
+    };
 
 
 
+    $('#btn_filter').click(function(){
+        if(validateRequiredFields($('#frm_filter'))){
+            showSpinningProgress($('#btn_filter'));
+            showProduct();
+            getProduct();
+            $('#modal_filter').modal('toggle');
+        }
+    });
+
+    var showProduct=function(){
+        $('#div_product_list').show();
+    };
+
+    var hideProduct=function(){
+        $('#div_product_list').hide();
+        $('#modal_filter').modal('toggle');
+    };
+
+
+
+});
+
+</script>
 
 </body>
 

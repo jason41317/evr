@@ -14,6 +14,7 @@ class Payable_payments extends CORE_Controller
         $this->load->model('Suppliers_model');
         $this->load->model('Payment_method_model');
         $this->load->model('Departments_model');
+        $this->load->model('Banks_model');
         $this->load->model('Trans_model');        
     }
 
@@ -30,6 +31,7 @@ class Payable_payments extends CORE_Controller
         $data['suppliers']=$this->Suppliers_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
         $data['methods']=$this->Payment_method_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
         $data['departments']=$this->Departments_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
+        $data['banks']=$this->Banks_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE));
 
         $data['title'] = 'AP Payment';
         (in_array('2-3',$this->session->user_rights)? 
@@ -84,12 +86,13 @@ class Payable_payments extends CORE_Controller
                 $m_payment->receipt_no=$receipt_no;
                 $m_payment->supplier_id=$this->input->post('supplier_id',TRUE);
 
-
+                $m_payment->receipt_type=$this->input->post('receipt_type',TRUE);
                 $m_payment->department_id=$this->input->post('department',TRUE);
                 $payment_method_id=$this->input->post('payment_method',TRUE);
                 $m_payment->payment_method_id=$payment_method_id;
 
                 if($payment_method_id==2){ //if check, insert additional infos
+                    $m_payment->bank_id=$this->input->post('bank_id',TRUE);
                     $m_payment->check_date_type=($this->input->post('check_date_type',TRUE)?1:2);
                     $m_payment->check_no=$this->input->post('check_no',TRUE);
                     $m_payment->check_date=date('Y-m-d',strtotime($this->input->post('check_date',TRUE)));

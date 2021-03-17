@@ -8,7 +8,6 @@ class Products_model extends CORE_Model {
         parent::__construct();
     }
 
-
     function getDepartment()
     {
         $query = $this->db->query('SELECT department_name FROM departments');

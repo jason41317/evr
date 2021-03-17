@@ -52,32 +52,59 @@ class Customers_model extends CORE_Model{
     }
 
     //returns list of sales invoice of customer that are unpaid
-    function get_customer_receivable_list($customer_id,$start_date,$end_date) {
-        $sql="SELECT unp.*,IFNULL(pay.sales_payment_amount,0) as sales_payment_amount,
-                (IFNULL(unp.total_sales_amount,0)-IFNULL(pay.sales_payment_amount,0))as net_receivable
+    function get_customer_receivable_list($customer_id,$start_date,$end_date,$filter_accounts) {
+        $sql="SELECT 
+                unp.*,
+                IFNULL(pay.sales_payment_amount, 0) AS sales_payment_amount,
+                (IFNULL(unp.total_sales_amount, 0) - IFNULL(pay.sales_payment_amount, 0)) AS net_receivable
+            FROM
+                (SELECT 
+                        ji.txn_no,
+                        ji.journal_id,
+                        si.sales_invoice_id,
+                        si.sales_inv_no,
+                        si.date_due,
+                        si.remarks,
+                        si.customer_id,
+                        c.customer_name,
+                        jaccounts.total_sales_amount
+                    FROM
+                        (journal_info ji
+                        INNER JOIN (SELECT 
+                            ja.journal_id,
+                            SUM(ja.dr_amount) as total_sales_amount
+                        FROM
+                            journal_accounts ja
+                        WHERE
+                            ja.account_id IN ($filter_accounts)) jaccounts ON jaccounts.journal_id = ji.journal_id)
+                            LEFT JOIN
+                        customers c ON c.customer_id = ji.customer_id
+                            LEFT JOIN
+                        sales_invoice si ON si.journal_id = ji.journal_id
+                    WHERE
+                        ji.is_deleted = FALSE
+                            AND ji.is_active = TRUE
+                            AND ji.book_type = 'SJE'
+                            AND ji.customer_id = $customer_id
+                            AND si.date_due BETWEEN '".$start_date."' AND '".$end_date."'
+                    GROUP BY ji.journal_id) AS unp
+
+                    LEFT JOIN
+                (SELECT 
+                    rpl.payment_id,
+                        rpl.sales_invoice_id,
+                        SUM(rpl.payment_amount) AS sales_payment_amount
                 FROM
-                (SELECT si.sales_invoice_id,si.sales_inv_no,date_due,si.remarks,si.customer_id,s.customer_name,
-                (si.total_after_tax)As total_sales_amount
-                FROM (sales_invoice as si
-                LEFT JOIN customers as s ON si.customer_id=s.customer_id)
-                WHERE si.is_active=TRUE AND si.is_deleted=FALSE AND si.is_paid=FALSE
-                AND si.customer_id=$customer_id
-                AND si.date_due BETWEEN '".$start_date."' AND '".$end_date."'
-                )as unp
-
-                LEFT JOIN
-
-                (SELECT rpl.payment_id,rpl.sales_invoice_id,
-                SUM(rpl.payment_amount)as sales_payment_amount
-                FROM (receivable_payments_list as rpl
-                INNER JOIN sales_invoice as si ON rpl.sales_invoice_id=si.sales_invoice_id)
-                INNER JOIN receivable_payments as rp ON rpl.payment_id=rp.payment_id
-                WHERE rp.is_active=TRUE AND rp.is_deleted=FALSE AND si.is_paid=FALSE
-                AND rp.customer_id=$customer_id
-                GROUP BY rpl.sales_invoice_id
-                )As pay
-
-                ON unp.sales_invoice_id=pay.sales_invoice_id HAVING net_receivable>0";
+                    (receivable_payments_list AS rpl
+                INNER JOIN sales_invoice AS si ON rpl.sales_invoice_id = si.sales_invoice_id)
+                INNER JOIN receivable_payments AS rp ON rpl.payment_id = rp.payment_id
+                WHERE
+                    rp.is_active = TRUE
+                        AND rp.is_deleted = FALSE
+                        AND si.is_paid = FALSE
+                        AND rp.customer_id = $customer_id
+                GROUP BY rpl.sales_invoice_id) AS pay ON unp.sales_invoice_id = pay.sales_invoice_id
+            HAVING net_receivable > 0";
                 
         return $this->db->query($sql)->result();
     }

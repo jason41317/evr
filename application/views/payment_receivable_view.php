@@ -210,9 +210,12 @@
                                                         <div class="row">
                                                             <div class="col-lg-6">
                                                                 Receipt type * : <br />
-                                                                <select id="cbo_receipt_type" name="receipt_type" class="form-control">
-                                                                    <option value="1" selected>Official Receipt</option>
-                                                                    <option value="2">Acknowledgement Receipt</option>
+                                                                <select id="cbo_receipt_type" name="receipt_type_id" class="form-control">
+                                                                    <?php foreach($receipts as $receipt){?>
+                                                                        <option value="<?php echo $receipt->receipt_type_id; ?>">
+                                                                            <?php echo $receipt->receipt_type; ?>
+                                                                        </option>
+                                                                    <?php }?>
                                                                 </select>
                                                             </div>
                                                         </div>

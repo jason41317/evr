@@ -40,7 +40,7 @@
                                 </div>
                             <?php } ?>
 
-                            <form id="frm_journal_review" role="form" class="form-horizontal row-border">
+                            <form id="frm_journal_review" role="form" class="form-horizontal row-border frm_journal_review_<?php echo $payment_info->payment_id; ?>">
 
                                 <input type="hidden" name="payment_id" value="<?php echo $payment_info->payment_id; ?>">
 
@@ -62,7 +62,7 @@
                                                 <div class="col-lg-4">
                                                     <label><b class="required">*</b> Date :</label>
                                                     <div class="input-group">
-                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>">
+                                                        <input type="text" name="date_txn" class="date-picker  form-control" value="<?php echo $payment_info->payment_date; ?>" required data-error-msg="Date is required!">
                                                         <span class="input-group-addon">
                                                             <i class="fa fa-calendar"></i>
                                                         </span>
@@ -71,9 +71,24 @@
                                             </div>
 
                                             <div class="row">
+                                              <div class="col-lg-4">
+                                                  <label><b class="required">* </b> Reference type:</label>
+                                                    <select class="form-control cbo_ref_type" name="ref_type" data-error-msg="Reference type is required." required>
+                                                        <option value="CV" <?php echo ($payment_info->receipt_type==1?'selected':''); ?>>CV</option>
+                                                        <option value="JV" <?php echo ($payment_info->receipt_type==2?'selected':''); ?>>JV</option>
+                                                    </select>
+                                              </div>
+                                              <div class="col-lg-4">
+                                                    <label> <b class="required">*</b> OR # : </label>
+                                                    <br/>
+                                                    <input type="text" name="ref_no" class="form-control" value="<?php echo $payment_info->receipt_no; ?>" style="width: 100%!important;" required data-error-msg="OR # is required!">
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
                                                 <div class="col-lg-8">
                                                     <label><b class="required">*</b> Supplier :</label>
-                                                    <select name="supplier_id" class="cbo_customer_list">
+                                                    <select name="supplier_id" class="cbo_customer_list" required data-error-msg="Supplier is required!">
                                                         <?php foreach($suppliers as $supplier){ ?>
                                                             <option value="<?php echo $supplier->supplier_id; ?>" <?php echo ($payment_info->supplier_id===$supplier->supplier_id?'selected':''); ?>><?php echo $supplier->supplier_name; ?></option>
                                                         <?php } ?>
@@ -87,7 +102,7 @@
                                             <div class="row">
                                                 <div class="col-lg-8">
                                                     <label><b class="required">*</b> Branch :</label>
-                                                    <select name="department_id" class="cbo_department_list">
+                                                    <select name="department_id" class="cbo_department_list" required data-error-msg="Branch is required!">
                                                         <?php foreach($departments as $department){ ?>
                                                             <option value="<?php echo $department->department_id; ?>" <?php echo ($payment_info->department_id===$department->department_id?'selected':''); ?>><?php echo $department->department_name; ?></option>
                                                         <?php } ?>
@@ -104,7 +119,7 @@
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <label><b class="required">*</b> Method of Payment:</label>
-                                                    <select name="payment_method" class="cbo_payment_method">
+                                                    <select name="payment_method" class="cbo_payment_method payment_method_<?php echo $payment_info->payment_id; ?>">
                                                         <?php foreach($methods as $method){ ?>
                                                             <option value="<?php echo $method->payment_method_id; ?>" <?php echo ($payment_info->payment_method_id==$method->payment_method_id?'selected':''); ?>><?php echo $method->payment_method; ?></option>
                                                         <?php } ?>
@@ -113,29 +128,23 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-6">
-                                                   <label><b class="required">*</b>  OR # :</label>
-
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <i class="fa fa-code"></i>
-                                                        </span>
-                                                        <input type="text" name="or_no" class="form-control" value="<?php echo $payment_info->receipt_no; ?>">
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <label><b class="required">*</b>  Amount :</label>
-                                                    <input type="text" name="amount" class="numeric form-control" value="<?php echo number_format($payment_info->total_paid_amount,2); ?>">
+                                                <div class="col-lg-12">
+                                                    <label><b class="required check_panel_<?php echo $payment_info->payment_id; ?>">*</b> Bank :</label>
+                                                    <select name="bank_id" class="cbo_bank_id check_<?php echo $payment_info->payment_id; ?>" data-error-msg="Bank is required!">
+                                                        <option value="0" <?php echo ($payment_info->bank_id==0?'selected':''); ?>>None</option>
+                                                        <?php foreach($banks as $bank){ ?>
+                                                            <option value="<?php echo $bank->bank_id; ?>" <?php echo ($payment_info->bank_id==$bank->bank_id?'selected':''); ?>><?php echo $bank->bank_name.' - ('.$bank->account_no.')'; ?></option>
+                                                        <?php } ?>
+                                                    </select>
 
                                                 </div>
                                             </div>
 
-
                                             <div class="row">
                                                 <div class="col-lg-6">
-                                                    <label>Check Date :</label>
+                                                    <label><b class="required check_panel_<?php echo $payment_info->payment_id; ?>">*</b> Check Date :</label>
                                                     <div class="input-group">
-                                                        <input type="text" name="check_date" class="date-picker form-control" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->date_check:''); ?>">
+                                                        <input type="text" name="check_date" class="date-picker form-control check_<?php echo $payment_info->payment_id; ?>" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->date_check:''); ?>" data-error-msg="Check Date is required!">
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-calendar"></i>
                                                             </span>
@@ -143,10 +152,18 @@
                                                 </div>
 
                                                 <div class="col-lg-6">
-                                                    <label>Check # :</label>
-                                                    <input type="text" name="check_no" class="form-control" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->check_no:''); ?>">
+                                                    <label><b class="required check_panel_<?php echo $payment_info->payment_id; ?>">*</b> Check # :</label>
+                                                    <input type="text" name="check_no" class="form-control check_<?php echo $payment_info->payment_id; ?>" value="<?php echo ($payment_info->payment_method_id==2?$payment_info->check_no:''); ?>" data-error-msg="Check # is required!">
                                                 </div>
 
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <label><b class="required">*</b>  Amount :</label>
+                                                    <input type="text" name="amount" class="numeric form-control" value="<?php echo number_format($payment_info->total_paid_amount,2); ?>"  required data-error-msg="Amount is required!">
+
+                                                </div>
                                             </div>
 
                                     </div>

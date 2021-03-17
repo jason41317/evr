@@ -56,10 +56,14 @@ class Templates extends CORE_Controller {
 
         $this->load->model('Receivable_payment_list_model');
 
+        $this->load->model('Payable_payment_model');
         $this->load->model('Payable_payment_list_model');
 
         $this->load->model('Check_layout_model');
         $this->load->model('Account_title_model');
+        $this->load->model('Banks_model');
+        $this->load->model('Account_integration_model');
+
 
         $this->load->library('M_pdf');
     }
@@ -893,8 +897,6 @@ class Templates extends CORE_Controller {
                 $journal_id=$this->input->get('id',TRUE);
                 $type=$this->input->get('type',TRUE);
 
-
-
                 $journal_info=$m_journal_info->get_list(
                     $journal_id,
 
@@ -905,12 +907,14 @@ class Templates extends CORE_Controller {
                         'suppliers.email_address',
                         'suppliers.contact_no',
                         'suppliers.contact_name',
-                        'departments.department_name'
+                        'departments.department_name',
+                        'banks.*'
                     ),
 
                     array(
                         array('suppliers','suppliers.supplier_id=journal_info.supplier_id','left'),
-                        array('departments','departments.department_id=journal_info.department_id','left')
+                        array('departments','departments.department_id=journal_info.department_id','left'),
+                        array('banks','banks.bank_id=journal_info.bank_id','left')
                     )
 
                 );
@@ -1693,13 +1697,15 @@ class Templates extends CORE_Controller {
                         'DATEDIFF(receivable_payments.check_date,NOW()) as rem_day_for_due',
                         'departments.department_name',
                         'customers.customer_name',
-                        'payment_methods.payment_method'
+                        'payment_methods.payment_method',
+                        'receipt_types.receipt_type'
                     ),
 
                     array(
                         array('departments','departments.department_id=receivable_payments.department_id','left'),
                         array('customers','customers.customer_id=receivable_payments.customer_id','left'),
-                        array('payment_methods','payment_methods.payment_method_id=receivable_payments.payment_method_id','left')
+                        array('payment_methods','payment_methods.payment_method_id=receivable_payments.payment_method_id','left'),
+                        array('receipt_types','receipt_types.receipt_type_id=receivable_payments.receipt_type_id','left')
                     )
                 );
                 $data['payment_info']=$payment_info[0];
@@ -1772,6 +1778,8 @@ class Templates extends CORE_Controller {
                 $m_methods=$this->Payment_method_model;
                 $m_departments=$this->Departments_model;
                 $m_pay_list=$this->Payable_payment_list_model;
+                $m_banks=$this->Banks_model;
+
 
                 $payment_info=$m_payments->get_list(
                     $payment_id,
@@ -1793,10 +1801,9 @@ class Templates extends CORE_Controller {
                 );
                 $data['payment_info']=$payment_info[0];
 
-
-
                 $data['methods']=$m_methods->get_list();
                 $data['departments']=$m_departments->get_list();
+                $data['banks']=$m_banks->get_list(array("is_deleted"=>FALSE));
 
                 $data['suppliers']=$m_suppliers->get_list(
                     array(
@@ -1921,8 +1928,19 @@ class Templates extends CORE_Controller {
 
                 break;
 
+            case 'payment-history':
+
+                $m_payments = $this->Payable_payment_model;
+                $m_invoices = $this->Payable_payment_list_model;
+
+                $payment_id=$filter_value;
+                $data['info'] = $m_payments->get_payment($payment_id);
+                $data['invoices'] = $m_invoices->get_invoices($payment_id);
+
+                $this->load->view('template/payment_history_report',$data); //load the template
 
 
+                break;
 
             case 'customer-subsidiary' :
                 $type=$this->input->get('type',TRUE);
@@ -2127,6 +2145,166 @@ class Templates extends CORE_Controller {
                 $pdf->setFooter('{PAGENO}');
                 $pdf->WriteHTML($content);
                 $pdf->Output();
+                break;
+
+            case 'adjustment-gje-for-review':
+                $adjustment_id=$this->input->get('id',TRUE);
+                $m_adjustment=$this->Adjustment_model;
+                $m_adjustment_items=$this->Adjustment_item_model;
+                $m_suppliers=$this->Suppliers_model;
+                $m_customers=$this->Customers_model;
+                $m_accounts=$this->Account_title_model;
+                $m_departments=$this->Departments_model;
+                $m_integration=$this->Account_integration_model;
+
+
+                $adjustment_info=$m_adjustment->get_list($adjustment_id,
+                    'adjustment_info.*,
+                    DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y")as date_adjusted,
+                    CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname)as posted_by
+                    ',
+                    array(
+                        array('user_accounts','user_accounts.user_id=adjustment_info.posted_by_user','left')
+                    ));
+
+                $data['adjustment_info']=$adjustment_info[0];
+                $data['departments']=$m_departments->get_list('is_active=TRUE AND is_deleted=FALSE');
+                $data['suppliers']=$m_suppliers->get_list(
+                    array(
+                        'suppliers.is_active'=>TRUE,
+                        'suppliers.is_deleted'=>FALSE
+                    ),
+
+                    array(
+                        'suppliers.supplier_id',
+                        'suppliers.supplier_name'
+                    )
+                );
+
+                $data['customers']=$m_customers->get_list(
+                    array('is_active'=>TRUE,
+                          'is_deleted'=> FALSE
+                        ),
+                    array(
+                        'customers.customer_id',
+                        'customers.customer_name'
+                        )
+                );
+
+                $adjustment_type=$adjustment_info[0]->adjustment_type;
+                $inv_type_id=$adjustment_info[0]->inv_type_id;
+
+                if($adjustment_type == 'IN'){
+                    
+                    if($inv_type_id > 0){
+                        $data['entries']=$m_adjustment->get_journal_entries_salesreturn($adjustment_id);
+                    }else{
+                        $data['entries']=$m_adjustment->get_journal_entries_2_in($adjustment_id);
+                    }
+
+                }else if ($adjustment_type == 'OUT'){
+
+                    if($inv_type_id > 0){
+                        $data['entries']=$m_adjustment->get_journal_entries_purchasereturn($adjustment_id);
+                    }else{
+                        $data['entries']=$m_adjustment->get_journal_entries_2($adjustment_id);
+                    }
+
+                }
+                
+                $data['accounts']=$m_accounts->get_list(
+                    array(
+                        'account_titles.is_active'=>TRUE,
+                        'account_titles.is_deleted'=>FALSE
+                    )
+                );
+
+                $data['items']=$m_adjustment_items->get_list(array('adjustment_items.adjustment_id'=>$adjustment_id),
+                    'adjustment_items.*,
+                    products.product_desc,
+                    units.unit_name
+                    ',
+                    array(array('products','products.product_id=adjustment_items.product_id','left'),
+                    array('units','units.unit_id=adjustment_items.unit_id','left')
+                        )
+
+                    );
+
+                //validate if customer is not deleted
+                $valid_particular = 0;
+                $particular_id = 0;
+                $particular_name = "";
+                $particular_type = "";
+
+                // For  Sales and Cash Invoice
+                if($adjustment_info[0]->inv_type_id == 1 || $adjustment_info[0]->inv_type_id == 2){
+                     $valid_particular=$m_customers->get_list(
+                        array(
+                            'customer_id'=>$adjustment_info[0]->customer_id,
+                            'is_active'=>TRUE,
+                            'is_deleted'=>FALSE
+                        )
+                    );
+                    $particular_id = $adjustment_info[0]->customer_id;
+                    $customer = $m_customers->get_list($adjustment_info[0]->customer_id);
+                    $particular_type = 1;
+
+                    if(count($customer)>0){
+                        $particular_name = $customer[0]->customer_name;
+                    }else{
+                        $particular_name = 'customer';
+                    }
+
+                // For Purchase Return
+                }else if($adjustment_info[0]->inv_type_id == 3){
+                     $valid_particular=$m_suppliers->get_list(
+                        array(
+                            'supplier_id'=>$adjustment_info[0]->supplier_id,
+                            'is_active'=>TRUE,
+                            'is_deleted'=>FALSE
+                        )
+                    );
+                    $particular_id = $adjustment_info[0]->supplier_id;
+                    $supplier = $m_suppliers->get_list($adjustment_info[0]->supplier_id);
+                    $particular_type = 2;
+
+                    if(count($supplier)>0){
+                        $particular_name = $supplier[0]->supplier_name;
+                    }else{
+                        $particular_name = 'supplier';
+                    }
+
+                // For in / out inventory
+                }else{
+
+                    $supplier_id = $m_integration->get_list(1);
+                    $valid_particular=$m_suppliers->get_list(
+                        array(
+                            'supplier_id'=>$supplier_id[0]->adj_supplier_id,
+                            'is_active'=>TRUE,
+                            'is_deleted'=>FALSE
+                        )
+                    );
+
+                    $particular_id = $supplier_id[0]->adj_supplier_id;
+                    $supplier = $m_suppliers->get_list($supplier_id[0]->adj_supplier_id);
+                    $particular_type = 2;
+                    
+                    if(count($supplier)>0){
+                        $particular_name = $supplier[0]->supplier_name;
+                   }else{
+                        $particular_name = 'supplier';
+                    }
+
+                }              
+
+                $data['valid_particular']=(count($valid_particular)>0);
+                $data['particular_name']=$particular_name;
+                $data['particular_id']=$particular_id;
+                $data['particular_type']=$particular_type;
+                echo $this->load->view('template/adjustment_for_review',$data,TRUE); //details of the journal
+
+
                 break;
 
         }

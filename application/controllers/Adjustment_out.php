@@ -13,6 +13,7 @@ class Adjustment_out extends CORE_Controller
         $this->load->model('Adjustment_item_model');
         $this->load->model('Departments_model');
         $this->load->model('Products_model');
+        $this->load->model('Suppliers_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Trans_model');
     }
@@ -32,6 +33,7 @@ class Adjustment_out extends CORE_Controller
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );
 
+        $data['suppliers']=$this->Suppliers_model->get_list(array("is_deleted"=>FALSE));
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE'
         );
@@ -140,6 +142,12 @@ class Adjustment_out extends CORE_Controller
                 $m_adjustment->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_adjustment->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                 $m_adjustment->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
+                
+                $m_adjustment->inv_type_id=$this->input->post('inv_type_id',TRUE);
+                $m_adjustment->is_purchase_returns=$this->input->post('adjustment_is_purchase_return',TRUE);
+                $m_adjustment->supplier_id=$this->input->post('supplier_id',TRUE);
+                $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
+
                 $m_adjustment->posted_by_user=$this->session->user_id;
                 $m_adjustment->save();
 
@@ -245,6 +253,12 @@ class Adjustment_out extends CORE_Controller
                 $m_adjustment->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_adjustment->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                 $m_adjustment->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
+                
+                $m_adjustment->inv_type_id=$this->input->post('inv_type_id',TRUE);
+                $m_adjustment->is_purchase_returns=$this->input->post('adjustment_is_purchase_return',TRUE);
+                $m_adjustment->supplier_id=$this->input->post('supplier_id',TRUE);
+                $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
+
                 $m_adjustment->modified_by_user=$this->session->user_id;
                 $m_adjustment->modify($adjustment_id);
 
@@ -372,6 +386,7 @@ class Adjustment_out extends CORE_Controller
         return $this->Adjustment_model->get_list(
             $filter_value,
             array(
+                'adjustment_info.*',
                 'adjustment_info.adjustment_id',
                 'adjustment_info.adjustment_code',
                 'adjustment_info.remarks',
@@ -379,7 +394,13 @@ class Adjustment_out extends CORE_Controller
                 'adjustment_info.date_created',
                 'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
                 'departments.department_id',
-                'departments.department_name'
+                'departments.department_name',
+                '(CASE 
+                    WHEN inv_type_id = 1 THEN "Sales Return"
+                    WHEN inv_type_id = 2 THEN "Sales Return"
+                    WHEN inv_type_id = 3 THEN "Purchase Return"
+                    ELSE adjustment_info.adjustment_type
+                END) as adjustment_type_desc'
             ),
             array(
                 array('departments','departments.department_id=adjustment_info.department_id','left')

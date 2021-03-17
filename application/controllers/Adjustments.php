@@ -11,6 +11,7 @@ class Adjustments extends CORE_Controller
 
         $this->load->model('Adjustment_model');
         $this->load->model('Adjustment_item_model');
+        $this->load->model('Customers_model');
         $this->load->model('Departments_model');
         $this->load->model('Products_model');
         $this->load->model('Refproduct_model');
@@ -60,7 +61,7 @@ class Adjustments extends CORE_Controller
             )
 
         );
-
+        $data['customers']=$this->Customers_model->get_list(array("is_deleted"=>FALSE));
         $data['title'] = 'Inventory Adjustment';
         
         (in_array('2-5',$this->session->user_rights)? 
@@ -83,6 +84,12 @@ class Adjustments extends CORE_Controller
                     AND DATE(adjustment_info.date_adjusted) BETWEEN '$tsd' AND '$ted'
                     ".($id_filter==null?"":" AND adjustment_info.adjustment_id=".$id_filter)
                 );
+                echo json_encode($response);
+                break;
+
+             case 'adjustment-for-review': 
+                $m_adjustment=$this->Adjustment_model;
+                $response['data']=$m_adjustment->get_adjustments_for_review();
                 echo json_encode($response);
                 break;
 
@@ -135,8 +142,10 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->department_id=$this->input->post('department',TRUE);
                 $m_adjustment->adjustment_type='IN';
                 $m_adjustment->remarks=$this->input->post('remarks',TRUE);
+                $m_adjustment->inv_type_id=$this->input->post('inv_type_id',TRUE);
+                $m_adjustment->is_returns=$this->input->post('adjustment_is_return',TRUE);
+                $m_adjustment->customer_id=$this->input->post('customer_id',TRUE);
                 $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
-                $m_adjustment->is_returns=$this->get_numeric_value($this->input->post('adjustment_is_return',TRUE));
                 $m_adjustment->date_adjusted=date('Y-m-d',strtotime($this->input->post('date_adjusted',TRUE)));
                 $m_adjustment->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_adjustment->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
@@ -235,9 +244,11 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->set('date_modified','NOW()'); 
                 $m_adjustment->department_id=$this->input->post('department',TRUE);
                 $m_adjustment->remarks=$this->input->post('remarks',TRUE);
-                $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
                 $m_adjustment->adjustment_type='IN';
-                $m_adjustment->is_returns=$this->get_numeric_value($this->input->post('adjustment_is_return',TRUE));
+                $m_adjustment->inv_type_id=$this->input->post('inv_type_id',TRUE);
+                $m_adjustment->is_returns=$this->input->post('adjustment_is_return',TRUE);
+                $m_adjustment->customer_id=$this->input->post('customer_id',TRUE);
+                $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
                 $m_adjustment->date_adjusted=date('Y-m-d',strtotime($this->input->post('date_adjusted',TRUE)));
                 $m_adjustment->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_adjustment->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
@@ -365,12 +376,14 @@ class Adjustments extends CORE_Controller
         return $this->Adjustment_model->get_list(
             $filter_value,
             array(
+                'adjustment_info.*',
                 'adjustment_info.adjustment_id',
                 'adjustment_info.adjustment_code',
                 'adjustment_info.remarks',
                 'adjustment_info.adjustment_type',
                 'adjustment_info.date_created',
                 'adjustment_info.inv_no',
+                'adjustment_info.customer_id',
                 "IF(adjustment_info.is_returns = 1, 'Sales Return', 'Adjustment') as trans_type",
                 'adjustment_info.is_returns as adjustment_is_return',
                 'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',

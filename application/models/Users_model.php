@@ -385,7 +385,7 @@ function get_newsfeed_revised($startDate,$endDate,$trans_type_id=null,$trans_key
                 FROM
                 user_accounts ua
                 WHERE CAST(ua.date_modified  as DATE) BETWEEN '$startDate' AND '$endDate'
-                
+            
                 UNION 
                 
                 SELECT
@@ -398,6 +398,18 @@ function get_newsfeed_revised($startDate,$endDate,$trans_type_id=null,$trans_key
                 FROM
                 user_accounts ua
                 WHERE CAST(ua.date_deleted  as DATE) BETWEEN '$startDate' AND '$endDate'
+
+                UNION
+                
+                SELECT
+                trans.user_id,
+                trans.trans_key_id,
+                trans.trans_type_id,
+                trans.trans_log as message,
+                trans.trans_date as date
+                FROM
+                trans
+                WHERE CAST(trans.trans_date  as DATE) BETWEEN '$startDate' AND '$endDate'
 
                 ) as t
                 LEFT JOIN user_accounts ua ON ua.user_id = t.user_id
@@ -615,7 +627,7 @@ function get_newsfeed() {
                 ji.created_by_user user_id,
                 ( CASE WHEN book_type = 'CDJ' 
                     THEN CONCAT('posted Txn # ', ji.txn_no, ' on Cash Disbursement Journal')
-                  WHEN book_type = 'PCV'
+                  WHEN book_type = 'PCJ'
                     THEN CONCAT('posted Txn # ', ji.txn_no,' on Petty Cash Voucher')
                   WHEN book_type = 'GJE'
                     THEN CONCAT('posted Txn #', ji.txn_no,' on General Journal Entry')
@@ -638,7 +650,7 @@ function get_newsfeed() {
                 ji.created_by_user user_id,
                 ( CASE WHEN book_type = 'CDJ' 
                     THEN CONCAT('cancelled Txn # ', ji.txn_no, ' on Cash Disbursement Journal')
-                  WHEN book_type = 'PCV'
+                  WHEN book_type = 'PCJ'
                     THEN CONCAT('cancelled Txn # ', ji.txn_no,' on Petty Cash Voucher')
                   WHEN book_type = 'GJE'
                     THEN CONCAT('cancelled Txn #', ji.txn_no,' on General Journal Entry')

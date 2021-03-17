@@ -16,7 +16,8 @@ class Account_integration extends CORE_Controller
                 'Accounting_period_model',
                 'Journal_info_model',
                 'Sales_invoice_model',
-                'Sched_expense_integration'
+                'Sched_expense_integration',
+                'Suppliers_model'
             )
 
         );
@@ -33,7 +34,7 @@ class Account_integration extends CORE_Controller
         $data['accounts'] = $this->Account_title_model->get_list('is_active=1 AND is_deleted=0');
         $current_accounts= $this->Account_integration_model->get_list();
         $data['current_accounts'] =$current_accounts[0];
-
+        $data['suppliers']=$this->Suppliers_model->get_list(array("is_deleted"=>FALSE));
         $data['users_counter']=$this->Invoice_counter_model->get_list(
             'ua.is_deleted=false AND ua.is_active=TRUE',
             'invoice_counter.*, CONCAT(ua.user_fname, " ", ua.user_lname) AS user_fullname, ug.user_group',
@@ -140,6 +141,17 @@ class Account_integration extends CORE_Controller
                 $m_integration->payment_from_customer_id=$this->input->post('payment_from_customer_id',TRUE);
 
                 $m_integration->retained_earnings_id=$this->input->post('retained_earnings_id',TRUE);
+                $m_integration->petty_cash_account_id=$this->input->post('petty_cash_account_id',TRUE);
+
+
+                $m_integration->cv_start_no=$this->get_numeric_value($this->input->post('cv_start_no',TRUE));        
+                $m_integration->jv_start_no=$this->get_numeric_value($this->input->post('jv_start_no',TRUE));  
+
+                //Adjustments
+
+                $m_integration->adj_supplier_id=$this->input->post('adj_supplier_id',TRUE);
+                $m_integration->adj_debit_id=$this->input->post('adj_debit_id',TRUE);
+                $m_integration->adj_credit_id=$this->input->post('adj_credit_id',TRUE);
 
                 $m_integration->save();
 

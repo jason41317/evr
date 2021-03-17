@@ -58,78 +58,68 @@
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboDepartments;
 
-        $(document).ready(function(){
-            $('#modal_filter').modal('show');
-            showList(false);
-        })
-
-        var getCustomer=function(){
-            dt=$('#tbl_customers').DataTable({
-                "fnInitComplete": function (oSettings, json) {
-                    $.unblockUI();
+            var initializeControls=function() {
+                dt=$('#tbl_customers').DataTable({
+                    "dom": '<"toolbar">frtip',
+                    "bLengthChange":false,
+                    "pageLength":15,
+                    "ajax": {
+                    "url": "Customers/transaction/getcustomer",
+                    "type": "POST",
+                    "bDestroy": true,
+                    "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "department_id": $('#cbo_department').val()
+                            });
+                        }
                     },
-                "dom": '<"toolbar">frtip',
-                "bLengthChange":false,
-                "pageLength":15,
-                "ajax": {
-                "url": "Customers/transaction/getcustomer",
-                "type": "POST",
-                "bDestroy": true,
-                "data": function ( d ) {
-                    return $.extend( {}, d, {
-                        "department_id": _selectedBranch//id of Branch
+                    "columns": [
+                        {
+                            "targets": [0],
+                            "class":          "details-control",
+                            "orderable":      false,
+                            "data":           null,
+                            "defaultContent": ""
+                        },
+                        { targets:[1],data: "customer_name" , render: $.fn.dataTable.render.ellipsis(60)},
+                        { targets:[2],data: "contact_name" , render: $.fn.dataTable.render.ellipsis(40)},
+                        { targets:[3],data: "address" , render: $.fn.dataTable.render.ellipsis(80)},
+                        { targets:[4],data: "contact_no" , render: $.fn.dataTable.render.ellipsis(30)},
+                        {
+                            targets:[5],
+                            render: function (data, type, full, meta){
+                                var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
+                                var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
+
+                                return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                            }
+                        }
+                    ],
+
+                    language: {
+                                 searchPlaceholder: "Search Customer Name"
+                             },
+                    "rowCallback":function( row, data, index ){
+
+                        $(row).find('td').eq(5).attr({
+                            "align": "left"
                         });
                     }
-                },
-                "columns": [
-                    {
-                        "targets": [0],
-                        "class":          "details-control",
-                        "orderable":      false,
-                        "data":           null,
-                        "defaultContent": ""
-                    },
-                    { targets:[1],data: "customer_name" , render: $.fn.dataTable.render.ellipsis(60)},
-                    { targets:[2],data: "contact_name" , render: $.fn.dataTable.render.ellipsis(40)},
-                    { targets:[3],data: "address" , render: $.fn.dataTable.render.ellipsis(80)},
-                    { targets:[4],data: "contact_no" , render: $.fn.dataTable.render.ellipsis(30)},
-                    {
-                        targets:[5],
-                        render: function (data, type, full, meta){
-                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
-                            var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
-
-                            return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
-                        }
-                    }
-                ],
-
-                language: {
-                             searchPlaceholder: "Search Customer Name"
-                         },
-                "rowCallback":function( row, data, index ){
-
-                    $(row).find('td').eq(5).attr({
-                        "align": "left"
-                    });
-                }
 
 
-            });
-        
-            $('.numeric').autoNumeric('init');
-            $('#term').keypress(validateNumber);
-            $('#credit_limit').keypress(validateNumber);
+                });
+            
+                $('.numeric').autoNumeric('init');
+                $('#term').keypress(validateNumber);
+                $('#credit_limit').keypress(validateNumber);
 
-            //$('#contact_no').keypress(validateNumber);
-     };
-
-
-
-
-
+                _cboDepartments=$("#cbo_department").select2({
+                    allowClear: false
+                });
+                //$('#contact_no').keypress(validateNumber);
+         }();
 
         var bindEventHandlers=(function(){
             var detailRows = [];
@@ -272,6 +262,20 @@
                 $('#btn_cancel').click(function(){
                     showList(true);
                 });
+
+                $("#searchbox_customers").keyup(function(){         
+                    dt
+                        .search(this.value)
+                        .draw();
+                });
+
+                $('#btn_print').click(function(){
+                   window.open('customers/transaction/print-masterfile?id='+$('#cbo_department').val());
+                });  
+
+                $('#btn_export').click(function(){
+                   window.open('customers/transaction/export-customer?id='+$('#cbo_department').val());
+                });  
 
                 $('#btn_save').click(function(){
 
@@ -504,17 +508,10 @@
             $('#tbl_customers').fnClearTable();
         });
 
-        $('#department_id').change(function() {
-            _selectedBranch=$(this).val();
-            //alert(_selectedBranch);
+        $('#cbo_department').change(function() {
+            $('#tbl_customers').DataTable().ajax.reload()
         });
-
-
-
-
-
     });
-
 
 
 
@@ -622,7 +619,9 @@
             margin-right: 10px;
         }
 
-
+        #tbl_customers_filter{
+            display: none;
+        }
     </style>
 </head>
 
@@ -656,10 +655,32 @@
                                         <div class="panel panel-default" style="border-top: 3px solid #2196f3;">                                  
                                             <div class="panel-body table-responsive"> 
                                             <h2 class="h2-panel-heading"> Customers</h2><hr>
-                                              <button class="btn btn-default btn-back" id="btn_backtofilter" title="Go back to filter">
-                                                <span class="fa fa-arrow-left" style="color: #9E9E9E;"></span>
-                                              </button>
-                                                <button class="btn btn-green" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title=" New product" ><i class="fa fa-plus-circle"></i>  New Customer</button>
+                                                <div class="row">
+                                                    <div class="col-lg-3"><br>
+                                                    <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title=" New product" ><i class="fa fa-plus"></i>  New Customer</button>
+                                                    </div>
+                                                    <div class="col-lg-3" style="text-align: right;">
+                                                    &nbsp;<br>
+                                                            <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Customer Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                            <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" 
+                                                            data-placement="left" title="Export Supplier Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        Branch : 
+                                                        <select class="form-control" id="cbo_department">
+                                                            <option value="0">All Branches</option>
+                                                            <?php foreach($departments as $department){?>
+                                                                <option value="<?php echo $department->department_id; ?>">
+                                                                    <?php echo $department->department_name; ?>
+                                                                </option>
+                                                            <?php }?>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                            Search :<br />
+                                                             <input type="text" id="searchbox_customers" class="form-control">
+                                                    </div>
+                                                </div><br>
                                                 <table id="tbl_customers" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>

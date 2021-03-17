@@ -82,11 +82,6 @@ $(document).ready(function(){
                     }
                 ]
             });
-            var createToolBarButton=function() {
-                var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New supplier" >'+
-                    '<i class="fa fa-plus-circle"></i> New Supplier</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
         }();
 
         $('.numeric').autoNumeric('init');
@@ -141,6 +136,12 @@ $(document).ready(function(){
         $('#btn_remove_photo').click(function(event){
             event.preventDefault();
             $('img[name="img_user"]').attr('src','assets/img/anonymous-icon.png');
+        });
+
+        $("#searchbox_suppliers").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
         });
 
         $('#tbl_suppliers tbody').on('click','button[name="edit_info"]',function(){
@@ -210,6 +211,14 @@ $(document).ready(function(){
         $('#btn_cancel').click(function(){
             showList(true);
         });
+
+        $('#btn_print').click(function(){
+           window.open('suppliers/transaction/print-masterfile');
+        });  
+
+        $('#btn_export').click(function(){
+           window.open('suppliers/transaction/export-supplier');
+        });  
 
         $('#btn_save').click(function(){
             if(validateRequiredFields()){
@@ -487,7 +496,9 @@ $(document).ready(function(){
         #img_user {
             padding-bottom: 15px;
         }
-
+        #tbl_suppliers_filter{
+            display: none;
+        }
     </style>
 
 </head>
@@ -519,6 +530,20 @@ $(document).ready(function(){
                                         <div class="panel panel-default"  style="border-top: 3px solid #2196f3;">
                                             <div class="panel-body table-responsive">
                                             <h2 class="h2-panel-heading"> Suppliers</h2><hr>
+                                            <div class="row">
+                                                <div class="col-lg-3"><br>
+                                                        <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New supplier" ><i class="fa fa-plus"></i> New Supplier</button>
+                                                </div>
+                                                <div class="col-lg-offset-3 col-lg-3" style="text-align: right;">
+                                                &nbsp;<br>
+                                                        <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print Supplier Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                        <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export Supplier Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                        Search :<br />
+                                                         <input type="text" id="searchbox_suppliers" class="form-control">
+                                                </div>
+                                            </div><br>
                                                 <table id="tbl_suppliers" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>

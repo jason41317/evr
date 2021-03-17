@@ -229,27 +229,38 @@
                                                 <div class="panel-body" style="min-height: 400px;">
                                                     <h2 class="h2-panel-heading">Cash Disbursement Journal</h2><hr />
                                                     <div class="row">
-                                                        <div class="col-lg-3">
+                                                        <div class="col-lg-2">
                                                         &nbsp;<br>
-                                                            <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" ><i class="fa fa-plus"></i> New Disbursement Journal</button>
+                                                            <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;width: 100%;" data-toggle="modal" data-target="" data-placement="left" title="New Journal" ><i class="fa fa-plus"></i> New Journal</button>
+                                                        </div>
+                                                        <div class="col-lg-2">
+                                                            From :<br />
+                                                            <div class="input-group">
+                                                                <input type="text" id="txt_start_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                                                                 <span class="input-group-addon">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                 </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-2">
+                                                            To :<br />
+                                                            <div class="input-group">
+                                                                <input type="text" id="txt_end_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                                                                 <span class="input-group-addon">
+                                                                        <i class="fa fa-calendar"></i>
+                                                                 </span>
+                                                            </div>
                                                         </div>
                                                         <div class="col-lg-3">
-                                                                From :<br />
-                                                                <div class="input-group">
-                                                                    <input type="text" id="txt_start_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
-                                                                     <span class="input-group-addon">
-                                                                            <i class="fa fa-calendar"></i>
-                                                                     </span>
-                                                                </div>
-                                                        </div>
-                                                        <div class="col-lg-3">
-                                                                To :<br />
-                                                                <div class="input-group">
-                                                                    <input type="text" id="txt_end_date_cdj" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
-                                                                     <span class="input-group-addon">
-                                                                            <i class="fa fa-calendar"></i>
-                                                                     </span>
-                                                                </div>
+                                                            Department :<br />
+                                                            <select class="form-control" id="cbo_department">
+                                                                <option value="0">All Departments</option>
+                                                                <?php foreach($departments as $department){ ?>
+                                                                    <option value="<?php echo $department->department_id; ?>">
+                                                                        <?php echo $department->department_name; ?>
+                                                                    </option>
+                                                                <?php }?>
+                                                            </select>
                                                         </div>
                                                         <div class="col-lg-3">
                                                                 Search :<br />
@@ -268,7 +279,7 @@
                                                                 <th>Txn Date</th>
                                                                 <th width="15%">Remarks</th>
                                                                 <th>Status</th>
-                                                                <th width="10%"><center>Action</center></th>
+                                                                <th width="15%"><center>Action</center></th>
                                                                 <th></th>
                                                             </tr>
                                                             </thead>
@@ -280,46 +291,34 @@
                                                 </div>
                                             </div>
 
+                                            <div class="panel panel-default" style="display:none;">
+                                                <div class="panel-body" style="min-height: 400px;display:none;">
+                                                    <h2 class="h2-panel-heading">Check Summary</h2><hr />
+                                                    <div>
 
-                                            <div class="panel panel-default" style="border-radius:6px;">
-                                                    <div class="panel-body" style="min-height: 400px;">
-                                                        <h2 class="h2-panel-heading">Check Summary</h2><hr />
-                                                        <div>
+                                                        <table id="tbl_check_list" class="table table-striped" cellspacing="0" width="100%">
+                                                            <thead style="display:none;">
+                                                            <tr>
 
-                                                            <table id="tbl_check_list" class="table table-striped" cellspacing="0" width="100%">
-                                                                <thead style="display:none;">
-                                                                <tr>
-
-                                                                    <th>Bank</th>
-                                                                    <th>Check #</th>
-                                                                    <th>Amount</th>
-                                                                    <th>Check Date</th>
-                                                                    <th>Voucher #</th>
-                                                                    <th>Particular</th>
-                                                                    <th width="15%">Remarks</th>
-                                                                    <th>Issued</th>
-                                                                    <th width="5%"><center>Action</center></th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-
-
-
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                                                <th>Bank</th>
+                                                                <th>Check #</th>
+                                                                <th>Amount</th>
+                                                                <th>Check Date</th>
+                                                                <th>Voucher #</th>
+                                                                <th>Particular</th>
+                                                                <th width="15%">Remarks</th>
+                                                                <th>Issued</th>
+                                                                <th width="5%"><center>Action</center></th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
-
+                                                </div>
                                             </div>
-
-
-
-
                                         </div>
-
-
                                     </div>
-
                                     <div id="div_payable_fields" style="display: none;">
                                         <div class="row">
                                             <div class="col-lg-12">
@@ -383,16 +382,17 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-4 col-lg-offset-2">
-                                                                     <label>Bank:</label>
-                                                                    <div class="input-group">
-                                                                        <span class="input-group-addon">
-                                                                            <i class="fa fa-credit-card"></i>
-                                                                        </span>
-                                                                        <input type="text" name="bank"  class="form-control">
-                                                                    </div>
+                                                                    <label><b class="check_panel required">*</b> Bank:</label>
+                                                                    <select class="form-control check" name="bank_id" id="bank_id" style="width: 100%;" data-error-msg="Bank is required.">
+                                                                        <option value="0">None</option>
+                                                                        <?php foreach($banks as $bank){ ?>
+                                                                            <option value="<?php echo $bank->bank_id; ?>">
+                                                                                <?php echo $bank->bank_name.' - ('.$bank->account_no.')'; ?>
+                                                                            </option>
+                                                                        <?php }?>
+                                                                    </select>
                                                                 </div>
                                                             </div>
-
                                                             <div class="row">
                                                                 <div class="col-lg-6">
                                                                      <label><b class="required">* </b> Supplier:</label>
@@ -405,22 +405,22 @@
                                                                 </div>
 
                                                                 <div class="col-lg-2 col-lg-offset-2">
-                                                                     <label>Check Date:</label>
+                                                                    <label><b class="check_panel required">*</b> Check Date:</label>
                                                                     <div class="input-group">
                                                                         <span class="input-group-addon">
                                                                             <i class="fa fa-calendar"></i>
                                                                         </span>
-                                                                        <input type="text" name="check_date" class="date-picker form-control">
+                                                                        <input type="text" name="check_date" id="check_date" class="date-picker form-control check" data-error-msg="Check Date is required.">
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="col-lg-2">
-                                                                     <label>Check #:</label>
+                                                                    <label><b class="check_panel required">*</b> Check #:</label>
                                                                     <div class="input-group">
                                                                         <span class="input-group-addon">
                                                                             <i class="fa fa-list-alt"></i>
                                                                         </span>
-                                                                        <input type="text" name="check_no" maxlength="15" class="form-control">
+                                                                        <input type="text" name="check_no" maxlength="15" class="form-control check" data-error-msg="Check # is required.">
                                                                     </div>
                                                                 </div>
 
@@ -438,8 +438,8 @@
                                                                 </div>
 
                                                                 <div class="col-lg-4 col-lg-offset-2">
-                                                                     <label>  Amount:</label>
-                                                                    <input class="form-control text-center numeric" id="cash_amount" type="text" maxlength="12" value="0.00" name="amount">
+                                                                    <label><b class="required">*</b> Amount:</label>
+                                                                    <input class="form-control text-center numeric" id="cash_amount" type="text" maxlength="12" value="0.00" name="amount" required data-error-msg="Amount is required.">
                                                                 </div>
                                                             </div>
 
@@ -627,7 +627,7 @@
 </div><!---modal-->
 
 
-<div id="modal_print_check_list_option" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+<div id="modal_print_check_list_option" class="modal fade" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header ">
@@ -640,7 +640,9 @@
                 <select id="cbo_banks" class="form-control">
                     <option value="0">All Banks</option>
                     <?php foreach($banks as $bank){ ?>
-                        <option value='<?php echo $bank->bank; ?>'><?php echo $bank->bank; ?></option>
+                        <option value="<?php echo $bank->bank_id; ?>">
+                            <?php echo $bank->bank_name.' - ('.$bank->account_no.')'; ?>
+                        </option>
                     <?php } ?>
                 </select>
 
@@ -717,7 +719,7 @@
 
 
 
-<div id="modal_new_supplier" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+<div id="modal_new_supplier" class="modal fade" role="dialog"><!--modal-->
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header" style="background-color:#2ecc71;">
@@ -839,7 +841,6 @@
                                             <i class="fa fa-code"></i>
                                         </span>
                                         <select name="tax_type_id" id="cbo_tax_group">
-                                            <option value="">Please select tax type...</option>
                                             <?php foreach($tax_types as $tax_type){ ?>
                                                 <option value="<?php echo $tax_type->tax_type_id; ?>" data-tax-rate="<?php echo $tax_type->tax_rate; ?>"><?php echo $tax_type->tax_type; ?></option>
                                             <?php } ?>
@@ -879,11 +880,11 @@
                 <button id="btn_create_new_supplier" type="button" class="btn btn-primary"  style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;"><span class=""></span> Create</button>
                 <button id="btn_close_new_supplier" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Cancel</button>
             </div>
-        </div><!---content---->
+        </div><!---content-->
     </div>
 </div><!---modal-->
 
-<div id="modal_check_layout" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+<div id="modal_check_layout" class="modal fade" role="dialog"><!--modal-->
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header" style="background-color:#2ecc71;">
@@ -955,7 +956,7 @@
     $(document).ready(function(){
         var _txnMode; var _cboSuppliers; var _cboMethods; var _selectRowObj; var _selectedID; var _txnMode, _cboBranches, _cboPaymentMethod;
         var dtReview; var cbo_refType; var _cboLayouts; var dtRecurring; var dtCheckList;
-
+        var _cboTaxGroups; var _cboBanks; var _cboBanksFilter; var _cboDepartments;
 
         var oTBJournal={
             "dr" : "td:eq(2)",
@@ -1012,8 +1013,8 @@
                     "data": function ( d ) {
                             return $.extend( {}, d, {
                                 "tsd":$('#txt_start_date_cdj').val(),
-                                "ted":$('#txt_end_date_cdj').val()
-
+                                "ted":$('#txt_end_date_cdj').val(),
+                                "department_id":$('#cbo_department').val()
                             });
                         }
                 }, 
@@ -1050,12 +1051,12 @@
                     {
                         targets:[8],
                         render: function (data, type, full, meta){
-                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
-                            var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
+                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                            var btn_cancel='<button class="btn btn-red btn-sm" name="cancel_info" data-toggle="tooltip" data-placement="top" title="Cancel Journal"><i class="fa fa-times"></i> </button>';
                             var btn_check_print='<button class="btn btn-success btn-sm" name="print_check" style="margin-right:0px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-print"></i></button>';
 
 
-                            return '<center>'+btn_edit+"&nbsp;"+btn_check_print+"&nbsp;"+btn_cancel+'</center>';
+                            return '<center>'+btn_check_print+"&nbsp;"+btn_edit+"&nbsp;"+btn_cancel+'</center>';
                         }
                     },
                     { targets:[9],data: "journal_id", visible:false },
@@ -1089,7 +1090,7 @@
                             }
                         }
                     },
-                    { targets:[6],data: "total_paid_amount" }
+                    { sClass:"text-right", targets:[6],data: "total_paid_amount" }
                 ]
             });
 
@@ -1104,7 +1105,7 @@
                 ],
                 "columns": [
 
-                    { targets:[0],data: "bank" },
+                    { targets:[0],data: "bank_name" },
                     { targets:[1],data: "check_no" },
                     { targets:[2],data: "amount",
                         render: function(data, type, full, meta){
@@ -1187,32 +1188,56 @@
 
             _cboSuppliers=$('#cbo_suppliers').select2({
                 placeholder: "Please select supplier.",
-                allowClear: true
+                allowClear: false
             });
             _cboSuppliers.select2('val',null);
 
             _cboPaymentMethod = $('#cbo_pay_type').select2({
                 placeholder: "Please select Payment Type.",
-                allowClear: true
+                allowClear: false
             });
             _cboPaymentMethod.select2('val',null);
 
             _cboBranches=$('#cbo_branch').select2({
                 placeholder: "Please select department.",
-                allowClear: true
+                allowClear: false
             });
             _cboBranches.select2('val',null);
 
             _cboLayouts=$('#cbo_layouts').select2({
                 placeholder: "Please select check layout.",
-                allowClear: true
+                allowClear: false
             });
             _cboLayouts.select2('val',null);
+
+            _cboTaxGroups=$('#cbo_tax_group').select2({
+                placeholder: "Please select tax type.",
+                allowClear: false
+            });
+            _cboTaxGroups.select2('val',null)        
+
+            _cboBanks=$('#bank_id').select2({
+                placeholder: "Please select a bank.",
+                allowClear: false
+            });
+            _cboBanks.select2('val',0); 
+
+            _cboBanksFilter=$('#cbo_banks').select2({
+                placeholder: "Please select a bank.",
+                allowClear: false
+            });
+            _cboBanksFilter.select2('val',0);    
+
+            _cboDepartments=$('#cbo_department').select2({
+                placeholder: "Please select a department.",
+                allowClear: false
+            });
+            _cboDepartments.select2('val',0);                                                
 
 
             cbo_refType=$('#cbo_refType').select2({
                 placeholder: "Please select reference type.",
-                allowClear: true
+                allowClear: false
             });
 
             // _cboMethods=$('#cbo_methods').select2({
@@ -1291,18 +1316,22 @@
             });
 
             $("#txt_start_date_cdj").on("change", function () {        
-                $('#tbl_cash_disbursement_list').DataTable().ajax.reload()
+                $('#tbl_cash_disbursement_list').DataTable().ajax.reload();
             });
 
             $("#txt_end_date_cdj").on("change", function () {        
-                $('#tbl_cash_disbursement_list').DataTable().ajax.reload()
+                $('#tbl_cash_disbursement_list').DataTable().ajax.reload();
             });
+
+            _cboDepartments.on("select2:select", function (e) {
+                $('#tbl_cash_disbursement_list').DataTable().ajax.reload();
+            });                        
+
             $("#searchbox_cdj").keyup(function(){         
                 dt
                     .search(this.value)
                     .draw();
             });
-
 
             $('#btn_browse_recurring').on('click', function(){
                 dtRecurring.destroy();
@@ -1406,7 +1435,8 @@
                         reInitializeSpecificDropDown($('.cbo_customer_list'));
                         reInitializeSpecificDropDown($('.cbo_department_list'));
                         reInitializeSpecificDropDown($('.cbo_payment_method'));
-
+                        reInitializeSpecificDropDown($('.cbo_bank_id'));
+                        reInitializeSpecificDropDown($('.cbo_ref_type'));
 
                         reInitializeNumeric();
 
@@ -1502,7 +1532,7 @@
                 //set defaults
                 _cboPaymentMethod.select2('val',1);//set cash as default
                 $('input[name="date_txn"]').val(_currentDate);
-
+                checkPanel(false);
                 showList(false);
 
             });
@@ -1615,6 +1645,14 @@
                 $('#cbo_suppliers').select2('val',data.supplier_id);
                 $('#cbo_branch').select2('val',data.department_id);
                 $('#cbo_refType').select2('val',data.ref_type);
+                $('#bank_id').select2('val',data.bank_id);
+
+                if(_cboPaymentMethod.select2('val') == 2){
+                    checkPanel(true);
+                }else{
+                    checkPanel(false);
+                    $('#check_date').val("");
+                }
 
                 $.ajax({
                     url: 'Cash_disbursement/transaction/get-entries?id=' + data.journal_id,
@@ -1648,7 +1686,26 @@
 
             });
 
+            var checkPanel = function(b=false){
+                if(b == true){
+                    $('.check_panel').show();
+                    $("input.check"). prop("required", true);
+                }else{
+                    $('.check_panel').hide();
+                    $("input.check"). prop("required", false);
+                }
+            } 
 
+            _cboPaymentMethod.on("select2:select", function (e) {
+                var i=$(this).select2('val');
+
+                if(i == 2){
+                    checkPanel(true);
+                }else{
+                    checkPanel(false);
+                }
+
+            });                        
 
             $('#tbl_entries').on('click','button.remove_account',function(){
                 var oRow=$('#tbl_entries > tbody tr');
@@ -2070,28 +2127,55 @@
 
             });
 
+            var checkPanelReview = function(b=false){
+                if(b){
+                    $('.check_panel_'+_dataParentID).show();
+                    $("input.check_"+_dataParentID). prop("required", true);
+                }else{
+                    $('.check_panel_'+_dataParentID).hide();
+                    $("input.check_"+_dataParentID). prop("required", false);
+                }
+            }
+
+            var payment_method = $('.payment_method_'+_dataParentID).val();
+            if(payment_method == 2){
+                checkPanelReview(true);
+            }else{
+                checkPanelReview(false);
+            }
+
+            $('.payment_method_'+_dataParentID).on("change", function(){
+
+                if($(this).val()==2){
+                    checkPanelReview(true);
+                }else{
+                    checkPanelReview(false);
+                }
+
+            });
 
             parent.on('click','button[name="btn_finalize_journal_review"]',function(){
 
-                var _curBtn=$(this);
-                if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
-                    finalizeJournalReview().done(function(response){
-                        showNotification(response);
-                        if(response.stat=="success"){
-                            dt.row.add(response.row_added[0]).draw();
-                            var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
-                            dtReview.row(_parentRow).remove().draw();
-                        }
+                if(validateRequiredFields($('.frm_journal_review_'+_dataParentID))){
+                    var _curBtn=$(this);
+                    if(isBalance('#tbl_entries_for_review_'+_dataParentID)){
+                        finalizeJournalReview().done(function(response){
+                            showNotification(response);
+                            if(response.stat=="success"){
+                                dt.row.add(response.row_added[0]).draw();
+                                var _parentRow=_curBtn.parents('table.table_journal_entries_review').parents('tr').prev();
+                                dtReview.row(_parentRow).remove().draw();
+                            }
 
 
-                    }).always(function(){
-                        showSpinningProgress(_curBtn);
-                    });
-                }else{
-                    showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
-                    stat=false;
+                        }).always(function(){
+                            showSpinningProgress(_curBtn);
+                        });
+                    }else{
+                        showNotification({title:"Not Balance!",stat:"error",msg:'Please make sure Debit and Credit amount are equal.'});
+                        stat=false;
+                    }
                 }
-
 
             });
 

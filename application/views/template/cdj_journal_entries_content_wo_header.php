@@ -36,7 +36,7 @@
             <td width="15%" align="right"><strong>Voucher No.:</strong></td>
             <td width="35%" style="padding-left: 10px;"><strong><?php echo $journal_info->ref_no; ?></strong></td>
             <td width="15%" align="right"><strong>Account No.:</strong></td>
-            <td width="35%" style="padding-left: 10px;"></td>
+            <td width="35%" style="padding-left: 10px;"><strong><?php echo $journal_info->account_no; ?></strong></td>
         </tr>
         <tr>
             <td width="15%" align="right"><strong>Voucher Date:</strong></td>
@@ -48,7 +48,11 @@
             <td width="15%" align="right"><strong>Amount:</strong></td>
             <td width="35%" style="padding-left: 10px;"><strong>***<?php echo number_format($journal_info->amount,2); ?>***</strong></td>
             <td width="15%" align="right"><strong>Check Date:</strong></td>
-            <td width="35" style="padding-left: 10px;"><strong></strong></td>
+            <td width="35" style="padding-left: 10px;"><strong>
+                <?php if($journal_info->payment_method_id == 2){
+                    echo date_format(new DateTime($journal_info->check_date),"m/d/Y"); }
+                ?>
+            </strong></td>
         </tr>
         <tr>
             <td width="15%" align="right"><strong>Amount in words:</strong></td>

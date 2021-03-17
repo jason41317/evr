@@ -58,11 +58,30 @@ class Account_titles extends CORE_Controller
                 $response['data']=$this->response_rows($filter_id); //filter_id is default as null
                 echo json_encode($response);
                 break;
+
             case 'create':
                 $m_accounts=$this->Account_title_model;
                 $parent_account_id=(float)$this->input->post('parent_account',TRUE);
                 $account_no=$this->input->post('account_no',TRUE);
+                $account_title=$this->input->post('account_title',TRUE);
 
+                $check_account_no = $m_accounts->validate_account_no($account_no);
+
+                if(count($check_account_no)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Error</b>';
+                    $response['msg']='Account # <b><u>'.$account_no.'</u></b> is already existing. <br/>Please make sure account no is unique!<br />';
+                    die(json_encode($response));
+                }
+
+                $check_account_title = $m_accounts->validate_account_title($account_title);
+
+                if(count($check_account_title)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Error</b>';
+                    $response['msg']='Account Title : <b><u>'.$account_title.'</u></b> is already existing. <br/>Please make sure account title is unique!<br />';
+                    die(json_encode($response));
+                }
 
                 $m_accounts->begin();
 
@@ -70,7 +89,7 @@ class Account_titles extends CORE_Controller
                 $m_accounts->created_by_user=$this->session->user_id;
 
                 $m_accounts->account_no=$account_no;
-                $m_accounts->account_title=$this->input->post('account_title',TRUE);
+                $m_accounts->account_title=$account_title;
                 $m_accounts->account_class_id=$this->input->post('account_class',TRUE);
                 $m_accounts->parent_account_id=$parent_account_id;
                 $m_accounts->save();
@@ -107,10 +126,27 @@ class Account_titles extends CORE_Controller
                 $account_no=$this->input->post('account_no',TRUE);
                 $account_id=$this->input->post('account_id',TRUE);
                 $account_class_id=$this->input->post('account_class',TRUE);
-
+                $account_title=$this->input->post('account_title',TRUE);
                 //******************************************************************************************************
                 //make sure, you cannot update parent account to its own child account
 
+                $check_account_no = $m_accounts->validate_account_no($account_no,$account_id);
+
+                if(count($check_account_no)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Error</b>';
+                    $response['msg']='Account # <b><u>'.$account_no.'</u></b> is already existing. <br/>Please make sure account no is unique!<br />';
+                    die(json_encode($response));
+                }
+
+                $check_account_title = $m_accounts->validate_account_title($account_title,$account_id);
+
+                if(count($check_account_title)>0){
+                    $response['stat']='error';
+                    $response['title']='<b>Error</b>';
+                    $response['msg']='Account Title : <b><u>'.$account_title.'</u></b> is already existing. <br/>Please make sure account title is unique!<br />';
+                    die(json_encode($response));
+                }
 
                 $m_accounts->begin();
 
@@ -118,7 +154,7 @@ class Account_titles extends CORE_Controller
                 $m_accounts->modified_by_user=$this->session->user_id;
 
                 $m_accounts->account_no=$account_no;
-                $m_accounts->account_title=$this->input->post('account_title',TRUE);
+                $m_accounts->account_title=$account_title;
                 $m_accounts->account_class_id=$account_class_id;
                 $m_accounts->parent_account_id=$parent_account_id;
                 $m_accounts->modify($account_id);
