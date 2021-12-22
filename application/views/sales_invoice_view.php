@@ -173,6 +173,34 @@
             padding-bottom: 4px!important;
             padding-left: 7px!important;
         }
+
+        .btn-luzon{
+            border: none; 
+            text-shadow: 0px 0px 7px rgba(150, 150, 150, 1);
+            background: rgba(73,155,234,1);
+            background: -moz-linear-gradient(top, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(73,155,234,1)), color-stop(100%, rgba(32,124,229,1)));
+            background: -webkit-linear-gradient(top, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+            background: -o-linear-gradient(top, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+            background: -ms-linear-gradient(top, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+            background: linear-gradient(to bottom, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#499bea', endColorstr='#207ce5', GradientType=0 );
+            margin-left: 10px;
+        }
+
+        .btn-vismin{
+            border: none; 
+            text-shadow: 0px 0px 7px rgba(150, 150, 150, 1);
+            background: rgba(0,173,109,1);
+            background: -moz-linear-gradient(top, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,173,109,1)), color-stop(100%, rgba(0,128,75,1)));
+            background: -webkit-linear-gradient(top, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            background: -o-linear-gradient(top, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            background: -ms-linear-gradient(top, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            background: linear-gradient(to bottom, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#499bea', endColorstr='#207ce5', GradientType=0 );
+            margin-left: 10px;
+        }         
     </style>
 </head>
 
@@ -312,7 +340,16 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="col-sm-2 col-sm-offset-6">
+                        <div class="col-sm-3 col-sm-offset-3">
+                            SO # : <br />
+                            <div class="input-group">
+                                <input type="text" name="so_no" class="form-control">
+                                <span class="input-group-addon">
+                                    <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
                             Invoice Date : <br />
                             <div class="input-group">
                                 <input type="text" name="date_invoice" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Invoice" data-error-msg="Please set the date this items are issued!" required>
@@ -332,7 +369,7 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             * Sales person :<br/>
                             <select name="salesperson_id" id="cbo_salesperson" data-error-msg="Sales person is required." required>
                                 <option value="0">[ Create New Salesperson ]</option>
@@ -341,13 +378,15 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="col-sm-2">
-                            SO # : <br />
+                        <div class="col-sm-3">
+                            Date Delivered : <br />
                             <div class="input-group">
-                                <input type="text" name="so_no" class="form-control">
-                                <span class="input-group-addon">
-                                    <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
+
+                                <input type="text" name="date_delivered" class="date-picker form-control" placeholder="Date Delivered">
+                                 <span class="input-group-addon">
+                                     <i class="fa fa-calendar"></i>
                                 </span>
+
                             </div>
                         </div>
                         <div class="col-sm-2">
@@ -366,12 +405,15 @@
 
                     </div>
                     <div class="row">
-                        <div class="col-sm-8">
+                        <div class="col-sm-7">
                             Address :<br>
                             <input class="form-control" id="txt_address" type="text" name="address" placeholder="Customer Address">
                         </div>
-
-                        <div class="col-sm-2 col-sm-offset-2">
+                        <div class="col-sm-3">
+                            COD / PDC :<br>
+                            <input class="form-control" id="cod_pdc" type="text" name="cod_pdc" placeholder="COD / PDC">
+                        </div>
+                        <div class="col-sm-2">
                             Term in Days : <br />
                             <div class="input-group">
                                 <input type="number" id="txt_terms" name="terms" class="form-control" value="" placeholder="Term in Days">
@@ -664,15 +706,15 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header " style="padding: 5px !important;">
-                <h3 style="color:white; padding-left: 10px;">Preview Sales Invoice</h3>
-                <button id="btn_print" class="btn btn-primary pull-right" style="position: absolute; top: 20px; left: 76%; border: none; text-shadow: 0px 0px 7px rgba(150, 150, 150, 1);background: rgba(73,155,234,1);
-background: -moz-linear-gradient(top, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
-background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(73,155,234,1)), color-stop(100%, rgba(32,124,229,1)));
-background: -webkit-linear-gradient(top, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
-background: -o-linear-gradient(top, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
-background: -ms-linear-gradient(top, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
-background: linear-gradient(to bottom, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#499bea', endColorstr='#207ce5', GradientType=0 );"><i class="fa fa-print"></i> Print Sales Invoice</button>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3 style="color:white; padding-left: 10px;">Preview Sales Invoice</h3>
+                    </div>
+                    <div class="col-sm-8" style="margin-top: 10px;">
+                        <button id="btn_print_vismin" class="btn btn-success btn-vismin pull-right"><i class="fa fa-print"></i> Print Sales Invoice (V.2)</button>
+                        <button id="btn_print" class="btn btn-primary btn-luzon pull-right"><i class="fa fa-print"></i> Print Sales Invoice (V.1)</button>
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
                 <div class="container-fluid" style="overflow: scroll; width: 100%;">
@@ -1327,9 +1369,13 @@ $(document).ready(function(){
         });
 
         $('#btn_print').click(function(){
-            window.open("Sales_invoice/transaction/print/"+ _selectedPrint);
+            window.open("Sales_invoice/transaction/print/"+ _selectedPrint+"/1");
         });
 
+        $('#btn_print_vismin').click(function(){
+            window.open("Sales_invoice/transaction/print/"+ _selectedPrint+"/2");
+        });
+        
         $('#link_browse').click(function(){
             $('#btn_receive_so').click();
         });
@@ -1560,6 +1606,9 @@ $(document).ready(function(){
             reComputeTotal(); //this is to make sure, display summary are recomputed as 0
             $('input[name="date_invoice"]').datepicker('setDate', 'today');
             $('input[name="date_due"]').datepicker('setDate', 'today');
+            // $('input[name="date_delivered"]').datepicker('setDate', 'today');
+            $('input[name="date_delivered"]').val("");
+            
             $('.typeahead').typeahead('val',''); 
             $.ajax({
                 "dataType":"json",
