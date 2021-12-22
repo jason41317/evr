@@ -47,7 +47,11 @@
                     <td class="table-cellpadding">BUSINESS STYLE :</td>
                     <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;"></td>
                     <td class="table-cellpadding">TERMS :</td>
-                    <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;"></td>
+                    <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;">
+                        <?php if($sales_info->terms > 0){ ?>
+                            <strong><?php echo $sales_info->terms; ?></strong>
+                        <?php }?>                            
+                    </td>
                     <td class="table-cellpadding" width="6%">TIN :</td>
                     <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;" width="30%"></td>
                 </tr>

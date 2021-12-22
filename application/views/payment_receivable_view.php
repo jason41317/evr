@@ -554,7 +554,8 @@
                 "bLengthChange":false,
                 "ajax" : "Receivable_payments/transaction/list",
                 "columns": [
-                    {
+                    {   
+                        "visible": false,
                         "targets": [0],
                         "class":          "details-control",
                         "orderable":      false,

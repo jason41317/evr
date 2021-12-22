@@ -81,24 +81,25 @@ class Sales_summary extends CORE_Controller
                     //set cell A1 content with some text
                     $excel->getActiveSheet()->setCellValue('A1', 'DR/SI')
                                             ->setCellValue('B1', 'Date')
-                                            ->setCellValue('C1', 'Vet Rep')
-                                            ->setCellValue('D1', 'VR')
-                                            ->setCellValue('E1', 'Customer')
-                                            ->setCellValue('F1', 'Product')
-                                            ->setCellValue('G1', 'Type of Product')
-                                            ->setCellValue('H1', 'Qty')
-                                            ->setCellValue('I1', 'FG')
-                                            ->setCellValue('J1', 'Pack Size')
-                                            ->setCellValue('K1', 'Supplier')
-                                            ->setCellValue('L1', 'SRP')
-                                            ->setCellValue('M1', 'Sales')
-                                            ->setCellValue('N1', 'Unit Cost')
-                                            ->setCellValue('O1', 'Cost of Sales')
-                                            ->setCellValue('P1', 'Net Profit')
-                                            ->setCellValue('Q1', 'Tax Amount')
-                                            ->setCellValue('R1', 'Non Tax Amount')
-                                            ->setCellValue('S1', 'With Returns?')
-                                            ->setCellValue('T1', 'References');
+                                            ->setCellValue('C1', 'Date Delivered')
+                                            ->setCellValue('D1', 'Vet Rep')
+                                            ->setCellValue('E1', 'VR')
+                                            ->setCellValue('F1', 'Customer')
+                                            ->setCellValue('G1', 'Product')
+                                            ->setCellValue('H1', 'Type of Product')
+                                            ->setCellValue('I1', 'Qty')
+                                            ->setCellValue('J1', 'FG')
+                                            ->setCellValue('K1', 'Pack Size')
+                                            ->setCellValue('L1', 'Supplier')
+                                            ->setCellValue('M1', 'SRP')
+                                            ->setCellValue('N1', 'Sales')
+                                            ->setCellValue('O1', 'Unit Cost')
+                                            ->setCellValue('P1', 'Cost of Sales')
+                                            ->setCellValue('Q1', 'Net Profit')
+                                            ->setCellValue('R1', 'Tax Amount')
+                                            ->setCellValue('S1', 'Non Tax Amount')
+                                            ->setCellValue('T1', 'With Returns?')
+                                            ->setCellValue('U1', 'References');
 
                     //change the font size
 
@@ -112,30 +113,31 @@ class Sales_summary extends CORE_Controller
                     foreach($invoices as $x){
                         $excel->getActiveSheet()->setCellValue('A'.$i,$x->sales_inv_no)
                                                 ->setCellValue('B'.$i,$x->inv_date)
-                                                ->setCellValue('C'.$i,$x->salesperson_name)
-                                                ->setCellValue('D'.$i,$x->vr)
-                                                ->setCellValue('E'.$i,$x->customer_name)
-                                                ->setCellValue('F'.$i,$x->product_desc)
-                                                ->setCellValue('G'.$i,$x->product_type)
-                                                ->setCellValue('H'.$i,$x->inv_qty)
-                                                ->setCellValue('I'.$i,$x->fg)
-                                                ->setCellValue('J'.$i,$x->size)
-                                                ->setCellValue('K'.$i,$x->supplier_name)
-                                                ->setCellValue('L'.$i,$x->srp)
-                                                ->setCellValue('M'.$i,$x->sales)
-                                                ->setCellValue('N'.$i,$x->purchase_cost)
-                                                ->setCellValue('O'.$i,$x->cost_of_sales)
-                                                ->setCellValue('P'.$i,$x->net_profit)
-                                                ->setCellValue('Q'.$i,$x->tax_amount)
-                                                ->setCellValue('R'.$i,$x->non_tax_amount)
-                                                ->setCellValue('S'.$i,$x->with_returns)
-                                                ->setCellValue('T'.$i,$x->return_invoices);
+                                                ->setCellValue('C'.$i,$x->date_delivered)
+                                                ->setCellValue('D'.$i,$x->salesperson_name)
+                                                ->setCellValue('E'.$i,$x->vr)
+                                                ->setCellValue('F'.$i,$x->customer_name)
+                                                ->setCellValue('G'.$i,$x->product_desc)
+                                                ->setCellValue('H'.$i,$x->product_type)
+                                                ->setCellValue('I'.$i,$x->inv_qty)
+                                                ->setCellValue('J'.$i,$x->fg)
+                                                ->setCellValue('K'.$i,$x->size)
+                                                ->setCellValue('L'.$i,$x->supplier_name)
+                                                ->setCellValue('M'.$i,$x->srp)
+                                                ->setCellValue('N'.$i,$x->sales)
+                                                ->setCellValue('O'.$i,$x->purchase_cost)
+                                                ->setCellValue('P'.$i,$x->cost_of_sales)
+                                                ->setCellValue('Q'.$i,$x->net_profit)
+                                                ->setCellValue('R'.$i,$x->tax_amount)
+                                                ->setCellValue('S'.$i,$x->non_tax_amount)
+                                                ->setCellValue('T'.$i,$x->with_returns)
+                                                ->setCellValue('U'.$i,$x->return_invoices);
                                                 $i++;
                     }
 
 
 
-                    $excel->getActiveSheet()->getStyle('A1:T1')->getFill()
+                    $excel->getActiveSheet()->getStyle('A1:U1')->getFill()
                         ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
                         ->getStartColor()->setARGB('4caf50');
 
@@ -149,18 +151,18 @@ class Sales_summary extends CORE_Controller
                             'name'  => 'Tahoma'
                         ));
 
-                    $excel->getActiveSheet()->getStyle('A1:T1')->applyFromArray($styleArray);
+                    $excel->getActiveSheet()->getStyle('A1:U1')->applyFromArray($styleArray);
 
                     //format columns with number data
                     $highestRow = $excel->getActiveSheet()->getHighestRow();
                     for($i=2;$i<=$highestRow;$i++){
-                        $excel->getActiveSheet()->getStyle('L'.$i.':T'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
+                        $excel->getActiveSheet()->getStyle('M'.$i.':S'.$i)->getNumberFormat()->setFormatCode('#,##0.00');
                     }
 
 
 
                     //autofit column
-                    foreach(range('A','T') as $columnID)
+                    foreach(range('A','U') as $columnID)
                     {
                         $excel->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(TRUE);
                     }
