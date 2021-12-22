@@ -321,7 +321,6 @@
                     <select name="lookup_price" id="cboLookupPrice">
                         <option value="1">SRP (Recommended)</option>
                         <option value="3">Dealer Price</option>
-                        <option value="6">Purchase Cost</option>
                     </select>
                 </div>
             </div>
@@ -1038,21 +1037,19 @@ $(document).ready(function(){
         templates: {
             header: [
                 '<table class="tt-head"><tr>'+
-                '<td width=7%" style="padding-left:1%;"><b>PLU</b></td>'+
-                '<td width="20%" align="left"><b>Description 1</b></td>'+
-                '<td width="7%" style="text-align: right;"><b>On hand</b></td>'+
-                '<td width="7%" align="right"><b>SRP</b></td>'+
-                '<td width="7%" align="right"><b>Dealer</b></td>'+
-                '<td width="7%" align="right" style="padding-right:1%;"><b>Cost</b></td></tr></table>'
+                '<td width=15%" style="padding-left:1%;"><b>PLU</b></td>'+
+                '<td width="40%" align="left"><b>Description 1</b></td>'+
+                '<td width="15%" style="text-align: right;"><b>On hand</b></td>'+
+                '<td width="15%" align="right"><b>SRP</b></td>'+
+                '<td width="15%" align="right" style="padding-right:1%;"><b>Dealer</b></td></td></tr></table>'
             ].join('\n'),
 
             suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
-                '<td width="7%" style="padding-left:1%;">{{product_code}}</td>'+
-                '<td width="20%" align="left">{{product_desc}}</td>'+
-                '<td width="7%" align="right">{{on_hand}}</td>'+
-                '<td width="7%" align="right">{{sale_price}}</td>'+
-                '<td width="7%" align="right">{{dealer_price}}</td>'+
-                '<td width="7%" align="right" style="padding-right:1%;">{{purchase_cost}}</td></tr></table>')
+                '<td width="15%" style="padding-left:1%;">{{product_code}}</td>'+
+                '<td width="40%" align="left">{{product_desc}}</td>'+
+                '<td width="15%" align="right">{{on_hand}}</td>'+
+                '<td width="15%" align="right">{{sale_price}}</td>'+
+                '<td width="15%" align="right" style="padding-right:1%;">{{dealer_price}}</td></tr></table>')
 
         }
     }).on('keyup', this, function (event) {

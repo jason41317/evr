@@ -548,6 +548,7 @@ $(document).ready(function(){
             "ajax" : "Payable_payments/transaction/list",
             "columns": [
                 {
+                    "visible": false,
                     "targets": [0],
                     "class":          "details-control",
                     "orderable":      false,
