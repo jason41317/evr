@@ -130,6 +130,7 @@
                                                         <th>Address</th>
                                                         <th>Mobile #</th>
                                                         <th>User Group</th>
+                                                        <th>Branch</th>
                                                         <th><center>Action</center></th>
                                                     </tr>
                                                     </thead>
@@ -169,7 +170,7 @@
                                                    </div>
 
                                                    <div class="form-group">
-                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>User Group :</strong></label>
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* User Group :</strong></label>
 
                                                        <div class="col-md-7">
                                                            <select name="" id="cbo_user_groups" data-error-msg="User group is required." required>
@@ -187,6 +188,19 @@
                                                    </div>
 
 
+                                                   <div class="form-group">
+                                                       <label class="col-md-2 col-md-offset-1 control-label"><strong>* Branch :</strong></label>
+
+                                                       <div class="col-md-7">
+                                                           <select name="" id="cbo_branch" data-error-msg="Branch is required." required>
+                                                               <?php foreach($departments as $department){ ?>
+                                                                        <option value="<?php echo $department->department_id; ?>"><?php echo $department->department_name; ?></option>
+                                                               <?php } ?>
+                                                           </select>
+
+                                                       </div>
+
+                                                   </div>
                                                    <div class="form-group">
                                                        <label class="col-md-2 col-md-offset-1 control-label"><strong>* Password :</strong></label>
                                                        <div class="col-md-7">
@@ -483,7 +497,7 @@
 
 <script>
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboUserGroup;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboUserGroup; var _cboBranch;
 
 
 
@@ -506,8 +520,9 @@
                     { targets:[3],data: "user_address" },
                     { targets:[4],data: "user_mobile" },
                     { targets:[5],data: "user_group" },
+                    { targets:[6],data: "department_name" },
                     {
-                        targets:[6],
+                        targets:[7],
                         render: function (data, type, full, meta){
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
@@ -538,10 +553,19 @@
 
             _cboUserGroup=$("#cbo_user_groups").select2({
                 placeholder: "Please select user group",
-                allowClear: true
+                allowClear: false
             });
 
-            _cboUserGroup.select2('val', null)
+            _cboUserGroup.select2('val', null);
+
+
+
+            _cboBranch=$("#cbo_branch").select2({
+                placeholder: "Please select a branch",
+                allowClear: false
+            });
+
+            _cboBranch.select2('val', null);
 
 
 
@@ -635,27 +659,26 @@
 
 
             $('#tbl_user_list tbody').on('click','button[name="edit_info"]',function(){
-                    ///alert("ddd");
-                    _txnMode="edit";
-                    _selectRowObj=$(this).closest('tr');
-                    var data=dt.row(_selectRowObj).data();
-                    _selectedID=data.user_id;
+                  ///alert("ddd");
+                  _txnMode="edit";
+                  _selectRowObj=$(this).closest('tr');
+                  var data=dt.row(_selectRowObj).data();
+                  _selectedID=data.user_id;
 
-                    $('input,textarea').each(function(){
-                        var _elem=$(this);
-                        $.each(data,function(name,value){
-                            if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
-                                _elem.val(value);
-                            }
+                  $('input,textarea').each(function(){
+                      var _elem=$(this);
+                      $.each(data,function(name,value){
+                          if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                              _elem.val(value);
+                          }
 
-                        });
+                      });
+                  });
 
-                        $('#cbo_user_groups').select2('val',data.user_group_id);
-                    });
-
-                    $('img[name="img_user"]').attr('src',data.photo_path);
-                    showList(false);
-
+                  $('#cbo_user_groups').select2('val',data.user_group_id);
+                  $('#cbo_branch').select2('val',data.department_id);
+                  $('img[name="img_user"]').attr('src',data.photo_path);
+                  showList(false);
             });
 
             $('#tbl_user_list tbody').on('click','button[name="remove_info"]',function(){
@@ -804,6 +827,7 @@
             var _data=$('#frm_users').serializeArray();
             _data.push({name : "photo_path" ,value : $('img[name="img_user"]').attr('src')});
             _data.push({name : "user_group_id" ,value : $('#cbo_user_groups').select2('val')});
+            _data.push({name : "department_id" ,value : $('#cbo_branch').select2('val')});
 
             return $.ajax({
                 "dataType":"json",
@@ -818,6 +842,7 @@
             var _data=$('#frm_users').serializeArray();
             _data.push({name : "photo_path" ,value : $('img[name="img_user"]').attr('src')});
             _data.push({name : "user_group_id" ,value : $('#cbo_user_groups').select2('val')});
+            _data.push({name : "department_id" ,value : $('#cbo_branch').select2('val')});
             _data.push({name : "user_id" ,value : _selectedID});
 
             return $.ajax({

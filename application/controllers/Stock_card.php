@@ -14,6 +14,7 @@
 					'Delivery_invoice_model',
 					'Suppliers_model',
 					'Company_model',
+            		'Departments_model',
 					'Products_model'
 				)
 			);
@@ -26,7 +27,10 @@
 	        $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', true);
 	        $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', true);
 	        $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', true);
+        	$data['_rights'] = $this->load->view('template/elements/rights', '', TRUE);
+        	
 	        $data['products']= $this->Products_model->get_list(array('is_active'=>TRUE,'is_deleted'=>FALSE ),'product_id,product_desc');
+        	$data['departments']=$this->Departments_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
 	        $data['title'] = 'Stock Card Report';
 
 	        (in_array('8-6',$this->session->user_rights)? 
@@ -40,12 +44,13 @@
 				case 'stock-history':
 
                 $product_id=$this->input->get('id');
+                $depid=$this->input->get('depid');
                 $startDate=date('Y-m-d',strtotime($this->input->get('startDate')));
                 $endDate=date('Y-m-d',strtotime($this->input->get('endDate')));
                 $m_products=$this->Products_model;
-                $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,$startDate)[0]; 
+                $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,$startDate,$depid)[0]; 
                 $data['balance_as_of'] =$balance_as_of;
-                $data['products']=$m_products->get_product_history($product_id,$startDate,$endDate,$balance_as_of->balance);
+                $data['products']=$m_products->get_product_history($product_id,$startDate,$endDate,$balance_as_of->balance,$depid);
                 $data['as_of_date'] = $startDate;
                 $data['product_id']=$product_id;
                 $this->load->view('template/product_history',$data);

@@ -65,7 +65,7 @@ class Adjustment_out extends CORE_Controller
 
         $data['title'] = 'Inventory Adjustment';
         
-        (in_array('2-6',$this->session->user_rights)? 
+        (in_array('11-4',$this->session->user_rights)? 
         $this->load->view('adjustment_out_view', $data)
         :redirect(base_url('dashboard')));
 
@@ -187,11 +187,12 @@ class Adjustment_out extends CORE_Controller
                     //$m_adjustment_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
 
                     //unit id retrieval is change, because of TRIGGER restriction
-                    $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                    $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                     $m_adjustment_items->unit_id=$unit_id[0]->unit_id;
 
                     //validate current on hand of item
-                    $on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
+                    $department_id=$this->input->post('department',TRUE);
+                    $on_hand=$m_products->get_product_current_qty($batch_no[$i], $this->get_numeric_value($prod_id[$i]), date('Y-m-d', strtotime($exp_date[$i])) ,$department_id);
 
                     if ($this->get_numeric_value($adjust_qty[$i]) > $this->get_numeric_value($on_hand)) {
                         $prod_description=$unit_id[0]->product_desc;
@@ -298,11 +299,12 @@ class Adjustment_out extends CORE_Controller
 
                     //$m_adjustment_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
 
-                    $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                    $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                     $m_adjustment_items->unit_id=$unit_id[0]->unit_id;
 
                     //validate current on hand of item
-                    $on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
+                    $department_id=$this->input->post('department',TRUE);
+                    $on_hand=$m_products->get_product_current_qty($batch_no[$i], $this->get_numeric_value($prod_id[$i]), date('Y-m-d', strtotime($exp_date[$i])),$department_id);
 
                     if ($this->get_numeric_value($adjust_qty[$i]) > $this->get_numeric_value($on_hand)) {
                         $prod_description=$unit_id[0]->product_desc;

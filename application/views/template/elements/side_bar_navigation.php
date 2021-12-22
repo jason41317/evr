@@ -37,9 +37,6 @@
                                 <li class="<?php echo (in_array('2-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Deliveries">Purchase Invoice (Supplier)</a></li>
                                 <li class="<?php echo (in_array('2-7',$this->session->user_rights)?'':'hidden'); ?>"><a href="Purchase_invoice_history">Purchase Invoice History</a></li>
                                 <li class="<?php echo (in_array('2-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Payable_payments">Record Payment</a></li>
-                                <li class="<?php echo (in_array('2-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Issuances">Item Issuance</a></li>
-                                <li class="<?php echo (in_array('2-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Adjustments">Item Adjustment (In)</a></li>
-                                <li class="<?php echo (in_array('2-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Adjustment_out">Item Adjustment (Out)</a></li>
                             </ul>
                         </li>
 
@@ -51,6 +48,22 @@
                                 <li class="<?php echo (in_array('3-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Sales_invoice_history">Sales Invoice History</a></li>
                                 <li class="<?php echo (in_array('3-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Receivable_payments">Collection Entry</a></li>
                                 <!-- <li><a href="AR_Receivable">AR Receivable Report</a></li> -->
+                            </ul>
+                        </li>
+                        
+                        <li class="<?php echo (in_array('11',$this->session->parent_rights)?'':'hidden'); ?>">
+                            <a href="#">
+                                <i class="fa fa-cube"></i><span>Inventory</span>
+                            </a>
+                            <ul class="acc-menu">
+                                <li  class="<?php echo (in_array('11-1',$this->session->user_rights)?'':'hidden'); ?>"><a href="Issuance_department">Item Transfer</a></li>
+                                <li  class="<?php echo (in_array('11-2',$this->session->user_rights)?'':'hidden'); ?>"><a href="Issuances">Item Issuance</a></li>
+                                <li  class="<?php echo (in_array('11-3',$this->session->user_rights)?'':'hidden'); ?>"><a href="Adjustments">Item Adjustment (In)</a></li>
+                                <li  class="<?php echo (in_array('11-4',$this->session->user_rights)?'':'hidden'); ?>"><a href="Adjustment_out">Item Adjustment (Out)</a></li>
+                                <li class="<?php echo (in_array('11-5',$this->session->user_rights)?'':'hidden'); ?>"><a href="Inventory_report">Inventory Report</a></li>
+                                <li class="<?php echo (in_array('11-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Batch_inventory">Batch Inventory</a></li>
+                                <li class="<?php echo (in_array('8-6',$this->session->user_rights)?'':'hidden'); ?>"><a href="Stock_card">Stock Card</a></li>
+
                             </ul>
                         </li>
 

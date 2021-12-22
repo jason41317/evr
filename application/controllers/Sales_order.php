@@ -99,30 +99,33 @@ class Sales_order extends CORE_Controller
                     $m_products=$this->Products_model;
                     $type_id=$this->input->get('type');
                     $description=$this->input->get('description');
+                    $department_id=$this->input->get('department_id');
+
+                    echo json_encode($m_products->get_order_list($type_id,$description,$department_id));
 
                     //not 3 means show all product type
-                    echo json_encode(
-                        $m_products->get_list(
-                                "(products.product_code LIKE '".$description."%' OR products.product_desc LIKE '%".$description."%' OR products.product_desc1 LIKE '%".$description."%') AND products.is_deleted=FALSE ".($type_id==1||$type_id==2?" AND products.refproduct_id=".$type_id:""),
+                    // echo json_encode(
+                    //     $m_products->get_list(
+                    //             "(products.product_code LIKE '".$description."%' OR products.product_desc LIKE '%".$description."%' OR products.product_desc1 LIKE '%".$description."%') AND products.is_deleted=FALSE ".($type_id==1||$type_id==2?" AND products.refproduct_id=".$type_id:""),
 
-                            array(
-                                'products.*',
-                                'FORMAT(products.dealer_price,4) as dealer_price',
-                                'FORMAT(products.distributor_price,4) as distributor_price',
-                                'FORMAT(products.public_price,4) as public_price',
-                                'FORMAT(products.discounted_price,4) as discounted_price',
-                                'FORMAT(products.purchase_cost,4) as purchase_cost',
-                                'FORMAT(products.sale_price,4) as sale_price',
-                                'IFNULL(tax_types.tax_rate,0) as tax_rate',
-                                'units.unit_name'
-                            ),
+                    //         array(
+                    //             'products.*',
+                    //             'FORMAT(products.dealer_price,4) as dealer_price',
+                    //             'FORMAT(products.distributor_price,4) as distributor_price',
+                    //             'FORMAT(products.public_price,4) as public_price',
+                    //             'FORMAT(products.discounted_price,4) as discounted_price',
+                    //             'FORMAT(products.purchase_cost,4) as purchase_cost',
+                    //             'FORMAT(products.sale_price,4) as sale_price',
+                    //             'IFNULL(tax_types.tax_rate,0) as tax_rate',
+                    //             'units.unit_name'
+                    //         ),
 
-                            array(
-                                array('tax_types','tax_types.tax_type_id=products.tax_type_id','left'),
-                                array('units','units.unit_id=products.unit_id','left')
-                            )
-                        )
-                    );
+                    //         array(
+                    //             array('tax_types','tax_types.tax_type_id=products.tax_type_id','left'),
+                    //             array('units','units.unit_id=products.unit_id','left')
+                    //         )
+                    //     )
+                    // );
                     break;
 
 
@@ -248,6 +251,8 @@ class Sales_order extends CORE_Controller
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
                 $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
+                $m_sales_order->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                $m_sales_order->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_sales_order->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_sales_order->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_sales_order->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -347,7 +352,8 @@ class Sales_order extends CORE_Controller
                 $m_sales_order->address=$this->input->post('address',TRUE);
                 $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
-
+                $m_sales_order->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                $m_sales_order->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_sales_order->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_sales_order->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_sales_order->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -489,6 +495,8 @@ class Sales_order extends CORE_Controller
             $filter_value,
 
             array(
+                'sales_order.total_overall_discount',
+                'sales_order.total_overall_discount_amount',
                 'sales_order.sales_order_id',
                 'sales_order.so_no',
                 'sales_order.remarks',

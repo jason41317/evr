@@ -1001,7 +1001,7 @@ $(document).ready(function(){
 
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Please select branch.",
-            allowClear: true
+            allowClear: false
         });
 
         _cboDepartments.select2('val',null);
@@ -1025,8 +1025,9 @@ $(document).ready(function(){
                     //var prod_type=$('#cbo_prodType').select2('val');
                     var sid=$('#cbo_suppliers').select2('val');
                     var prod_type=$('#cbo_prodType').select2('val');
+                    var department_id=$('#cbo_departments').select2('val');
 
-                    return url + '?type='+prod_type+'&sid='+sid+'&description='+uriEncodedQuery;
+                    return url + '?type='+prod_type+'&sid='+sid+'&description='+uriEncodedQuery+'&department_id='+department_id;
                 }
             }
         });
@@ -1299,6 +1300,7 @@ $(document).ready(function(){
             clearFields($('#frm_deliveries'));
             _cboSuppliers.select2('val',null);
             _cboTaxType.select2('val',null);
+            $('#cbo_departments').select2('val', default_department_id);
             $('input[name="date_delivered"]').datepicker('setDate', 'today');
             $('input[name="date_due"]').datepicker('setDate', 'today');
             $('input[name="plu_search"]').val('');

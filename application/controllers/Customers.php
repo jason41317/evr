@@ -191,6 +191,7 @@ class Customers extends CORE_Controller {
                 $accounts=$this->Soa_settings_model->get_list(null,'soa_account_id');
                 $acc = [];
 
+                $department_id=$this->input->get('depid',TRUE);
                 $customer_id=$this->input->get('id',TRUE);
                 $start_date=date('Y-m-d',strtotime($this->input->get('start_date',TRUE)));
                 $end_date=date('Y-m-d',strtotime($this->input->get('end_date',TRUE)));
@@ -198,7 +199,7 @@ class Customers extends CORE_Controller {
                 foreach ($accounts as $account) { $acc[]=$account->soa_account_id; }
                 $filter_accounts =  implode(",", $acc);
 
-                $data['receivables']=$m_customers->get_customer_receivable_list($customer_id,$start_date,$end_date,$filter_accounts);
+                $data['receivables']=$m_customers->get_customer_receivable_list($customer_id,$start_date,$end_date,$filter_accounts,$department_id);
                 $structured_content=$this->load->view('template/customer_receivable_list',$data,TRUE);
                 echo $structured_content;
 

@@ -103,8 +103,8 @@
                                                     <h2 class="h2-panel-heading">Stock Card Report</h2>
                                                         <div style="border: 1px solid #a0a4a5;padding: 1%;border-radius: 5px;padding-bottom: 2%;">
                                                             <div class="row">
-                                                                <div class="col-lg-8">
-                                                                    Product Type * :<br/>
+                                                                <div class="col-lg-5">
+                                                                    Product * :<br/>
                                                                     <select id="cboProduct" class="form-control">
                                                                         <?php foreach($products as $product) { ?>
                                                                             <option value="<?php echo $product->product_id; ?>">
@@ -113,7 +113,17 @@
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
-
+                                                                <div class="col-lg-3">
+                                                                    Branch * :<br/>
+                                                                    <select id="cbo_department" class="form-control">
+                                                                        <option value="0">All Branches</option>
+                                                                        <?php foreach($departments as $department) { ?>
+                                                                            <option value="<?php echo $department->department_id; ?>">
+                                                                                <?php echo $department->department_name; ?>
+                                                                            </option>
+                                                                        <?php } ?>
+                                                                    </select>
+                                                                </div>
                                                                 <div class="col-lg-2">
                                                                     Period Start * :<br />
                                                                     <div class="input-group">
@@ -208,18 +218,10 @@
                         <button id="btn_update_cost" type="button" class="btn" style="background-color:#2ecc71;color:white;"><span></span> Update</button>
                         <button id="btn_cancel" type="button" class="btn btn-danger" data-dismiss="modal" style="padding: 2px 7px!important;">Cancel</button>
                     </div>
-                </div><!---content---->
+                </div><!---content-->
             </div>
         </div><!---modal-->
 
-        <footer role="contentinfo">
-            <div class="clearfix">
-                <ul class="list-unstyled list-inline pull-left">
-                    <li><h6 style="margin: 0;">&copy; 2020 - JDEV OFFICE SOLUTION INC</h6></li>
-                </ul>
-                <button class="pull-right btn btn-link btn-xs hidden-print" id="back-to-top"><i class="ti ti-arrow-up"></i></button>
-            </div>
-        </footer>
 
     </div>
 </div>
@@ -234,7 +236,7 @@
 
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
-
+<?php echo $_rights; ?>
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
 <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
@@ -255,6 +257,7 @@
 <script>
     $(document).ready(function(){
         var cbo_product;
+        var _cboDepartments;
         var dtProducts;
         var _date_from = $('input[name="date_from"]');
         var _date_to = $('input[name="date_to"]');
@@ -326,20 +329,31 @@
 
             cbo_product = $('#cboProduct').select2({
                 placeholder: "Please Select a Product",
-                allowClear: true
+                allowClear: false
             });
 
             cbo_product.select2('val',1);
+
+            _cboDepartments = $('#cbo_department').select2({
+                placeholder: "Please Select a department",
+                allowClear: false
+            });
+
+            _cboDepartments.select2('val',default_department_id);
 
             initializeDataTable();
         }();
 
         var bindEventControls=function(){
             $('#btn_excel').on('click', function(){
-                window.open('Products/transaction/export-product-history?id='+cbo_product.val()+'&start='+_date_from.val()+'&end='+_date_to.val());
+                window.open('Products/transaction/export-product-history?id='+cbo_product.val()+'&start='+_date_from.val()+'&end='+_date_to.val()+'&depid='+_cboDepartments.val());
             });
 
             cbo_product.on('select2:select', function(){
+                initializeDataTable();
+            });
+
+            _cboDepartments.on('select2:select', function(){
                 initializeDataTable();
             });
 
@@ -386,7 +400,7 @@
             $.ajax({
                 "dataType":"html",
                 "type":"POST",
-                "url":"Stock_card/transaction/stock-history?id="+cbo_product.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val(),
+                "url":"Stock_card/transaction/stock-history?id="+cbo_product.val()+'&startDate='+_date_from.val()+'&endDate='+_date_to.val()+'&depid='+_cboDepartments.val(),
             }).done(function(response){
                 $('#tbl_products > tbody').html(response);
             });

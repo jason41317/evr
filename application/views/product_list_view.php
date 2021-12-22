@@ -62,9 +62,11 @@
                                         <div class="col-sm-12">
                                             Branch : <br />
                                             <select name="department" id="cbo_departments" data-error-msg="Branch is required." required>
-
+                                                <option value="0">ALL DEPARTMENTS</option>
                                                 <?php foreach($departments as $department){ ?>
-                                                    <option value="<?php echo $department->department_id; ?>" <?php echo ($department->department_id==1?"selected":""); ?>><?php echo $department->department_name; ?></option>
+                                                    <option value="<?php echo $department->department_id; ?>">
+                                                        <?php echo $department->department_name; ?>
+                                                    </option>
                                                 <?php } ?>
                                             </select>
                                         </div>
@@ -114,7 +116,7 @@
 
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <input type="checkbox" id="chk_show_all" value="1">Show Items with 0 Qty
+                                            <input type="checkbox" id="chk_show_all" value="1"> <label for="chk_show_all" style="font-weight: normal;">Show Items with 0 Qty</label>
                                         </div>
                                     </div>
 
@@ -202,8 +204,7 @@
             });
 
             $('#btn_export').click(function(){
-                window.open('Product_list/transaction/export?date='+$('#dt_date_filter').val()+'&type_id='+$('#cboProductType').select2('val')+'&show_all='+$('#chk_show_all:checked').val()+'&supid='+_cboSuppliers.select2('val'));
-
+                window.open('Product_list/transaction/export?date='+$('#dt_date_filter').val()+'&type_id='+$('#cboProductType').select2('val')+'&show_all='+$('#chk_show_all:checked').val()+'&depid='+_cboDepartments.select2('val')+'&supid='+_cboSuppliers.select2('val'));
             });
 
 
@@ -216,7 +217,9 @@
                 enabled: false
             });
 
-            _cboDepartments.select2("enable",false);
+            _cboDepartments.select2("val",0);
+
+            // _cboDepartments.select2("enable",false);
 
             _cboSuppliers=$("#cboSuppliers").select2({
                 placeholder: "Please select supplier.",
@@ -252,9 +255,6 @@
             });
 
         }();
-
-
-        _cboDepartments.select2('val',1);
 
     });
 </script>

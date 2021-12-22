@@ -351,6 +351,7 @@
                                 <th width="10%"><center>Expiration Date</center></th>
                                 <th width="13%"><center>Batch #</center></th>
                                 <th><center><strong>Action</strong></center></th>
+                                <th class="hidden">Discounts</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -662,8 +663,8 @@ $(document).ready(function(){
         tax : 'td:eq(6)',
         total : 'td:eq(7)',
         vat_input : 'td:eq(8)',
-        net_vat : 'td:eq(9)'
-
+        net_vat : 'td:eq(9)',
+        global_discount : 'td:eq(14)'
     };
 
 
@@ -765,7 +766,7 @@ $(document).ready(function(){
 
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Issue item to Branch.",
-            allowClear: true
+            allowClear: false
         });
 
 
@@ -810,7 +811,8 @@ $(document).ready(function(){
                     //var prod_type=$('#cbo_prodType').select2('val');
 
                     var prod_type=$('#cbo_prodType').select2('val');
-                    return url+'?type='+prod_type+'&description='+uriEncodedQuery;
+                    var department_id=$('#cbo_departments').select2('val');
+                    return url+'?type='+prod_type+'&description='+uriEncodedQuery+'&department_id='+department_id;
                 }
             }
         });
@@ -883,6 +885,8 @@ $(document).ready(function(){
                 tax_exempt : false,
                 adjust_tax_rate : tax_rate,
                 adjust_price : suggestion.purchase_cost,
+                adjust_global_discount : "0.00",
+                global_discount_amount : "0.00",
                 adjust_discount : "0.00",
                 tax_type_id : null,
                 adjust_line_total_price : total,
@@ -1114,7 +1118,11 @@ $(document).ready(function(){
             $('input[id="is_adjustment"]').prop('checked', true);
             $("#inv_no").prop('required',false);
             $('#span_invoice_no').html('ADJ-YYYYMMDD-XXX');
+            $('#cbo_departments').select2('val', default_department_id);
+
             showList(false);
+            reInitializeNumeric();
+            reComputeTotal();
         });
 
         $('#btn_browse').click(function(event){
@@ -1152,6 +1160,8 @@ $(document).ready(function(){
                 product_id: value.product_id,
                 product_desc : value.product_desc,
                 adjust_line_total_discount : value.inv_line_total_discount,
+                adjust_global_discount : value.total_overall_discount,
+                global_discount_amount : value.global_discount_amount,
                 tax_exempt : false,
                 adjust_tax_rate : value.inv_tax_rate,
                 adjust_price : value.inv_price,
@@ -1237,7 +1247,9 @@ $(document).ready(function(){
                                     tax_exempt : false,
                                     adjust_tax_rate : value.adjust_tax_rate,
                                     adjust_price : value.adjust_price,
-                                    adjust_discount : value.adjust_discount,
+                                    adjust_discount : value.adjust_discount,  
+                                    adjust_global_discount : value.adjust_global_discount,
+                                    global_discount_amount : value.global_discount_amount,
                                     tax_type_id : null,
                                     adjust_line_total_price : value.adjust_line_total_price,
                                     adjust_non_tax_amount: value.adjust_non_tax_amount,
@@ -1282,6 +1294,7 @@ $(document).ready(function(){
             var discount=parseFloat(accounting.unformat(row.find(oTableItems.discount).find('input.numeric').val()));
             var qty=parseFloat(accounting.unformat(row.find(oTableItems.qty).find('input.number').val()));
             var tax_rate=parseFloat(accounting.unformat(row.find(oTableItems.tax).find('input.numeric').val()))/100;
+            var global_discount=parseFloat(accounting.unformat(row.find(oTableItems.global_discount).find('input.adjust_global_discount').val()));
 
             if(discount>price){
                 showNotification({title:"Invalid",stat:"error",msg:"Discount must not greater than unit price."});
@@ -1290,16 +1303,19 @@ $(document).ready(function(){
                 //return;
             }
 
-            var discounted_price=price-discount;
-            var line_total_discount=discount*qty;
-            var line_total=discounted_price*qty;
-            var net_vat=line_total/(1+tax_rate);
-            var vat_input=line_total-net_vat;
+            var line_total = price*qty; //ok not included in the output (view) and not saved in the database
+            var line_total_discount=discount*qty; 
+            var new_line_total=line_total-line_total_discount; 
+            var global_discount_amount=(new_line_total*(global_discount/100));
+            var total_after_global = new_line_total-(new_line_total*(global_discount/100));
+            var net_vat=total_after_global/(1+tax_rate);
+            var vat_input=total_after_global-net_vat;
 
-            $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(line_total,2)); // line total amount
+            $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(total_after_global,2)); // line total amount
             $(oTableItems.total_line_discount,row).find('input.numeric').val(line_total_discount); //line total discount
             $(oTableItems.net_vat,row).find('input.numeric').val(net_vat); //net of vat
             $(oTableItems.vat_input,row).find('input.numeric').val(vat_input); //vat input
+            $(oTableItems.global_discount,row).find('input.global_discount_amount').val(global_discount_amount); //line total discount
 
             //console.log(net_vat);
             reComputeTotal();
@@ -1581,11 +1597,12 @@ $(document).ready(function(){
             '<td><input type="text" name="exp_date[]" class="date-expire form-control" placeholder="mm/dd/yyyy" data-error-msg="Expiration Date is required!" value="'+ (d.exp_date == undefined ? '' : d.exp_date) +'" required></td>' +
             '<td><input name="batch_code[]" type="text" class="form-control" value="'+d.batch_no+'"></td>'+
             '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
+            '<td class="hidden">'+
+                '<input type="hidden" name="adjust_global_discount[]" class="numeric adjust_global_discount form-control" value="'+ accounting.formatNumber(d.adjust_global_discount,2)+'" style="text-align:right;" readonly>'+
+                '<input type="hidden" name="global_discount_amount[]" class="numeric global_discount_amount form-control" value="'+ accounting.formatNumber(d.global_discount_amount,2)+'" style="text-align:right;" readonly>'+
+            '</td>'+
             '</tr>';
     };
-
-
-
 
     var reComputeTotal=function(){
         var rows=$('#tbl_items > tbody tr');

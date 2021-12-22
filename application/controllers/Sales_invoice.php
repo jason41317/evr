@@ -107,7 +107,7 @@ class Sales_invoice extends CORE_Controller
     }
 
 
-    function transaction($txn = null,$id_filter=null) {
+    function transaction($txn = null,$id_filter=null,$group=null) {
         switch ($txn){
             case 'current-invoice-no':
                 $m_invoice=$this->Sales_invoice_model;
@@ -120,15 +120,17 @@ class Sales_invoice extends CORE_Controller
 
             case 'current-items':
                 $type=$this->input->get('type');
+                $department_id=$this->input->get('depid');
                 $description=$this->input->get('description');
-                echo json_encode($this->Products_model->get_current_item_list($description,$type));
+                echo json_encode($this->Products_model->get_current_item_list($description,$type,$department_id));
                 break;
 
 
             case 'current-items-search':
                 $type=$this->input->post('type');
+                $department_id=$this->input->post('depid');
                 $description=trim($this->input->post('description'));
-                $response['data'] = $this->Products_model->get_current_item_list($description,$type);
+                $response['data'] = $this->Products_model->get_current_item_list($description,$type,$department_id);
 
                 echo json_encode($response);
                 break;
@@ -165,7 +167,14 @@ class Sales_invoice extends CORE_Controller
                 $data['_def_css_files'] = $this->load->view('template/assets/css_files', '', TRUE);
                 $data['_def_js_files'] = $this->load->view('template/assets/js_files', '', TRUE);
 
-                $this->load->view('template/sales_invoice_content_html',$data);
+                if($group != null){
+                    if($group == 1){
+                        $this->load->view('template/sales_invoice_content_html',$data);
+                    }else if($group == 2){
+                        $this->load->view('template/sales_invoice_content_html_vismin',$data);
+                    }
+                }
+
             break;
 
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
@@ -298,8 +307,20 @@ class Sales_invoice extends CORE_Controller
                             $m_invoice->sales_order_id=$sales_order_id;
                             $m_invoice->remarks=$this->input->post('remarks',TRUE);
                             $m_invoice->terms=$this->input->post('terms',TRUE);
+                            $m_invoice->cod_pdc=$this->input->post('cod_pdc',TRUE);
                             $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                             $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+
+                            $date_delivered =$this->input->post('date_delivered',TRUE);
+
+                            if ($date_delivered != null || ""){
+                                $m_invoice->date_delivered=date('Y-m-d',strtotime($date_delivered));
+                            }else{
+                                $m_invoice->date_delivered = null;
+                            }
+
+                            $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                            $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                             $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                             $m_invoice->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                             $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -347,12 +368,12 @@ class Sales_invoice extends CORE_Controller
                                 $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                                 //unit id retrieval is change, because of TRIGGER restriction
-                                $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                                $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                                 $m_invoice_items->unit_id=$unit_id[0]->unit_id;
 
                                 //$m_invoice_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
-
-                                $on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
+                                $department_id = $this->input->post('department',TRUE);
+                                $on_hand=$m_products->get_product_current_qty($batch_no[$i], $this->get_numeric_value($prod_id[$i]), date('Y-m-d', strtotime($exp_date[$i])), $department_id);
 
                                 if ($this->get_numeric_value($inv_qty[$i]) > $this->get_numeric_value($on_hand)) {
                                     $prod_description=$unit_id[0]->product_desc;
@@ -434,11 +455,23 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice->department_id=$this->input->post('department',TRUE);
                     $m_invoice->remarks=$this->input->post('remarks',TRUE);
                     $m_invoice->terms=$this->input->post('terms',TRUE);
+                    $m_invoice->cod_pdc=$this->input->post('cod_pdc',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
                     $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
                     $m_invoice->sales_order_id=$sales_order_id;
                     $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                     $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+
+                    $date_delivered =$this->input->post('date_delivered',TRUE);
+
+                    if ($date_delivered != null || ""){
+                        $m_invoice->date_delivered=date('Y-m-d',strtotime($date_delivered));
+                    }else{
+                        $m_invoice->date_delivered = null;
+                    }
+
+                    $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                    $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                     $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_invoice->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                     $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -486,12 +519,13 @@ class Sales_invoice extends CORE_Controller
                         $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                         //unit id retrieval is change, because of TRIGGER restriction
-                        $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                        $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                         $m_invoice_items->unit_id=$unit_id[0]->unit_id;
 
                         //$m_invoice_items->set('unit_id','(SELECT unit_id FROM products WHERE product_id='.(int)$prod_id[$i].')');
 
-                        $on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
+                        $department_id = $this->input->post('department',TRUE);
+                        $on_hand=$m_products->get_product_current_qty($batch_no[$i], $this->get_numeric_value($prod_id[$i]), date('Y-m-d', strtotime($exp_date[$i])), $department_id);
 
                         if ($this->get_numeric_value($inv_qty[$i]) > $this->get_numeric_value($on_hand)) {
                             $prod_description=$unit_id[0]->product_desc;
@@ -623,6 +657,8 @@ class Sales_invoice extends CORE_Controller
         return $this->Sales_invoice_model->get_list(
             $filter_value,
             array(
+                'sales_invoice.total_overall_discount',
+                'sales_invoice.cod_pdc',
                 'sales_invoice.sales_invoice_id',
                 'sales_invoice.sales_inv_no',
                 'sales_invoice.remarks',
@@ -638,7 +674,12 @@ class Sales_invoice extends CORE_Controller
                 'sales_invoice.salesperson_id',
                 'sales_invoice.address',
                 'sales_order.so_no',
-                'sales_order.order_status_id'
+                'sales_order.order_status_id',
+                '(CASE 
+                    WHEN isnull(sales_invoice.date_delivered) 
+                    THEN ""
+                    ELSE DATE_FORMAT(sales_invoice.date_delivered,"%m/%d/%Y")
+                END) as date_delivered'
             ),
             array(
                 array('departments','departments.department_id=sales_invoice.department_id','left'),
