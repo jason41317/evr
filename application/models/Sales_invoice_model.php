@@ -10,175 +10,196 @@ class Sales_invoice_model extends CORE_Model
         parent::__construct();
     }
 
-    // function get_journal_entries($sales_invoice_id){
-    //     $sql="SELECT main.* FROM(SELECT
-    //         p.income_account_id as account_id,
-    //         '' as memo,
-    //         SUM(sii.inv_non_tax_amount) cr_amount,
-    //         0 as dr_amount
-
-    //         FROM `sales_invoice_items` as sii
-    //         INNER JOIN products as p ON sii.product_id=p.product_id
-    //         WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-    //         GROUP BY p.income_account_id
-
-    //         UNION ALL
-
-
-    //         SELECT output_tax.account_id,output_tax.memo,
-    //         SUM(output_tax.cr_amount)as cr_amount,0 as dr_amount
-    //          FROM
-    //         (SELECT sii.product_id,
-
-    //         (SELECT output_tax_account_id FROM account_integration) as account_id
-    //         ,
-    //         '' as memo,
-    //         SUM(sii.inv_tax_amount) as cr_amount,
-    //         0 as dr_amount
-
-    //         FROM `sales_invoice_items` as sii
-    //         INNER JOIN products as p ON sii.product_id=p.product_id
-    //         WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-    //         )as output_tax GROUP BY output_tax.account_id
-
-    //         UNION ALL
-
-    //         SELECT acc_receivable.account_id,acc_receivable.memo,
-    //         0 as cr_amount,SUM(acc_receivable.dr_amount) as dr_amount
-    //          FROM
-    //         (SELECT sii.product_id,
-
-    //         (SELECT receivable_account_id FROM account_integration) as account_id
-    //         ,
-    //         '' as memo,
-    //         0 cr_amount,
-    //         SUM(sii.inv_line_total_price) as dr_amount
-
-    //         FROM `sales_invoice_items` as sii
-    //         INNER JOIN products as p ON sii.product_id=p.product_id
-    //         WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-    //         ) as acc_receivable GROUP BY acc_receivable.account_id)as main WHERE main.dr_amount>0 OR main.cr_amount>0";
-
-    //     return $this->db->query($sql)->result();
-    // }
-
-
     function get_journal_entries($sales_invoice_id){
+        $sql="SELECT main.* FROM(SELECT
+            p.income_account_id as account_id,
+            '' as memo,
+            (SUM(sii.inv_non_tax_amount) + si.total_overall_discount_amount) cr_amount,
+            0 as dr_amount
 
-    $sql="SELECT main.* FROM(
-                SELECT acc_receivable.account_id,acc_receivable.memo,
-                0 as cr_amount,SUM(acc_receivable.dr_amount) as dr_amount
-                 FROM
-                (SELECT sii.product_id,
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            LEFT JOIN sales_invoice si ON si.sales_invoice_id = sii.sales_invoice_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+            GROUP BY p.income_account_id
 
-                (SELECT receivable_account_id FROM account_integration) as account_id
-                ,
-                '' as memo,
-                0 cr_amount,
-                SUM(sii.inv_line_total_price) as dr_amount
+            UNION ALL
 
-                FROM `sales_invoice_items` as sii
-                INNER JOIN products as p ON sii.product_id=p.product_id
-                WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-                ) as acc_receivable GROUP BY acc_receivable.account_id
-                
-                UNION ALL 
-                
+
+            SELECT output_tax.account_id,output_tax.memo,
+            SUM(output_tax.cr_amount)as cr_amount,0 as dr_amount
+             FROM
+            (SELECT sii.product_id,
+
+            (SELECT output_tax_account_id FROM account_integration) as account_id
+            ,
+            '' as memo,
+            SUM(sii.inv_tax_amount) as cr_amount,
+            0 as dr_amount
+
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+            )as output_tax GROUP BY output_tax.account_id
+
+            UNION ALL
+
+            SELECT acc_receivable.account_id,acc_receivable.memo,
+            0 as cr_amount,SUM(acc_receivable.dr_amount) as dr_amount
+             FROM
+            (SELECT sii.product_id,
+
+            (SELECT receivable_account_id FROM account_integration) as account_id
+            ,
+            '' as memo,
+            0 cr_amount,
+            SUM(sii.inv_line_total_price) as dr_amount
+
+            FROM `sales_invoice_items` as sii
+            INNER JOIN products as p ON sii.product_id=p.product_id
+            WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+            ) as acc_receivable GROUP BY acc_receivable.account_id
+
+            UNION ALL
+
                 SELECT 
-                p.cos_account_id as account_id,
-                '' as memo,
-                0 as cr_amount,
-                -- SUM(sii.inv_qty * p.purchase_cost) as dr_amount
-                SUM(sii.inv_qty * sii.cost_upon_invoice) as dr_amount
-                FROM `sales_invoice_items` as sii
-                INNER JOIN products as p ON sii.product_id=p.product_id
-                WHERE sii.sales_invoice_id=$sales_invoice_id AND p.cos_account_id >0
-                GROUP BY p.cos_account_id
+                    discount.account_id,
+                    discount.memo,
+                    0 as cr_amount,
+                    SUM(discount.dr_amount) as dr_amount
 
-                UNION ALL
-                
-                -- SELECT acc_discount.account_id,acc_discount.memo,
-                -- 0 as cr_amount,SUM(acc_discount.dr_amount) as dr_amount
-                --  FROM
-                -- (SELECT sii.product_id,
-
-                -- (SELECT receivable_discount_account_id FROM account_integration) as account_id
-                -- ,
-                -- '' as memo,
-                -- 0 cr_amount,
-                -- SUM((sii.inv_line_total_price - sii.inv_line_total_after_global) + sii.inv_line_total_discount) as dr_amount
-
-                -- FROM `sales_invoice_items` as sii
-                -- INNER JOIN products as p ON sii.product_id=p.product_id
-                -- WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-                -- ) as acc_discount GROUP BY acc_discount.account_id
-
-
-                SELECT
-                p.sd_account_id as account_id,
-                '' as memo,
-                0 cr_amount,
-                SUM(sii.inv_qty*sii.inv_discount) as dr_amount
-
-                FROM `sales_invoice_items` as sii
-                INNER JOIN products as p ON sii.product_id=p.product_id
-                WHERE sii.sales_invoice_id=$sales_invoice_id AND p.sd_account_id>0
-                GROUP BY p.sd_account_id
-
-                UNION ALL
-
-                SELECT
-                p.expense_account_id as account_id,
-                '' as memo,
-                -- SUM(sii.inv_qty * p.purchase_cost) cr_amount,
-                SUM(sii.inv_qty * sii.cost_upon_invoice) cr_amount,
-                0 as dr_amount
-
-                FROM `sales_invoice_items` as sii
-                INNER JOIN products as p ON sii.product_id=p.product_id
-                WHERE sii.sales_invoice_id=$sales_invoice_id AND p.expense_account_id>0
-                GROUP BY p.expense_account_id
-
-                UNION ALL
-
-                SELECT
-                p.income_account_id as account_id,
-                '' as memo,
-                SUM(sii.inv_non_tax_amount) cr_amount,
-                0 as dr_amount
-
-                FROM `sales_invoice_items` as sii
-                INNER JOIN products as p ON sii.product_id=p.product_id
-                WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-                GROUP BY p.income_account_id
-
-
-                UNION ALL
-
-                SELECT output_tax.account_id,
-                output_tax.memo,
-                SUM(output_tax.cr_amount)as cr_amount,
-                0 as dr_amount
                  FROM
-                (SELECT sii.product_id,
+                (SELECT
+                    (SELECT receivable_discount_account_id FROM account_integration) as account_id,
+                    '' as memo,
+                    0 cr_amount,
+                    SUM(si.total_overall_discount_amount) as dr_amount
+                FROM `sales_invoice` as si
+                WHERE si.sales_invoice_id=$sales_invoice_id
+                ) as discount GROUP BY discount.account_id
 
-                (SELECT output_tax_account_id FROM account_integration) as account_id
-                ,
-                '' as memo,
-                SUM(sii.inv_tax_amount) as cr_amount,
-                0 as dr_amount
-                FROM `sales_invoice_items` as sii
-                INNER JOIN products as p ON sii.product_id=p.product_id
-                WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
-                )as output_tax GROUP BY output_tax.account_id
+            )as main WHERE main.dr_amount>0 OR main.cr_amount>0";
+
+        return $this->db->query($sql)->result();
+    }
 
 
-                )as main WHERE main.dr_amount>0 OR main.cr_amount>0
+    // function get_journal_entries($sales_invoice_id){
+
+    // $sql="SELECT main.* FROM(
+    //             SELECT acc_receivable.account_id,acc_receivable.memo,
+    //             0 as cr_amount,SUM(acc_receivable.dr_amount) as dr_amount
+    //              FROM
+    //             (SELECT sii.product_id,
+
+    //             (SELECT receivable_account_id FROM account_integration) as account_id
+    //             ,
+    //             '' as memo,
+    //             0 cr_amount,
+    //             SUM(sii.inv_line_total_price) as dr_amount
+
+    //             FROM `sales_invoice_items` as sii
+    //             INNER JOIN products as p ON sii.product_id=p.product_id
+    //             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+    //             ) as acc_receivable GROUP BY acc_receivable.account_id
+                
+    //             UNION ALL 
+                
+    //             SELECT 
+    //             p.cos_account_id as account_id,
+    //             '' as memo,
+    //             0 as cr_amount,
+    //             -- SUM(sii.inv_qty * p.purchase_cost) as dr_amount
+    //             SUM(sii.inv_qty * sii.cost_upon_invoice) as dr_amount
+    //             FROM `sales_invoice_items` as sii
+    //             INNER JOIN products as p ON sii.product_id=p.product_id
+    //             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.cos_account_id >0
+    //             GROUP BY p.cos_account_id
+
+    //             UNION ALL
+                
+    //             -- SELECT acc_discount.account_id,acc_discount.memo,
+    //             -- 0 as cr_amount,SUM(acc_discount.dr_amount) as dr_amount
+    //             --  FROM
+    //             -- (SELECT sii.product_id,
+
+    //             -- (SELECT receivable_discount_account_id FROM account_integration) as account_id
+    //             -- ,
+    //             -- '' as memo,
+    //             -- 0 cr_amount,
+    //             -- SUM((sii.inv_line_total_price - sii.inv_line_total_after_global) + sii.inv_line_total_discount) as dr_amount
+
+    //             -- FROM `sales_invoice_items` as sii
+    //             -- INNER JOIN products as p ON sii.product_id=p.product_id
+    //             -- WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+    //             -- ) as acc_discount GROUP BY acc_discount.account_id
+
+
+    //             SELECT
+    //             p.sd_account_id as account_id,
+    //             '' as memo,
+    //             0 cr_amount,
+    //             SUM(sii.inv_qty*sii.inv_discount) as dr_amount
+
+    //             FROM `sales_invoice_items` as sii
+    //             INNER JOIN products as p ON sii.product_id=p.product_id
+    //             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.sd_account_id>0
+    //             GROUP BY p.sd_account_id
+
+    //             UNION ALL
+
+    //             SELECT
+    //             p.expense_account_id as account_id,
+    //             '' as memo,
+    //             -- SUM(sii.inv_qty * p.purchase_cost) cr_amount,
+    //             SUM(sii.inv_qty * sii.cost_upon_invoice) cr_amount,
+    //             0 as dr_amount
+
+    //             FROM `sales_invoice_items` as sii
+    //             INNER JOIN products as p ON sii.product_id=p.product_id
+    //             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.expense_account_id>0
+    //             GROUP BY p.expense_account_id
+
+    //             UNION ALL
+
+    //             SELECT
+    //             p.income_account_id as account_id,
+    //             '' as memo,
+    //             SUM(sii.inv_non_tax_amount) cr_amount,
+    //             0 as dr_amount
+
+    //             FROM `sales_invoice_items` as sii
+    //             INNER JOIN products as p ON sii.product_id=p.product_id
+    //             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+    //             GROUP BY p.income_account_id
+
+
+    //             UNION ALL
+
+    //             SELECT output_tax.account_id,
+    //             output_tax.memo,
+    //             SUM(output_tax.cr_amount)as cr_amount,
+    //             0 as dr_amount
+    //              FROM
+    //             (SELECT sii.product_id,
+
+    //             (SELECT output_tax_account_id FROM account_integration) as account_id
+    //             ,
+    //             '' as memo,
+    //             SUM(sii.inv_tax_amount) as cr_amount,
+    //             0 as dr_amount
+    //             FROM `sales_invoice_items` as sii
+    //             INNER JOIN products as p ON sii.product_id=p.product_id
+    //             WHERE sii.sales_invoice_id=$sales_invoice_id AND p.income_account_id>0
+    //             )as output_tax GROUP BY output_tax.account_id
+
+
+    //             )as main WHERE main.dr_amount>0 OR main.cr_amount>0
                 
 
-                ";
-            return $this->db->query($sql)->result();
-    }
+    //             ";
+    //         return $this->db->query($sql)->result();
+    // }
 
     function get_sales_summary($start=null,$end=null){ // ORIGINAL SALES SUMMARY  05-28-2020 -> SEARCH FOR get_sales_summary_2020 for the revised one. Sales return module was added there.
         $sql="SELECT mQ.*,DATE_FORMAT(mQ.date_invoice,'%m/%d/%Y') as inv_date,(mQ.sales-mQ.cost_of_sales) as net_profit
@@ -255,6 +276,12 @@ class Sales_invoice_model extends CORE_Model
 
                 FROM
                 (SELECT si.sales_inv_no,si.date_invoice,sii.inv_price, CONCAT(sp.firstname, ' ', sp.lastname, ' - ', sp.acr_name) AS salesperson_name,
+                (CASE 
+                    WHEN isnull(si.date_delivered) 
+                    THEN ''
+                    ELSE DATE_FORMAT(si.date_delivered,'%m/%d/%Y')
+                END) as date_delivered,
+
                 '' as dr_si,'' as vr,c.customer_name,
                 IF(sii.inv_price=0,CONCAT(pr.product_desc,' (Free)'),pr.product_desc)as product_desc,
                 refp.product_type,
@@ -272,7 +299,9 @@ class Sales_invoice_model extends CORE_Model
                 IF(sii.inv_price=0,
                   sii.cost_upon_invoice, /**change @ 3/8/2017 even if it is free, show the cost when it was invoice**/
                   sii.cost_upon_invoice
-                )as purchase_cost /**GET THE COST OF THE PRODUCT WHEN IT WAS INVOICED**/
+                )as purchase_cost, /**GET THE COST OF THE PRODUCT WHEN IT WAS INVOICED**/
+
+                IFNULL(si.total_overall_discount_amount - IFNULL(returns.return_discount,0), 0) as discount_amount
 
 
 
@@ -292,7 +321,8 @@ class Sales_invoice_model extends CORE_Model
                     SUM(aii.adjust_qty) as return_qty,
                     SUM(aii.adjust_line_total_price) return_line_total_price,
                     SUM(aii.adjust_tax_amount) return_tax_amount,
-                    SUM(aii.adjust_non_tax_amount) return_non_tax_amount
+                    SUM(aii.adjust_non_tax_amount) return_non_tax_amount,
+                    SUM(aii.global_discount_amount) return_discount
 
                     FROM adjustment_items aii 
                     LEFT JOIN adjustment_info ai ON ai.adjustment_id = aii.adjustment_id  

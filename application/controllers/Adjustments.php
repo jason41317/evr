@@ -64,7 +64,7 @@ class Adjustments extends CORE_Controller
         $data['customers']=$this->Customers_model->get_list(array("is_deleted"=>FALSE));
         $data['title'] = 'Inventory Adjustment';
         
-        (in_array('2-5',$this->session->user_rights)? 
+        (in_array('11-3',$this->session->user_rights)? 
         $this->load->view('adjustment_view', $data)
         :redirect(base_url('dashboard')));
 
@@ -162,6 +162,8 @@ class Adjustments extends CORE_Controller
                 $adjust_qty=$this->input->post('adjust_qty',TRUE);
                 $adjust_price=$this->input->post('adjust_price',TRUE);
                 $adjust_discount=$this->input->post('adjust_discount',TRUE);
+                $adjust_global_discount=$this->input->post('adjust_global_discount',TRUE);
+                $global_discount_amount=$this->input->post('global_discount_amount',TRUE);
                 $adjust_line_total_discount=$this->input->post('adjust_line_total_discount',TRUE);
                 $adjust_tax_rate=$this->input->post('adjust_tax_rate',TRUE);
                 $adjust_line_total_price=$this->input->post('adjust_line_total_price',TRUE);
@@ -180,6 +182,8 @@ class Adjustments extends CORE_Controller
                     $m_adjustment_items->adjust_price=$this->get_numeric_value($adjust_price[$i]);
                     $m_adjustment_items->adjust_discount=$this->get_numeric_value($adjust_discount[$i]);
                     $m_adjustment_items->adjust_line_total_discount=$this->get_numeric_value($adjust_line_total_discount[$i]);
+                    $m_adjustment_items->adjust_global_discount=$this->get_numeric_value($adjust_global_discount[$i]);
+                    $m_adjustment_items->global_discount_amount=$this->get_numeric_value($global_discount_amount[$i]);
                     $m_adjustment_items->adjust_tax_rate=$this->get_numeric_value($adjust_tax_rate[$i]);
                     $m_adjustment_items->adjust_line_total_price=$this->get_numeric_value($adjust_line_total_price[$i]);
                     $m_adjustment_items->adjust_tax_amount=$this->get_numeric_value($adjust_tax_amount[$i]);
@@ -266,6 +270,8 @@ class Adjustments extends CORE_Controller
                 $adjust_price=$this->input->post('adjust_price',TRUE);
                 $adjust_discount=$this->input->post('adjust_discount',TRUE);
                 $adjust_line_total_discount=$this->input->post('adjust_line_total_discount',TRUE);
+                $adjust_global_discount=$this->input->post('adjust_global_discount',TRUE);
+                $global_discount_amount=$this->input->post('global_discount_amount',TRUE);
                 $adjust_tax_rate=$this->input->post('adjust_tax_rate',TRUE);
                 $adjust_qty=$this->input->post('adjust_qty',TRUE);
                 $adjust_line_total_price=$this->input->post('adjust_line_total_price',TRUE);
@@ -283,6 +289,8 @@ class Adjustments extends CORE_Controller
                     $m_adjustment_items->adjust_price=$this->get_numeric_value($adjust_price[$i]);
                     $m_adjustment_items->adjust_discount=$this->get_numeric_value($adjust_discount[$i]);
                     $m_adjustment_items->adjust_line_total_discount=$this->get_numeric_value($adjust_line_total_discount[$i]);
+                    $m_adjustment_items->adjust_global_discount=$this->get_numeric_value($adjust_global_discount[$i]);
+                    $m_adjustment_items->global_discount_amount=$this->get_numeric_value($global_discount_amount[$i]);
                     $m_adjustment_items->adjust_tax_rate=$this->get_numeric_value($adjust_tax_rate[$i]);
                     $m_adjustment_items->adjust_qty=$this->get_numeric_value($adjust_qty[$i]);
                     $m_adjustment_items->adjust_line_total_price=$this->get_numeric_value($adjust_line_total_price[$i]);

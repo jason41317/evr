@@ -135,6 +135,7 @@ class Login extends CORE_Controller {
                             array(
                                 'user_id'=>$result->row()->user_id,
                                 'user_group_id'=>$result->row()->user_group_id,
+                                'default_department_id'=>$result->row()->department_id,
                                 'user_fullname'=>$result->row()->user_fullname,
                                 'user_email'=>$result->row()->user_email,
                                 'user_photo'=>$result->row()->photo_path,

@@ -46,10 +46,11 @@ class Product_list extends CORE_Controller
                 $m_products=$this->Products_model;
 
                 $is_show_all=($this->input->get('show_all',TRUE)==1?TRUE:FALSE);
+
+                $department_id = $this->input->get('depid',TRUE);
                 $prod_type_id=$this->input->get('type_id',TRUE);
                 $date=date('Y-m-d',strtotime($this->input->get('date',TRUE)));
                 $supplier_id=$this->input->get('supid',TRUE);
-
 
                 $excel=$this->excel;
                 $excel->setActiveSheetIndex(0);
@@ -69,7 +70,7 @@ class Product_list extends CORE_Controller
                     ->setCellValue('G4', 'SRP')
                     ->setCellValue('H4', 'On Hand');
 
-                $inventory=$m_products->get_inventory($date,$prod_type_id,$is_show_all,$supplier_id);
+                $inventory=$m_products->get_inventory($date,$prod_type_id,$is_show_all,$supplier_id,$department_id);
                 $rows=array();
                 foreach($inventory as $x){
                     $rows[]=array(

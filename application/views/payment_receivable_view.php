@@ -513,8 +513,7 @@
 
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
-
-
+<?php echo $_rights; ?>
 
 
 <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
@@ -714,10 +713,10 @@
                 //$('.toggle-fullscreen').click();
                 clearFields($('#div_payment_fields'));
                 resetSummaryDetails();
-                showList(false);
-
+                $('#cbo_branch').select2('val', default_department_id);
                 _cboReceiptType.select2('val',1); //set official receipt as default
 
+                showList(false);
             });
 
 
@@ -738,6 +737,7 @@
 
 
             var getCustomerPayables = function(){
+                var department_id=_cboBranch.select2('val');
                 var customer_id=_cboCustomers.select2('val');
                 var start_date=$('#start_date').val();
                 var end_date=$('#end_date').val();
@@ -745,7 +745,7 @@
                 $.ajax({
                     "dataType":"html",
                     "type":"GET",
-                    "url":"Customers/transaction/receivables?id="+customer_id+"&start_date="+start_date+"&end_date="+end_date,
+                    "url":"Customers/transaction/receivables?id="+customer_id+"&depid="+department_id+"&start_date="+start_date+"&end_date="+end_date,
                     "beforeSend": function(){
                         var obj=$("#tbl_receivables");
                         showTableLoader(obj);
@@ -759,6 +759,10 @@
             };
 
             _cboCustomers.on("select2:select", function (e) {
+                getCustomerPayables();
+            });
+
+            _cboBranch.on("select2:select", function (e) {
                 getCustomerPayables();
             });
 

@@ -102,23 +102,26 @@ class Purchases extends CORE_Controller
                     $supplier_id=$this->input->get('sid',TRUE);
                     $type_id=$this->input->get('type',TRUE);
                     $description=$this->input->get('description',TRUE);
+                    $department_id=$this->input->get('department_id',TRUE);
 
                     //not 3 means show all product type
-                    $data=$m_products->get_list(
-                                "(products.product_code LIKE '".$description."%' OR products.product_desc LIKE '%".$description."%' OR products.product_desc1 LIKE '%".$description."%') AND products.is_deleted=FALSE ".($supplier_id>0?" AND products.supplier_id=".$supplier_id:"").($type_id==1||$type_id==2?" AND products.refproduct_id=".$type_id:""),
+                    $data = $m_products->get_order_list($type_id,$description,$department_id,$supplier_id);
 
-                            array(
-                                'products.*',
-                                'IFNULL(tax_types.tax_rate,0) as tax_rate',
-                                'FORMAT(products.purchase_cost,4)as cost',
-                                'units.unit_name'
-                            ),
+                    // $data=$m_products->get_list(
+                    //             "(products.product_code LIKE '".$description."%' OR products.product_desc LIKE '%".$description."%' OR products.product_desc1 LIKE '%".$description."%') AND products.is_deleted=FALSE ".($supplier_id>0?" AND products.supplier_id=".$supplier_id:"").($type_id==1||$type_id==2?" AND products.refproduct_id=".$type_id:""),
 
-                            array(
-                                array('tax_types','tax_types.tax_type_id=products.tax_type_id','left'),
-                                array('units','units.unit_id=products.unit_id','left')
-                            )
-                        );
+                    //         array(
+                    //             'products.*',
+                    //             'IFNULL(tax_types.tax_rate,0) as tax_rate',
+                    //             'FORMAT(products.purchase_cost,4)as cost',
+                    //             'units.unit_name'
+                    //         ),
+
+                    //         array(
+                    //             array('tax_types','tax_types.tax_type_id=products.tax_type_id','left'),
+                    //             array('units','units.unit_id=products.unit_id','left')
+                    //         )
+                    //     );
                         
                     echo json_encode($data);
                     break;

@@ -25,9 +25,10 @@ class Users_model extends CORE_Model{
     }
 
     function authenticate_user($uname,$pword){
-        $this->db->select('ua.user_id,ua.user_name,ua.user_group_id,ua.photo_path,ua.user_email,CONCAT_WS(" ",ua.user_fname,ua.user_mname,ua.user_lname) as user_fullname');
+        $this->db->select('ua.user_id,ua.user_name,ua.user_group_id,ua.department_id,ua.photo_path,ua.user_email,CONCAT_WS(" ",ua.user_fname,ua.user_mname,ua.user_lname) as user_fullname');
         $this->db->from('user_accounts as ua');
         $this->db->join('user_groups as ug', 'ua.user_group_id = ug.user_group_id','left');
+        $this->db->where('ua.is_deleted', FALSE);
         $this->db->where('ua.user_name', $uname);
         $this->db->where('ua.user_pword', sha1($pword));
         return $this->db->get();
@@ -57,12 +58,13 @@ class Users_model extends CORE_Model{
 
     function get_user_list($id=null){
 
-        $this->db->select('ua.user_id,ua.user_name,ua.user_lname,ua.user_fname,ua.user_mname,ua.photo_path');
-        $this->db->select('ua.user_address,ua.user_email,ua.user_mobile,ua.user_telephone');
+        $this->db->select('ua.user_id,ua.user_name,ua.user_lname,ua.user_fname,ua.user_mname,ua.photo_path,ua.department_id');
+        $this->db->select('ua.user_address,ua.user_email,ua.user_mobile,ua.user_telephone,d.department_name');
         $this->db->select('DATE_FORMAT(ua.user_bdate,"%m/%d/%Y")as user_bdate,ua.user_group_id');
         $this->db->select('ua.is_active,ug.user_group,CONCAT_WS(" ",ua.user_fname,ua.user_mname,ua.user_lname)as full_name');
         $this->db->from('user_accounts as ua');
         $this->db->join('user_groups as ug', 'ua.user_group_id = ug.user_group_id','left');
+        $this->db->join('departments as d', 'd.department_id = ua.department_id','left');
         $this->db->where('ua.is_active=', 1);
         $this->db->where('ua.is_deleted=', 0);
 

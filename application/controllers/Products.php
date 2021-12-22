@@ -9,6 +9,7 @@ class Products extends CORE_Controller
         $this->validate_session();
         $this->load->library('excel');
         $this->load->model('Products_model');
+        $this->load->model('Departments_model');
         $this->load->model('Categories_model');
         $this->load->model('Units_model');
         $this->load->model('Item_type_model');
@@ -236,18 +237,31 @@ class Products extends CORE_Controller
                 }
 
                 break;
+
             case 'product-history':
                 $product_id=$this->input->get('id');
+                $depid=$this->input->get('depid');
+                $type=$this->input->get('type');
+                $as_of_date = $this->input->get('date');
+
                 $m_products=$this->Products_model;
-                
-                $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,date('Y-m-01'))[0]; 
+
+                $previous_date = date('Y-m-01', strtotime($as_of_date));
+                $current_date = date('Y-m-d', strtotime($as_of_date));
+
+                $balance_as_of = $m_products->get_product_balance_as_of_date($product_id,$previous_date,$depid)[0]; 
                 $data['balance_as_of'] =$balance_as_of;
-                $data['products']=$m_products->get_product_history($product_id,date('Y-m-01'),date('Y-m-d'),$balance_as_of->balance);
+                $data['products']=$m_products->get_product_history($product_id,$previous_date,$current_date,$balance_as_of->balance,$depid);
                 $data['product_id']=$product_id;
-                $data['as_of_date'] = date('Y-m-01');
-                $this->load->view('template/product_history_menus',$data);
-                $this->load->view('template/product_history',$data);
+                $data['as_of_date'] = $previous_date;
+
+                if($type <= 0){
+                    $this->load->view('template/product_history_menus',$data);
+                }else{
+                    $this->load->view('template/product_history',$data);
+                }
                 break;
+
             case 'get-current-invoice-cost':
                 $m_inv=$this->Sales_invoice_model;
                 $m_inv_items=$this->Sales_invoice_item_model;
@@ -302,9 +316,11 @@ class Products extends CORE_Controller
                 echo json_encode($response);
 
                 break;
+
             case 'export-product-history':
                 $excel=$this->excel;
                 $product_id=$this->input->get('id');
+                $depid=$this->input->get('depid');
                 $start=date('Y-m-d',strtotime($this->input->get('start')));
                 $end=date('Y-m-d',strtotime($this->input->get('end')));
 
@@ -315,8 +331,17 @@ class Products extends CORE_Controller
                 }
 
                 $m_products=$this->Products_model;
+                $m_department=$this->Departments_model;
 
                 $product_info=$m_products->get_list($product_id);
+                $dept_info=$m_department->get_list($depid);
+
+                if($depid > 0){
+                    $department_name = $dept_info[0]->department_name;
+                }else{
+                    $department_name = "All Branches";
+                }
+
 
                 $excel->setActiveSheetIndex(0);
 
@@ -326,7 +351,8 @@ class Products extends CORE_Controller
 
                 $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A1',$product_info[0]->product_desc."  History")
-                    ->setCellValue('A2',"Period ".date('m/d/Y',strtotime($start))." to ".date('m/d/Y',strtotime($end)));
+                    ->setCellValue('A2',"Period ".date('m/d/Y',strtotime($start))." to ".date('m/d/Y',strtotime($end)))
+                    ->setCellValue('A3',"Branch : ".$department_name);
 
                 //create headers
                 $excel->getActiveSheet()->getStyle('A4:I4')->getFont()->setBold(TRUE);
@@ -346,7 +372,7 @@ class Products extends CORE_Controller
                                         ->setCellValue('D5', 'System Generated Balance')
                                         ->setCellValue('I5', $balance_as_of->balance);
 
-                $transaction=$m_products->get_product_history($product_id,$start,$end,$balance_as_of->balance);
+                $transaction=$m_products->get_product_history($product_id,$start,$end,$balance_as_of->balance,$depid);
 
                 $rows=array();
                 foreach($transaction as $x){

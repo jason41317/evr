@@ -8,6 +8,7 @@ class Users extends CORE_Controller
         parent::__construct('');
         $this->validate_session();
         $this->load->model('Users_model');
+        $this->load->model('Departments_model');
         $this->load->model('User_groups_model');
     }
 
@@ -19,6 +20,7 @@ class Users extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['user_groups']=$this->User_groups_model->get_list(array('is_deleted'=>0));
+        $data['departments']=$this->Departments_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
         $data['title'] = 'User Account Management';
 
         (in_array('6-5',$this->session->user_rights)? 
@@ -61,6 +63,7 @@ class Users extends CORE_Controller
                 $m_users->user_telephone=$this->input->post('user_telephone',TRUE);
                 $m_users->user_bdate=date('Y-m-d',strtotime($this->input->post('user_bdate',TRUE)));
                 $m_users->user_group_id=$this->input->post('user_group_id',TRUE);
+                $m_users->department_id=$this->input->post('department_id',TRUE);
                 $m_users->photo_path=$this->input->post('photo_path',TRUE);
 
                 $m_users->set('date_created','NOW()');
@@ -93,6 +96,7 @@ class Users extends CORE_Controller
                 $m_users->user_telephone=$this->input->post('user_telephone',TRUE);
                 $m_users->user_bdate=date('Y-m-d',strtotime($this->input->post('user_bdate',TRUE)));
                 $m_users->user_group_id=$this->input->post('user_group_id',TRUE);
+                $m_users->department_id=$this->input->post('department_id',TRUE);
                 $m_users->photo_path=$this->input->post('photo_path');
 
                 $m_users->set('date_modified','NOW()');

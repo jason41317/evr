@@ -186,6 +186,7 @@ class Sales_invoice_other extends CORE_Controller
                 //check if department is already created as CUSTOMER
                 $issue_department=$this->input->post('issue_to_department',TRUE);
                 $link_customers=$m_customers->get_list(array('link_department_id'=>$issue_department));
+
                 if(count($link_customers)>0){ //if exist
                     $m_departments=$this->Departments_model;
                     $link_department=$m_departments->get_list(array('department_id'=>$issue_department));
@@ -214,13 +215,15 @@ class Sales_invoice_other extends CORE_Controller
                 $m_invoice->set('date_created','NOW()'); //treat NOW() as function and not string
 
                 $m_invoice->customer_id=$customer_id;
-                $m_invoice->department_id=$this->input->post('department',TRUE);
+                $m_invoice->department_id=$this->input->post('department_id',TRUE);
                 $m_invoice->issue_to_department=$this->input->post('issue_to_department',TRUE);
                 $m_invoice->address=$this->input->post('address',TRUE);
                 $m_invoice->sales_order_id=$sales_order_id;
                 $m_invoice->remarks=$this->input->post('remarks',TRUE);
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+                $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));                
                 $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_invoice->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_invoice->inv_type=2;
@@ -269,10 +272,11 @@ class Sales_invoice_other extends CORE_Controller
                     $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
-                    $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                    $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                     $m_invoice_items->unit_id=$unit_id[0]->unit_id;
 
-                    $on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
+                    $department_id = $this->input->post('department_id',TRUE);
+                    $on_hand=$m_products->get_product_current_qty($batch_no[$i], $this->get_numeric_value($prod_id[$i]), date('Y-m-d', strtotime($exp_date[$i])), $department_id);
 
                     if ($this->get_numeric_value($inv_qty[$i]) > $this->get_numeric_value($on_hand)) {
                         $prod_description=$unit_id[0]->product_desc;
@@ -372,13 +376,15 @@ class Sales_invoice_other extends CORE_Controller
                 }
 
                 $m_invoice->customer_id=$customer_id;
-                $m_invoice->department_id=$this->input->post('department',TRUE);
+                $m_invoice->department_id=$this->input->post('department_id',TRUE);
                 $m_invoice->remarks=$this->input->post('remarks',TRUE);
                 $m_invoice->issue_to_department=$this->input->post('issue_to_department',TRUE);
                 $m_invoice->address=$this->input->post('address',TRUE);
                 $m_invoice->sales_order_id=$sales_order_id;
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+                $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));                
                 $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_invoice->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -427,10 +433,11 @@ class Sales_invoice_other extends CORE_Controller
                     $m_invoice_items->cost_upon_invoice=$this->get_numeric_value($cost_upon_invoice[$i]);
 
                     //unit id retrieval is change, because of TRIGGER restriction
-                    $unit_id=$m_products->get_list(array('product_id'=>$prod_id[$i]));
+                    $unit_id=$m_products->get_list(array('product_id'=>$this->get_numeric_value($prod_id[$i])));
                     $m_invoice_items->unit_id=$unit_id[0]->unit_id;
 
-                    $on_hand=$m_products->get_product_current_qty($batch_no[$i], $prod_id[$i], date('Y-m-d', strtotime($exp_date[$i])));
+                    $department_id = $this->input->post('department_id',TRUE);
+                    $on_hand=$m_products->get_product_current_qty($batch_no[$i], $this->get_numeric_value($prod_id[$i]), date('Y-m-d', strtotime($exp_date[$i])), $department_id);
 
                     if ($this->get_numeric_value($inv_qty[$i]) > $this->get_numeric_value($on_hand)) {
                         $prod_description=$unit_id[0]->product_desc;
@@ -554,6 +561,7 @@ class Sales_invoice_other extends CORE_Controller
         return $this->Sales_invoice_model->get_list(
             $filter_value,
             array(
+                'sales_invoice.total_overall_discount',
                 'sales_invoice.sales_invoice_id',
                 'sales_invoice.sales_inv_no',
                 'sales_invoice.issue_to_department',

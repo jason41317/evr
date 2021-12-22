@@ -964,7 +964,7 @@ $(document).ready(function(){
                 { targets:[3],data: "product_type" },
                 { targets:[4],data: "category_name" },
                 {
-                    sClass: "text-right", targets:[5],data: "on_hand",
+                    visible: false, sClass: "text-right", targets:[5],data: "on_hand",
                     render: function (data, type, full, meta) {
                         if(data=="na"){
                             return data;

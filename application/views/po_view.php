@@ -229,7 +229,7 @@
                                     <th width="10%" class="align-center">Approved</th>
                                     <th width="10%" class="align-center">Status</th>
                                     <th width="5%" class="align-center">Sent</th>
-                                    <th width="12%" style="text-align: left;">Action</th>
+                                    <th width="15%" style="text-align: left;">Action</th>
                                     <th class="align-center">id</th>
                                 </tr>
                                 </thead>
@@ -880,7 +880,7 @@ $(document).ready(function(){
 
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Please select branch.",
-            allowClear: true
+            allowClear: false
         });
 
         _cboDepartments.select2('val',null);
@@ -931,8 +931,9 @@ $(document).ready(function(){
                     //var prod_type=$('#cbo_prodType').select2('val');
                     var sid=$('#cbo_suppliers').select2('val');
                     var prod_type=$('#cbo_prodType').select2('val');
+                    var department_id=$('#cbo_departments').select2('val');
 
-                    return url + '?type='+prod_type+'&sid='+sid+'&description='+uriEncodedQuery;
+                    return url + '?type='+prod_type+'&sid='+sid+'&description='+uriEncodedQuery+'&department_id='+department_id;
                 }
             }
         });
@@ -1140,6 +1141,8 @@ $(document).ready(function(){
         $('#btn_new').click(function(){
             _txnMode="new";
             $('#span_po_no').html("PO-XXXX");
+
+            $('#cbo_departments').select2('val', default_department_id);
 
             //$('.toggle-fullscreen').click();
             clearFields($('#frm_purchases'));

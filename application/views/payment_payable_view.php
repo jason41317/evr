@@ -474,7 +474,7 @@
 
 <?php echo $_switcher_settings; ?>
 <?php echo $_def_js_files; ?>
-
+<?php echo $_rights; ?>
 
 
 
@@ -679,6 +679,7 @@ $(document).ready(function(){
             clearFields($('#frm_payments'));
             checkPanel(false);
             _cboSuppliers.select2('val',null);
+            $('#cbo_branch').select2('val', default_department_id);
             resetSummaryDetails();
 
             showList(false);
@@ -728,13 +729,14 @@ $(document).ready(function(){
 
         var getSupplierPayables = function(){
             var supplier_id=_cboSuppliers.select2('val');
+            var department_id=_cboBranch.select2('val');
             var start_date=$('#start_date').val();
             var end_date=$('#end_date').val();
 
             $.ajax({
                 "dataType":"html",
                 "type":"GET",
-                "url":"Suppliers/transaction/payables?id="+supplier_id+"&start_date="+start_date+"&end_date="+end_date,
+                "url":"Suppliers/transaction/payables?id="+supplier_id+"&depid="+department_id+"&start_date="+start_date+"&end_date="+end_date,
                 "beforeSend": function(){
                     var obj=$("#tbl_payables");
                     showTableLoader(obj);
@@ -749,6 +751,10 @@ $(document).ready(function(){
 
 
         _cboSuppliers.on("select2:select", function (e) {
+            getSupplierPayables();
+        });
+
+        _cboBranch.on("select2:select", function (e) {
             getSupplierPayables();
         });
 

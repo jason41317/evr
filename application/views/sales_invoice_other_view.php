@@ -256,16 +256,16 @@
 
                                                     <div class="row">
                                                         <div class="col-sm-4">
-                                                            Branch (Main) : <br />
-                                                            <select name="department" id="cbo_departments" data-error-msg="Branch is required." required>
-                                                                <option value="0">[ Create New Branch ]</option>
+                                                            <b class="required">*</b> Branch : <br />
+                                                            <select name="department_id" id="cbo_departments" data-error-msg="Branch is required." required>
+                                                                <!-- <option value="0">[ Create New Branch ]</option> -->
                                                                 <?php foreach($departments as $department){ ?>
                                                                     <option value="<?php echo $department->department_id; ?>" <?php echo ($department->department_id==1?'selected':''); ?>><?php echo $department->department_name; ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-2 col-sm-offset-6">
-                                                            Invoice Date : <br />
+                                                            <b class="required">*</b> Invoice Date : <br />
                                                             <div class="input-group">
                                                                 <input type="text" name="date_invoice" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Invoice" data-error-msg="Please set the date this items are issued!" required>
                                                                  <span class="input-group-addon">
@@ -276,7 +276,7 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-sm-4">
-                                                            Issue to Branch / Department * : <br />
+                                                            <b class="required">*</b> Issue to Branch / Department * : <br />
                                                             <select name="issue_to_department" id="cbo_issue_departments" data-error-msg="Branch is required." required>
                                                                 <option value="0">[ Create New Branch ]</option>
                                                                 <?php foreach($departments as $department){ ?>
@@ -285,17 +285,17 @@
                                                             </select>
                                                         </div>
 
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-3">
                                                             SO # : <br />
                                                             <div class="input-group">
-                                                                <input type="text" name="so_no" class="form-control">
+                                                                <input type="text" name="so_no" class="form-control" readonly>
                                                                 <span class="input-group-addon">
                                                                     <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-2 col-sm-offset-4">
-                                                            Due Date : <br />
+                                                        <div class="col-sm-2 col-sm-offset-3">
+                                                            <b class="required">*</b> Due Date : <br />
                                                             <div class="input-group">
 
                                                                 <input type="text" name="date_due" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Due" data-error-msg="Please set the date this items are issued!" required>
@@ -305,9 +305,6 @@
 
                                                             </div>
                                                         </div>
-
-
-
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-sm-4">
@@ -373,6 +370,7 @@
                                                             <th style="display: none;">T.D</th> <!-- total discount -->
                                                             <th style="display: none;">Tax %</th>
                                                             <th width="10%" style="text-align: right;">Total</th>
+                                                            <th class="hidden">Total Price</th>
                                                             <th style="display: none;">V.I</th> <!-- vat input -->
                                                             <th style="display: none;">N.V</th> <!-- net of vat -->
                                                             <td style="display: none;">Item ID</td><!-- product id -->
@@ -406,11 +404,14 @@
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
-                                                            <td colspan="8" style="height: 50px;">&nbsp;</td>
+                                                            <td colspan="9" style="height: 50px;">&nbsp;</td>
                                                         </tr>
                                                         <tr>
                                                             <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
-                                                            <td align="right" colspan="1" id="td_discount color="red">0.00</td>
+                                                            <td align="right">
+                                                                <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00">
+                                                                <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" readonly>
+                                                            </td>
                                                             <td colspan="3" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                                             <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
                                                         </tr>
@@ -758,12 +759,13 @@
             discount : 'td:eq(4)',
             total_line_discount : 'td:eq(5)',
             tax : 'td:eq(6)',
-            total : 'td:eq(7)',
-            vat_input : 'td:eq(8)',
-            net_vat : 'td:eq(9)',
-            batch_no : 'td:eq(11)',
-            exp_date : 'td:eq(13)',
-            srp_cost : 'td:eq(15)'
+            gross : 'td:eq(7)',
+            total : 'td:eq(8)',
+            vat_input : 'td:eq(9)',
+            net_vat : 'td:eq(10)',
+            batch_no : 'td:eq(12)',
+            exp_date : 'td:eq(14)',
+            srp_cost : 'td:eq(16)'
 
         };
 
@@ -872,10 +874,10 @@
 
             _cboDepartments=$("#cbo_departments").select2({
                 placeholder: "Please select branch.",
-                allowClear: true
+                allowClear: false
             });
             _cboDepartments.select2('val', 1);
-            _cboDepartments.select2("enable",false);
+            _cboDepartments.select2("enable",true);
 
             _lookUpPrice = $('#cboLookupPrice').select2({
                 allowClear: false
@@ -884,7 +886,7 @@
 
             _cboIssueDepartments=$("#cbo_issue_departments").select2({
                 placeholder: "Please select branch.",
-                allowClear: true
+                allowClear: false
             });
             _cboIssueDepartments.select2('val', null);
 
@@ -912,7 +914,8 @@
                     url: 'Sales_invoice/transaction/current-items/',
                     replace: function(url, uriEncodedQuery) {
                         var prod_type=$('#cbo_prodType').select2('val');
-                        return url + '?type='+prod_type+'&description='+uriEncodedQuery;
+                        var depid=$('#cbo_departments').select2('val');
+                        return url + '?type='+prod_type+'&description='+uriEncodedQuery+'&depid='+depid;
                     }
                 }
             });
@@ -1026,6 +1029,7 @@
                         inv_price : total,
                         inv_discount : "0.00",
                         tax_type_id : null,
+                        inv_line_total_gross : total,
                         inv_line_total_price : total,
                         inv_non_tax_amount: net_vat,
                         inv_tax_amount:vat_input,
@@ -1145,14 +1149,40 @@
                 $('#modal_new_salesperson').modal('hide');
             });
 
+
+
+            _cboDepartments.on("select2:select", function (e) {
+                var i=$(this).select2('val');
+                var to_dept_id = $('#cbo_issue_departments').select2('val');
+
+                if(i==0){
+                }else{
+
+                    if(to_dept_id == i){
+                        showNotification({title:"Invalid",stat:"error",msg:"Branches must not be the same."});
+                        _cboDepartments.select2('val',null);
+                        return;
+                    }
+                }
+            });
+
+
             //loads modal to create new department
             _cboIssueDepartments.on("select2:select", function (e) {
                 var i=$(this).select2('val');
+                var dept_id = $('#cbo_departments').select2('val');
+
                 if(i==0){ //new department
                     clearFields($('#modal_new_department').find('form'));
-                    _cboIssueDepartments.select2('val',null)
+                    _cboIssueDepartments.select2('val',null);
                     $('#modal_new_department').modal('show');
                 }else{
+
+                    if(dept_id == i){
+                        showNotification({title:"Invalid",stat:"error",msg:"Branches must not be the same."});
+                        _cboIssueDepartments.select2('val',null);
+                        return;
+                    }
 
                     var obj_department=$('#cbo_issue_departments').find('option[value="'+i+'"]');
                     $('textarea[name="address"]').val(obj_department.data('address'));
@@ -1231,8 +1261,8 @@
             $('#btn_new').click(function(){
                 _txnMode="new";
 
-				$('#btn_save').removeClass('disabled');
-                $('#cbo_departments').select2('val', 1);
+                $('#btn_save').removeClass('disabled');
+                $('#cbo_departments').select2('val', default_department_id);
                 $('#cbo_issue_departments').select2('val', null);
                 $('#cbo_prodType').select2('val', 3);
                 $('#cboLookupPrice').select2('val', 1);
@@ -1243,6 +1273,8 @@
                 $('input[name="date_due"]').datepicker('setDate', 'today');
                 $('.typeahead').typeahead('val',''); 
                 showList(false);
+                
+                $('#txt_overall_discount').val('0.00');
 
             });
 
@@ -1271,6 +1303,7 @@
                 var _data=[];
                 _data.push({name : "type", value :$('#cbo_prodType').select2('val') });
                 _data.push({name : "description", value : global_item_desc });
+                _data.push({name : "depid", value : _cboDepartments.val() });
 
 
                 $.ajax({
@@ -1380,6 +1413,7 @@
                                 inv_price : value.so_price,
                                 inv_discount : value.so_discount,
                                 tax_type_id : null,
+                                inv_line_total_gross : (value.so_price * value.so_qty),
                                 inv_line_total_price : value.so_line_total,
                                 inv_non_tax_amount: value.non_tax_amount,
                                 inv_tax_amount:value.tax_amount,
@@ -1390,6 +1424,7 @@
                             }));
                         });
 
+                        $('.trigger-keyup').keyup();
                         reComputeTotal();
                         showSpinningProgress(btn);
                     }
@@ -1432,13 +1467,13 @@
                             });
                         });
 
-                        $('#cbo_departments').select2('val',1);
+                        $('#cbo_departments').select2('val',data.department_id);
                         $('#cbo_issue_departments').select2('val',data.issue_to_department);
                         //$('#cbo_customers').select2('val',data.customer_id);
                         //$('#cbo_salesperson').select2('val',data.salesperson_id);
                         $('textarea[name="remarks"]').val(data.remarks);
                         $('#cboLookupPrice').select2('val', 1);
-
+                        $('#txt_overall_discount').val(accounting.formatNumber($('#txt_overall_discount').val(),2));
 
                         $.ajax({
                             url : 'Sales_invoice_other/transaction/items/'+data.sales_invoice_id,
@@ -1469,6 +1504,7 @@
                                         inv_price : value.inv_price,
                                         inv_discount : value.inv_discount,
                                         tax_type_id : null,
+                                        inv_line_total_gross : (value.inv_qty * value.inv_price),
                                         inv_line_total_price : value.inv_line_total_price,
                                         inv_non_tax_amount: value.inv_non_tax_amount,
                                         inv_tax_amount:value.inv_tax_amount,
@@ -1514,7 +1550,24 @@
                 });
             });
 
+            $('#txt_overall_discount').on('keypress', function(event){
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                  }
+            });
 
+            $('#txt_overall_discount').on('keyup',function(){
+                var global_discount = accounting.unformat($(this).val());
+
+                if (global_discount > 100){
+                    showNotification({title:"Invalid",stat:"error",msg:"Discount must not be greater than 100%."});
+                    $(this).val('0.00');
+                    $(this).select();
+                }
+
+                $('.trigger-keyup').keyup();
+                reComputeTotal();
+            });
 
             //track every changes on numeric fields
             $('#tbl_items tbody').on('keyup','input.numeric,input.number',function(){
@@ -1535,13 +1588,17 @@
                     //return;
                 }
 
-                var discounted_price=price-discount;
-                var line_total_discount=discount*qty;
-                var line_total=discounted_price*qty;
-                var net_vat=line_total/(1+tax_rate);
-                var vat_input=line_total-net_vat;
+                var global_discount = $('#txt_overall_discount').val();
+                var line_total = price*qty; //ok not included in the output (view) and not saved in the database
+                var line_total_discount=discount*qty; 
+                // var line_total_discount=line_total*(discount/100);
+                var new_line_total=line_total-line_total_discount; 
+                var total_after_global = new_line_total-(new_line_total*(global_discount/100));
+                var net_vat=total_after_global/(1+tax_rate);
+                var vat_input=total_after_global-net_vat;
 
-                $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(line_total,4)); // line total amount
+                $(oTableItems.gross,row).find('input.numeric').val(accounting.formatNumber(line_total,4));
+                $(oTableItems.total,row).find('input.numeric').val(accounting.formatNumber(total_after_global,4)); // line total amount
                 $(oTableItems.total_line_discount,row).find('input.numeric').val(line_total_discount); //line total discount
                 $(oTableItems.net_vat,row).find('input.numeric').val(net_vat); //net of vat
                 $(oTableItems.vat_input,row).find('input.numeric').val(vat_input); //vat input
@@ -1823,14 +1880,15 @@
 
         var newRowItem=function(d){
             return '<tr class="row-item">'+
-                '<td width="10%"><input name="inv_qty[]" type="text" class="number form-control" value="'+ d.inv_qty+'"></td>'+
+                '<td width="10%"><input name="inv_qty[]" type="text" class="number form-control trigger-keyup" value="'+ d.inv_qty+'"></td>'+
                 '<td width="5%">'+ d.unit_name+'</td>'+
                 '<td width="10%">'+d.product_desc+'</td>'+
                 '<td width="11%"><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,4)+'" style="text-align:right;"></td>'+
                 '<td width="11%" style="display:none;"><input name="inv_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_discount,4)+'" style="text-align:right;"></td>'+
                 '<td style="display: none;" width="11%"><input name="inv_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_discount,4)+'" readonly></td>'+
                 '<td width="11%" style="display:none;"><input name="inv_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_tax_rate,4)+'"></td>'+
-                '<td width="11%" align="right"><input name="inv_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_price,4)+'" readonly></td>'+
+                '<td width="11%" align="right"><input name="inv_line_total_gross[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_gross,4)+'" readonly></td>'+
+                '<td class="hidden"><input name="inv_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_price,4)+'" readonly></td>'+
                 '<td style="display: none;"><input name="inv_tax_amount[]" type="text" class="numeric form-control" value="'+ d.inv_tax_amount+'" readonly></td>'+
                 '<td style="display: none;"><input name="inv_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.inv_non_tax_amount+'" readonly></td>'+
                 '<td style="display: none;"><input name="product_id[]" type="text" class="form-control" value="'+ d.product_id+'" readonly></td>'+
@@ -1848,26 +1906,33 @@
         var reComputeTotal=function(){
             var rows=$('#tbl_items > tbody tr');
 
-
-            var discounts=0; var before_tax=0; var after_tax=0; var inv_tax_amount=0;
+            var discounts=0;
+            var before_tax=0;
+            var after_tax=0;
+            var inv_tax_amount=0;
+            var gross=0;
 
             $.each(rows,function(){
                 //console.log($(oTableItems.net_vat,$(this)));
+                gross+=parseFloat(accounting.unformat($(oTableItems.gross,$(this)).find('input.numeric').val()));
                 discounts+=parseFloat(accounting.unformat($(oTableItems.total_line_discount,$(this)).find('input.numeric').val()));
                 before_tax+=parseFloat(accounting.unformat($(oTableItems.net_vat,$(this)).find('input.numeric').val()));
                 inv_tax_amount+=parseFloat(accounting.unformat($(oTableItems.vat_input,$(this)).find('input.numeric').val()));
                 after_tax+=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
             });
 
+            var global_discount = (gross - discounts) * ($('#txt_overall_discount').val() / 100);
+
             var tbl_summary=$('#tbl_sales_invoice_summary');
-            tbl_summary.find(oTableDetails.discount).html(accounting.formatNumber(discounts,4));
+            tbl_summary.find(oTableDetails.discount).html(accounting.formatNumber(discounts + global_discount,4));
             tbl_summary.find(oTableDetails.before_tax).html(accounting.formatNumber(before_tax,4));
             tbl_summary.find(oTableDetails.inv_tax_amount).html(accounting.formatNumber(inv_tax_amount,4));
             tbl_summary.find(oTableDetails.after_tax).html('<b>'+accounting.formatNumber(after_tax,4)+'</b>');
 
+            $('#txt_overall_discount_amount').val(accounting.formatNumber(global_discount,2));
             $('#td_before_tax').html(accounting.formatNumber(before_tax,4));
             $('#td_after_tax').html('<b>'+accounting.formatNumber(after_tax,4)+'</b>');
-            $('#td_discount').html(accounting.formatNumber(discounts,4));
+            $('#td_discount').html(accounting.formatNumber(discounts + global_discount,4));
             $('#td_tax').html(accounting.formatNumber(inv_tax_amount,4));
 
         };

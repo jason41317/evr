@@ -74,14 +74,14 @@ protected $pk_id = "adjustment_id";
     }
 
 
-function get_journal_entries_salesreturn($adjustment_id){
+	function get_journal_entries_salesreturn($adjustment_id){
 		$sql="SELECT 
         main.* 
         FROM(
-        -- Sales Return
+        /* Sales Return */
 		SELECT
 		p.sales_return_account_id as account_id,
-		SUM(IFNULL(adj.adjust_non_tax_amount,0)) as dr_amount,
+		SUM(IFNULL(adj.adjust_non_tax_amount,0) + IFNULL(adj.adjust_line_total_discount,0) + IFNULL(adj.global_discount_amount,0) ) as dr_amount,
 		0 as cr_amount,
 		
 		'' as memo
@@ -90,12 +90,12 @@ function get_journal_entries_salesreturn($adjustment_id){
 		WHERE adj.adjustment_id= $adjustment_id AND p.sales_return_account_id > 0
 		GROUP BY p.sales_return_account_id
 
-		-- Inventory
+		/* Inventory */
 		UNION ALL
 
         SELECT
 		p.expense_account_id as account_id,
-		SUM(adj.adjust_qty * p.purchase_cost) as dr_amount,
+		SUM(adj.adjust_qty * adj.cost_upon_invoice) as dr_amount,
 		0 as cr_amount,
 		
 		'' as memo
@@ -106,7 +106,7 @@ function get_journal_entries_salesreturn($adjustment_id){
 		WHERE adj.adjustment_id = $adjustment_id AND p.expense_account_id > 0
 		GROUP BY p.expense_account_id
 
-		-- Output Tax
+		/* Output Tax */
 	    UNION ALL
 
 	    SELECT output_tax.account_id,
@@ -126,7 +126,7 @@ function get_journal_entries_salesreturn($adjustment_id){
 	    WHERE adj.adjustment_id=$adjustment_id AND p.income_account_id>0
 	    )as output_tax GROUP BY output_tax.account_id
 
-	    -- AR / Cash 
+	    /* AR / Cash */ 
 		UNION ALL
 				
 		SELECT 
@@ -149,13 +149,13 @@ function get_journal_entries_salesreturn($adjustment_id){
 			main.account_id > 0
 		GROUP BY main.account_id
 		
-		-- Cost of Sales
+		/* Cost of Sales */
 		UNION ALL
         
         SELECT
 		p.cos_account_id as account_id,
 		0 as dr_amount,
-		SUM(adj.adjust_qty * p.purchase_cost) as cr_amount,
+		SUM(adj.adjust_qty * adj.cost_upon_invoice) as cr_amount,
 		'' as memo
 		FROM 
 		adjustment_items adj 
@@ -163,13 +163,13 @@ function get_journal_entries_salesreturn($adjustment_id){
 		WHERE adj.adjustment_id = $adjustment_id AND p.cos_account_id > 0
 		GROUP BY p.cos_account_id
 
-		-- Discount
+		/* Discount */
 		UNION ALL
 
 		SELECT
 		p.sd_account_id as account_id,
 		0 as dr_amount,
-		SUM(IFNULL(adj.adjust_line_total_discount,0)) as cr_amount,
+		SUM(IFNULL(adj.adjust_line_total_discount,0) + IFNULL(adj.global_discount_amount,0) ) as cr_amount,
 		
 		'' as memo
 		FROM adjustment_items adj
@@ -183,6 +183,7 @@ function get_journal_entries_salesreturn($adjustment_id){
 		WHERE main.dr_amount > 0 OR main.cr_amount > 0";
         return $this->db->query($sql)->result();
 	}
+
 
 	function get_journal_entries_purchasereturn($adjustment_id){
 		$sql="SELECT 
@@ -388,6 +389,8 @@ function get_journal_entries_salesreturn($adjustment_id){
 			si.sales_inv_no,
 			si.is_journal_posted,
 			si.date_invoice,
+			si.total_overall_discount,
+			(((sii.inv_qty * sii.inv_price) - sii.inv_line_total_discount)*(si.total_overall_discount/100)) as global_discount_amount,			
 			'1' as inv_type_id,
 			p.product_code,
 			p.product_desc,

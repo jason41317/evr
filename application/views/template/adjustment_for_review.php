@@ -215,8 +215,10 @@
                                         </thead>
                                         <tbody>
                                             <?php
-                                                $dr_total_price=0.00;
-                                                $dr_total_tax=0.00;
+                                                $gross_total=0;
+                                                $discounts=0;
+                                                $dr_total_price=0;
+                                                $dr_total_tax=0;
                                                 foreach($items as $item){
                                                     ?>
                                             <tr style="">
@@ -225,10 +227,12 @@
                                                 <td><?php echo $item->unit_name; ?></td>
                                                 <td align="right"><?php echo number_format($item->adjust_non_tax_amount,2); ?></td>
                                                 <td align="right"><?php echo number_format($item->adjust_tax_amount,2); ?></td>
-                                                <td align="right"><?php echo number_format($item->adjust_price,2); ?></td>
+                                                <td align="right"><?php echo number_format($item->adjust_price * $item->adjust_qty,2); ?></td>
                                                 
                                             </tr>
                                             <?php
+                                                    $gross_total+=$item->adjust_qty*$item->adjust_price;
+                                                    $discounts+=$item->global_discount_amount;               
                                                     $dr_total_price+=$item->adjust_line_total_price;
                                                     $dr_total_tax+=$item->adjust_tax_amount;
                                             }
@@ -242,8 +246,13 @@
 
                                             <tr>
                                                 <td></td>
-                                                <td colspan="4" align="right">Discount 1:</td>
-                                                <td align="right"><?php echo number_format($adjustment_info->total_discount,2); ?></td>
+                                                <td colspan="4" align="right">Gross Total:</td>
+                                                <td align="right"><?php echo number_format($gross_total,2); ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td colspan="4" align="right">Discount:</td>
+                                                <td align="right"><?php echo number_format($discounts,2); ?></td>
                                             </tr>
                                             <tr>
                                                 <td></td>
@@ -258,8 +267,8 @@
 
                                             <tr>
                                                 <td></td>
-                                                <td colspan="4" align="right">Total After Tax:</td>
-                                                <td align="right"><?php echo number_format($adjustment_info->total_after_tax,2); ?></td>
+                                                <td colspan="4" align="right"><strong>Total Amount:</strong></td>
+                                                <td align="right"><strong><?php echo number_format($adjustment_info->total_after_tax,2); ?></strong></td>
                                             </tr>
                                       </tfoot>
                                     </table>

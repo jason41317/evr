@@ -45,19 +45,28 @@
             </tr>
             </thead>
             <tbody>
-            <?php foreach($sales_order_items as $item){ ?>
+            <?php 
+                $gross_total = 0;
+                foreach($sales_order_items as $item){
+                $gross_total += $item->so_qty*$item->so_price;
+            ?>
                 <tr>
                     <td width="50%" style="border-bottom: 1px solid gray;text-align: left;height: 30px;padding: 6px;"><?php echo $item->product_desc; ?></td>
                     <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($item->so_qty,0); ?></td>
                     <td width="12%" style="border-bottom: 1px solid gray;text-align: center;height: 30px;padding: 6px;"><?php echo $item->unit_name; ?></td>
                     <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($item->so_price,2); ?></td>
 
-                    <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($item->so_line_total_price,2); ?></td>
+                    <td width="12%" style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($item->so_qty*$item->so_price,2); ?></td>
                 </tr>
             <?php } ?>
 
             </tbody>
             <tfoot>
+            <tr>
+                <td colspan="2" style="text-align: right;height: 30px;padding: 6px;"></td>
+                <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 30px;padding: 6px;">Gross Total : </td>
+                <td style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($gross_total,2); ?></td>
+            </tr>
             <tr>
                 <td colspan="2" style="text-align: right;height: 30px;padding: 6px;"></td>
                 <td colspan="2" style="border-bottom: 1px solid gray;text-align: left;height: 30px;padding: 6px;">Discount : </td>

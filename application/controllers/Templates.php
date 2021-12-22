@@ -63,6 +63,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Account_title_model');
         $this->load->model('Banks_model');
         $this->load->model('Account_integration_model');
+        
+        $this->load->model('Issuance_department_model');
+        $this->load->model('Issuance_department_item_model');
 
 
         $this->load->library('M_pdf');
@@ -444,6 +447,78 @@ class Templates extends CORE_Controller {
                 }
 
                 break;*/
+
+            case 'issuance-department':
+                $m_issuance=$this->Issuance_department_model;
+                $m_dr_items=$this->Issuance_department_item_model;
+                $m_company=$this->Company_model;
+                $m_accounts=$this->Account_integration_model;
+
+                $type=$this->input->get('type',TRUE);
+
+                $info=$m_issuance->get_list(
+                    $filter_value,
+                    'issuance_department_info.*,
+                    departments.department_name as to_department_name,
+                    depfrom.department_name as from_department_name,
+                    CONCAT_WS(" ", user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as encoded_by',
+                    array(
+                        array('departments','departments.department_id=issuance_department_info.to_department_id','left'),
+                        array('departments as depfrom','depfrom.department_id=issuance_department_info.from_department_id','left'),
+                        array('user_accounts','user_accounts.user_id=issuance_department_info.posted_by_user','left'),
+                    )
+                );
+
+                $company=$m_company->get_list();
+
+                $data['issuance_info']=$info[0];
+                $data['company_info']=$company[0];
+                $data['issue_items']=$m_dr_items->get_list(
+                    array('issuance_department_items.issuance_department_id'=>$filter_value),
+                    'issuance_department_items.*,products.product_desc,units.unit_name,units.unit_code',
+                    array(
+                        array('products','products.product_id=issuance_department_items.product_id','left'),
+                        array('units','units.unit_id=issuance_department_items.unit_id','left')
+                    )
+                );
+
+                //show only inside grid with menu button
+                if($type=='fullview'||$type==null){
+                    echo $this->load->view('template/issuance_department_content_wo_header',$data,TRUE);
+                    echo $this->load->view('template/issue_department_content_menus',$data,TRUE);
+                }
+
+                //show only inside grid without menu button
+                if($type=='contentview'){
+                    echo $this->load->view('template/issuance_department_content',$data,TRUE);
+                }
+
+                //download pdf
+                if($type=='pdf'){
+                    $file_name=$info[0]->trn_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/issuance_department_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output($pdfFilePath,"D");
+
+                }
+
+                //preview on browser
+                if($type=='preview'){
+                    $file_name=$info[0]->trn_no;
+                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                    $content=$this->load->view('template/issuance_department_content',$data,TRUE); //load the template
+                    // $pdf->setFooter('{PAGENO}');
+                    $pdf->WriteHTML($content);
+                    //download it.
+                    $pdf->Output();
+                }
+
+                break;
 
 
             //****************************************************
@@ -1361,6 +1436,7 @@ class Templates extends CORE_Controller {
                     ),
 
                     array(
+                        'sales_invoice.total_overall_discount_amount',
                         'sales_invoice.sales_invoice_id',
                         'sales_invoice.sales_inv_no',
                         'sales_invoice.customer_id',
