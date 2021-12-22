@@ -671,7 +671,7 @@
                         '<td width="15%" align="left"><b>Batch #</b></td>'+
                         '<td width="10%" align="left"><b>Expiration</b></td>'+
                         '<td width="10%" align="right"><b>On hand</b></td>'+
-                        '<td width="15%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
+                        '<td width="15%" align="right" style="padding-right: 1%;"><b>Cost</b></td>'+
                         '</tr></table>'
                     ].join('\n'),
 
@@ -681,7 +681,7 @@
                         '<td width="15%" align="left">{{batch_no}}</td>'+
                         '<td width="10%" align="left">{{exp_date}}</td>'+
                         '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
-                        '<td width="15%" align="right" style="padding-right: 1%;">{{srp}}</td>'+
+                        '<td width="15%" align="right" style="padding-right: 1%;">{{cost_price}}</td>'+
                         '</tr></table>')
 
                 }
@@ -700,7 +700,7 @@
 
                 var tax_rate=suggestion.tax_rate; // tax rate is based on the tax type set to selected product
 
-                var total=getFloat(suggestion.sale_price);
+                var total=getFloat(suggestion.purchase_cost_2);
                 var net_vat=0;
                 var vat_input=0;
 
@@ -725,7 +725,7 @@
                     adjust_line_total_discount : "0.00",
                     tax_exempt : false,
                     adjust_tax_rate : tax_rate,
-                    adjust_price : suggestion.sale_price,
+                    adjust_price : suggestion.purchase_cost_2,
                     adjust_discount : "0.00",
                     tax_type_id : null,
                     adjust_line_total_price : total,

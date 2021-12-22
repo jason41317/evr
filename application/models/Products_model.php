@@ -492,6 +492,7 @@ class Products_model extends CORE_Model {
                 FORMAT(distributor_price,4) as srp_distributor,
                 FORMAT(public_price,4) as srp_public,
                 FORMAT(discounted_price,4) as srp_discounted,
+                FORMAT(purchase_cost_2,2) as cost_price,
                 FORMAT(rc.item_cost,4) as srp_cost,
                 (rc.in_qty-IFNULL(sinv.out_qty,0)-IFNULL(iss.out_qty,0)-IFNULL(aoQ.out_qty,0)) as on_hand_per_batch
 

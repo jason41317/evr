@@ -107,7 +107,7 @@ class Sales_invoice extends CORE_Controller
     }
 
 
-    function transaction($txn = null,$id_filter=null) {
+    function transaction($txn = null,$id_filter=null,$group=null) {
         switch ($txn){
             case 'current-invoice-no':
                 $m_invoice=$this->Sales_invoice_model;
@@ -165,7 +165,14 @@ class Sales_invoice extends CORE_Controller
                 $data['_def_css_files'] = $this->load->view('template/assets/css_files', '', TRUE);
                 $data['_def_js_files'] = $this->load->view('template/assets/js_files', '', TRUE);
 
-                $this->load->view('template/sales_invoice_content_html_vismin',$data);
+                if($group != null){
+                    if($group == 1){
+                        $this->load->view('template/sales_invoice_content_html',$data);
+                    }else if($group == 2){
+                        $this->load->view('template/sales_invoice_content_html_vismin',$data);
+                    }
+                }
+
             break;
 
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
@@ -288,8 +295,19 @@ class Sales_invoice extends CORE_Controller
                             $m_invoice->sales_order_id=$sales_order_id;
                             $m_invoice->remarks=$this->input->post('remarks',TRUE);
                             $m_invoice->terms=$this->input->post('terms',TRUE);
+                            $m_invoice->cod_pdc=$this->input->post('cod_pdc',TRUE);
                             $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                             $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+
+                            $date_delivered =$this->input->post('date_delivered',TRUE);
+
+                            if ($date_delivered != null || ""){
+                                $m_invoice->date_delivered=date('Y-m-d',strtotime($date_delivered));
+                            }else{
+                                $m_invoice->date_delivered = null;
+                            }
+
+
                             $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                             $m_invoice->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                             $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -424,11 +442,22 @@ class Sales_invoice extends CORE_Controller
                     $m_invoice->department_id=$this->input->post('department',TRUE);
                     $m_invoice->remarks=$this->input->post('remarks',TRUE);
                     $m_invoice->terms=$this->input->post('terms',TRUE);
+                    $m_invoice->cod_pdc=$this->input->post('cod_pdc',TRUE);
                     $m_invoice->customer_id=$this->input->post('customer',TRUE);
                     $m_invoice->salesperson_id=$this->input->post('salesperson_id',TRUE);
                     $m_invoice->sales_order_id=$sales_order_id;
                     $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                     $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
+
+                    $date_delivered =$this->input->post('date_delivered',TRUE);
+
+                    if ($date_delivered != null || ""){
+                        $m_invoice->date_delivered=date('Y-m-d',strtotime($date_delivered));
+                    }else{
+                        $m_invoice->date_delivered = null;
+                    }
+
+
                     $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_invoice->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                     $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -613,6 +642,7 @@ class Sales_invoice extends CORE_Controller
         return $this->Sales_invoice_model->get_list(
             $filter_value,
             array(
+                'sales_invoice.cod_pdc',
                 'sales_invoice.sales_invoice_id',
                 'sales_invoice.sales_inv_no',
                 'sales_invoice.remarks',
@@ -628,7 +658,12 @@ class Sales_invoice extends CORE_Controller
                 'sales_invoice.salesperson_id',
                 'sales_invoice.address',
                 'sales_order.so_no',
-                'sales_order.order_status_id'
+                'sales_order.order_status_id',
+                '(CASE 
+                    WHEN isnull(sales_invoice.date_delivered) 
+                    THEN ""
+                    ELSE DATE_FORMAT(sales_invoice.date_delivered,"%m/%d/%Y")
+                END) as date_delivered'
             ),
             array(
                 array('departments','departments.department_id=sales_invoice.department_id','left'),

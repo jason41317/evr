@@ -137,6 +137,13 @@ class Sales_invoice_model extends CORE_Model
 
                 FROM
                 (SELECT si.sales_inv_no,si.date_invoice,sii.inv_price, CONCAT(sp.firstname, ' ', sp.lastname, ' - ', sp.acr_name) AS salesperson_name,
+
+                (CASE 
+                    WHEN isnull(si.date_delivered) 
+                    THEN ''
+                    ELSE DATE_FORMAT(si.date_delivered,'%m/%d/%Y')
+                END) as date_delivered,
+
                 '' as dr_si,'' as vr,c.customer_name,
                 IF(sii.inv_price=0,CONCAT(pr.product_desc,' (Free)'),pr.product_desc)as product_desc,
                 refp.product_type,
