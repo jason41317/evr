@@ -691,7 +691,7 @@ dt_si = $('#tbl_si_list').DataTable({
                     '<td width="15%" align="left"><b>Batch #</b></td>'+
                     '<td width="15%" align="left"><b>Expiration</b></td>'+
                     '<td width="10%" align="right"><b>On hand</b></td>'+
-                    '<td width="10%" align="right" style="padding-right: 1%;"><b>SRP</b></td>'+
+                    '<td width="10%" align="right" style="padding-right: 1%;"><b>Cost</b></td>'+
                     '</tr></table>'
                 ].join('\n'),
 
@@ -701,7 +701,7 @@ dt_si = $('#tbl_si_list').DataTable({
                     '<td width="15%" align="left">{{batch_no}}</td>'+
                     '<td width="15%" align="left">{{exp_date}}</td>'+
                     '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
-                    '<td width="10%" align="right" style="padding-right: 1%;">{{sale_price}}</td>'+
+                    '<td width="10%" align="right" style="padding-right: 1%;">{{item_cost}}</td>'+
                     '</tr></table>')
 
             }
@@ -719,7 +719,7 @@ dt_si = $('#tbl_si_list').DataTable({
 
             var tax_rate=suggestion.tax_rate; // tax rate is based the tax type set to selected product
 
-            var total=getFloat(suggestion.sale_price);
+            var total=getFloat(suggestion.item_cost);
             var net_vat=0;
             var vat_input=0;
 
@@ -742,7 +742,7 @@ dt_si = $('#tbl_si_list').DataTable({
                 issue_line_total_discount : "0.00",
                 tax_exempt : false,
                 issue_tax_rate : tax_rate,
-                issue_price : suggestion.sale_price,
+                issue_price : suggestion.item_cost,
                 issue_discount : "0.00",
                 tax_type_id : null,
                 issue_line_total_price : total,
