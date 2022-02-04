@@ -23,18 +23,15 @@ class Products extends CORE_Controller
     }
 
     public function index() {
-
-
         $data['_def_css_files'] = $this->load->view('template/assets/css_files', '', TRUE);
         $data['_def_js_files'] = $this->load->view('template/assets/js_files', '', TRUE);
         $data['_switcher_settings'] = $this->load->view('template/elements/switcher', '', TRUE);
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
         $data['title'] = 'Product Management';
-
         $data['tax_types']=$this->Tax_model->get_list();
         $data['suppliers']=$this->Suppliers_model->get_list(
-            array('suppliers.is_deleted'=>FALSE),
+            array('suppliers.is_deleted'=>FALSE,'suppliers.is_active'=>TRUE),
             'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
             array(
                 array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
@@ -73,12 +70,19 @@ class Products extends CORE_Controller
 
             case 'getproduct':
                 $refproduct_id = $this->input->post('refproduct_id', TRUE);
+                $is_active = $this->input->post('is_active', TRUE);
                 $get = "";
-
+                
                 if($refproduct_id == 3){
                     $get = array('products.is_deleted'=>FALSE);
+                    if ($is_active != -1) {
+                        $get = array('products.is_deleted' => FALSE, 'products.is_active' => $is_active);
+                    }
                 }else{
                     $get = array('products.refproduct_id'=>$refproduct_id,'products.is_deleted'=>FALSE);
+                    if ($is_active != -1) {
+                        $get = array('products.refproduct_id'=>$refproduct_id,'products.is_deleted'=>FALSE, 'products.is_active' => $is_active);
+                    }
                 }
                 
                 $response['data'] = $this->response_rows($get);
@@ -232,7 +236,34 @@ class Products extends CORE_Controller
                     $response['title']='Success!';
                     $response['stat']='success';
                     $response['msg']='Product information successfully deleted.';
+                    echo json_encode($response);
+                }
 
+                break;
+
+            case 'activate-deactivate':
+                $m_products=$this->Products_model;
+
+                $product_id=$this->input->post('product_id',TRUE);
+
+                // $m_products->set('date_deleted','NOW()');
+                $m_products->is_active = $this->input->post('is_active',TRUE) ? 1 : 0;
+                // $m_products->is_deleted=1;
+                if($m_products->modify($product_id)){
+
+                    $product_desc= $m_products->get_list($product_id,'product_desc');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=2; //CRUD
+                    $m_trans->trans_type_id=50; // TRANS TYPE
+                    $m_trans->trans_log='Updated Set as '.$m_products->is_active ? 'Active' : 'Inactive' .' Product: '.$product_desc[0]->product_desc;
+                    $m_trans->save();
+                                        
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Product information successfully '.($m_products->is_active ? 'Activated' : 'Deactivated').'.';
+                    $response['row_updated']=$this->response_rows($product_id);
                     echo json_encode($response);
                 }
 

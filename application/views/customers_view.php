@@ -59,8 +59,14 @@
 
     $(document).ready(function(){
         var dt; var _txnMode; var _selectedID; var _selectRowObj; var _selectedBranch; var _cboDepartments;
-
+        var _cboStatus; var isActive;
             var initializeControls=function() {
+                _cboStatus=$('#is_active').select2({
+                    placeholder: "Please select status.",
+                    allowClear: false
+                });
+
+                _cboStatus.select2('val', 1);
                 dt=$('#tbl_customers').DataTable({
                     "dom": '<"toolbar">frtip',
                     "bLengthChange":false,
@@ -71,7 +77,8 @@
                     "bDestroy": true,
                     "data": function ( d ) {
                         return $.extend( {}, d, {
-                            "department_id": $('#cbo_department').val()
+                            "department_id": $('#cbo_department').val(),
+                            "is_active": _cboStatus.select2('val')
                             });
                         }
                     },
@@ -90,17 +97,22 @@
                         {
                             targets:[5],
                             render: function (data, type, full, meta){
+                                var variant = full.is_active == 1 ? 'warning' : 'success';
+                                var title = full.is_active == 1 ? 'Inactive' : 'Active';
+                                var icon = full.is_active == 1 ? 'times' : 'check';
+
+                                var btn_active='<button class="btn btn-'+variant+' btn-sm" name="active_info"   data-toggle="tooltip" data-placement="top" title="Set as '+title+'" style="margin-right: 5px;"><i class="fa fa-'+icon+'"></i> </button>';
                                 var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                                 var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
 
-                                return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                                return '<center>'+btn_active+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                             }
                         }
                     ],
 
                     language: {
-                                 searchPlaceholder: "Search Customer Name"
-                             },
+                        searchPlaceholder: "Search Customer Name"
+                    },
                     "rowCallback":function( row, data, index ){
 
                         $(row).find('td').eq(5).attr({
@@ -122,6 +134,24 @@
          }();
 
         var bindEventHandlers=(function(){
+            _cboStatus.on("select2:select", function (e) {
+                $('#tbl_customers').DataTable().ajax.reload();
+            });
+
+            $('#btn_yes_active').click(function(){
+                setActiveInactive().done(function(response){
+                    showNotification(response);
+                    if(response.stat == 'success'){
+                        if (_cboStatus.select2('val') == '-1') {
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                        } else {
+                            dt.row(_selectRowObj).remove().draw();
+                        }
+                    }
+                    // dt.row(_selectRowObj).remove().draw();
+                });
+            });
+
             var detailRows = [];
 
             $('#tbl_customers tbody').on( 'click', 'tr td.details-control', function () {
@@ -161,6 +191,18 @@
                 }
             } );
 
+            $('#tbl_customers tbody').on('click','button[name="active_info"]',function(){
+                // $('#modal_confirmation').modal('show');
+                // _selectRowObj=$(this).closest('tr');
+                // var data=dt.row(_selectRowObj).data();
+                // _selectedID=data.product_id;
+                _selectRowObj=$(this).closest('tr');
+                var data=dt.row(_selectRowObj).data();
+                _selectedID=data.customer_id;
+                isActive=data.is_active;
+                $('#confirm_msg').text(isActive == 1 ? 'Inactive' : 'Active');
+                $('#modal_active').modal('show');
+            });
 
             $('#btn_new').click(function(){
                 _txnMode="new";
@@ -511,6 +553,16 @@
         $('#cbo_department').change(function() {
             $('#tbl_customers').DataTable().ajax.reload()
         });
+
+        var setActiveInactive=function(){
+            return $.ajax({ 
+                "dataType":"json",
+                "type":"POST",
+                "url":"Customers/transaction/activate-deactivate",
+                "data":{customer_id : _selectedID, is_active: isActive == 1 ? 0 : 1},
+                "beforeSend": showSpinningProgress($('#btn_save'))
+            });
+        };
     });
 
 
@@ -661,11 +713,19 @@
                                                     </div>
                                                     <div class="col-lg-3" style="text-align: right;">
                                                     &nbsp;<br>
-                                                            <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Customer Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
-                                                            <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" 
-                                                            data-placement="left" title="Export Supplier Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
+                                                        <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Customer Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                        <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" 
+                                                        data-placement="left" title="Export Supplier Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
                                                     </div>
-                                                    <div class="col-lg-3">
+                                                    <div class="col-lg-2">
+                                                        Status :<br />
+                                                        <select name="is_active" id="is_active" class="form-control">
+                                                            <option value="-1">ALL</option>
+                                                            <option value="1">ACTIVE</option>
+                                                            <option value="0">INACTIVE</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-2">
                                                         Branch : 
                                                         <select class="form-control" id="cbo_department">
                                                             <option value="0">All Branches</option>
@@ -676,9 +736,9 @@
                                                             <?php }?>
                                                         </select>
                                                     </div>
-                                                    <div class="col-lg-3">
-                                                            Search :<br />
-                                                             <input type="text" id="searchbox_customers" class="form-control">
+                                                    <div class="col-lg-2">
+                                                        Search :<br />
+                                                        <input type="text" id="searchbox_customers" class="form-control">
                                                     </div>
                                                 </div><br>
                                                 <table id="tbl_customers" class="table table-striped" cellspacing="0" width="100%">
@@ -1091,7 +1151,23 @@
                 </div>
             </div><!---modal-->
 
-
+            <div id="modal_active" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title"><span id="modal_mode"> </span>Confirmation</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p id="modal-body-message">Are you sure you want to set this customer as <span id="confirm_msg"></span>?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btn_yes_active" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                            <button id="btn_close_active" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!---modal-->
 
 
 

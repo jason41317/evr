@@ -33,7 +33,7 @@ class Adjustment_out extends CORE_Controller
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );
 
-        $data['suppliers']=$this->Suppliers_model->get_list(array("is_deleted"=>FALSE));
+        $data['suppliers']=$this->Suppliers_model->get_list(array("is_deleted"=>FALSE,"is_active"=>TRUE));
         $data['refproducts']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE'
         );

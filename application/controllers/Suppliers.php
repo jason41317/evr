@@ -36,8 +36,13 @@ class Suppliers extends CORE_Controller {
         switch($txn) {
             case 'list':
                 $m_suppliers=$this->Suppliers_model;
+                $filter = array('suppliers.is_deleted' => FALSE);
+                $is_active = $this->input->post('is_active', TRUE);
+                if ($is_active != -1) {
+                    $filter = array('suppliers.is_deleted' => FALSE, 'suppliers.is_active' => $is_active);
+                }
                 $response['data']=$m_suppliers->get_list(
-                        array('suppliers.is_deleted'=>FALSE),
+                        $filter,
                         'suppliers.*,tax_types.tax_type,tax_types.tax_rate',
 
                         array(
@@ -142,6 +147,30 @@ class Suppliers extends CORE_Controller {
 
                         ));
                 echo json_encode($response);
+
+                break;
+
+            case 'activate-deactivate':
+                $m_suppliers=$this->Suppliers_model;
+
+                $supplier_id=$this->input->post('supplier_id',TRUE);
+
+                $m_suppliers->is_active = $this->input->post('is_active',TRUE) ? 1 : 0;
+                // $m_products->is_deleted=1;
+                if($m_suppliers->modify($supplier_id)){         
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Supplier information successfully '.($m_suppliers->is_active ? 'Activated' : 'Deactivated').'.';
+                    $response['row_updated']=$m_suppliers->get_list(
+                        $supplier_id,
+                            'suppliers.*,tax_types.tax_type,tax_types.tax_rate',
+    
+                            array(
+                                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
+    
+                            ));
+                    echo json_encode($response);
+                }
 
                 break;
 

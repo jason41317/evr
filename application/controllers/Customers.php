@@ -46,11 +46,17 @@ class Customers extends CORE_Controller {
             case 'getcustomer':
                 $department_id = $this->input->post('department_id', TRUE);
                 $get = "";
-
+                $is_active = $this->input->post('is_active', TRUE);
                 if($department_id > 1){
                     $get = array('customers.department_id'=>$department_id,'customers.is_deleted'=>FALSE);
+                    if ($is_active != -1) {
+                        $get = array('customers.department_id'=>$department_id,'customers.is_deleted'=>FALSE, 'customers.is_active' => $is_active);
+                    }
                 }else {
                     $get = array('customers.is_deleted'=>FALSE);
+                    if ($is_active != -1) {
+                        $get = array('customers.is_deleted'=>FALSE, 'customers.is_active' => $is_active);
+                    }
                 }
 
                 $response['data'] = $this->response_rows($get);
@@ -145,6 +151,23 @@ class Customers extends CORE_Controller {
                 $response['msg']='Customer Information successfully updated.';
                 $response['row_updated']=$this->response_rows($customer_id);
                 echo json_encode($response);
+
+                break;
+
+            case 'activate-deactivate':
+                $m_customers=$this->Customers_model;
+
+                $customer_id=$this->input->post('customer_id',TRUE);
+
+                $m_customers->is_active = $this->input->post('is_active',TRUE) ? 1 : 0;
+                // $m_products->is_deleted=1;
+                if($m_customers->modify($customer_id)){         
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Customer information successfully '.($m_customers->is_active ? 'Activated' : 'Deactivated').'.';
+                    $response['row_updated']=$this->response_rows($customer_id);
+                    echo json_encode($response);
+                }
 
                 break;
 

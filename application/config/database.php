@@ -75,9 +75,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => 'JDEV-SERVER:3307',
 	'username' => 'root',
-	'password' => 'noble',
+	'password' => 'jdev',
 	// 'database' => 'evr_db',
 	'database' => 'eoption_luzon11042020',
 	'dbdriver' => 'mysqli',

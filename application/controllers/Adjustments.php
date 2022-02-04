@@ -61,7 +61,7 @@ class Adjustments extends CORE_Controller
             )
 
         );
-        $data['customers']=$this->Customers_model->get_list(array("is_deleted"=>FALSE));
+        $data['customers']=$this->Customers_model->get_list(array("is_deleted"=>FALSE,"is_active"=>TRUE));
         $data['title'] = 'Inventory Adjustment';
         
         (in_array('11-3',$this->session->user_rights)? 

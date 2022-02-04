@@ -13,6 +13,8 @@
         <link rel="stylesheet" href="assets/plugins/spinner/dist/ladda-themeless.min.css">
         <link type="text/css" href="assets/plugins/datatables/dataTables.bootstrap.css" rel="stylesheet">
         <link type="text/css" href="assets/plugins/datatables/dataTables.themify.css" rel="stylesheet">
+        <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
+        <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
         <style>
             .toolbar{
                 float: left;
@@ -43,6 +45,12 @@
             @-webkit-keyframes spin2 {
                 from { -webkit-transform: rotate(0deg); }
                 to { -webkit-transform: rotate(360deg); }
+            }
+            #tbl_salesperson_filter{
+                display: none;
+            }
+            .select2-container{
+                min-width: 100%;
             }
 
         </style>
@@ -75,7 +83,27 @@
                                             <div id="div_category_list">
                                                 <div class="panel panel-default" style="border-top: 3px solid #2196f3;">
                                                     <div class="panel-body table-responsive">
-                                                    <h2 class="h2-panel-heading"> Sales Person</h2><hr>
+                                                        <h2 class="h2-panel-heading"> Sales Person</h2><hr>
+                                                        <div class="row">
+                                                            <div class="col-lg-4"><br>
+                                                            <button class="btn btn-green"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New Sales Person" ><i class="fa fa-users"></i> New Sales person</button>
+                                                            </div>
+                                                            <div class="col-lg-3" style="text-align: right;">
+                                                            &nbsp;<br>
+                                                            </div>
+                                                            <div class="col-lg-2">
+                                                                Status :<br />
+                                                                <select name="is_active" id="is_active" class="form-control">
+                                                                    <option value="-1">ALL</option>
+                                                                    <option value="1">ACTIVE</option>
+                                                                    <option value="0">INACTIVE</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-lg-3">
+                                                                Search :<br />
+                                                                <input type="text" id="searchbox_salesperson" class="form-control">
+                                                            </div>
+                                                        </div><br>
                                                         <table id="tbl_salesperson" class="table table-striped" cellspacing="0" width="100%">
                                                             <thead class="">
                                                             <tr>
@@ -235,6 +263,23 @@
                         </div>
                     </div>
                 </div>
+                <div id="modal_active" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                                <h4 class="modal-title"><span id="modal_mode"> </span>Confirmation</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p id="modal-body-message">Are you sure you want to set this salesperson as <span id="confirm_msg"></span>?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="btn_yes_active" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                                <button id="btn_close_active" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!---modal-->
 
                 <footer role="contentinfo">
                     <div class="clearfix">
@@ -259,17 +304,33 @@
 
     <script type="text/javascript" src="assets/plugins/datatables/jquery.dataTables.js"></script>
     <script type="text/javascript" src="assets/plugins/datatables/dataTables.bootstrap.js"></script>
-
+    <script src="assets/plugins/select2/select2.full.min.js"></script>
     <script>
 
     $(document).ready(function(){
-        var dt; var _txnMode; var _selectedID; var _selectRowObj;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboStatus; var isActive;
 
         var initializeControls=function(){
+            _cboStatus=$('#is_active').select2({
+                placeholder: "Please select status.",
+                allowClear: false
+            });
+
+            _cboStatus.select2('val', 1);
+
             dt=$('#tbl_salesperson').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
-                "ajax" : "Salesperson/transaction/list",
+                "ajax": {
+                    "url": "Salesperson/transaction/list",
+                    "type": "POST",
+                    "bDestroy": true,
+                    "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "is_active": _cboStatus.select2('val')
+                        });
+                    }
+                },
                 "columns": [
 
                     { targets:[0],data: "acr_name" },
@@ -277,24 +338,52 @@
                     {
                         targets:[2],
                         render: function (data, type, full, meta){
-                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
+                            var variant = full.is_active == 1 ? 'warning' : 'success';
+                            var title = full.is_active == 1 ? 'Inactive' : 'Active';
+                            var icon = full.is_active == 1 ? 'times' : 'check';
+
+                            var btn_active='<button class="btn btn-'+variant+' btn-sm" name="active_info"   data-toggle="tooltip" data-placement="top" title="Set as '+title+'" style="margin-right: 5px;"><i class="fa fa-'+icon+'"></i> </button>';
+                            var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"  style="margin-right:5px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-red btn-sm" name="remove_info" style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
 
-                            return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                            return '<center>'+btn_active+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                         }
                     }
                 ]
             });
-
-            var createToolBarButton=function(){
-                var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New category" >'+
-                    '<i class="fa fa-users"></i> New Sales person</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
         }();
 
         var bindEventHandlers=(function(){
+            _cboStatus.on("select2:select", function (e) {
+                $('#tbl_salesperson').DataTable().ajax.reload();
+            });
+            $('#btn_yes_active').click(function(){
+                setActiveInactive().done(function(response){
+                    showNotification(response);
+                    if(response.stat == 'success'){
+                        if (_cboStatus.select2('val') == '-1') {
+                            dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                        } else {
+                            dt.row(_selectRowObj).remove().draw();
+                        }
+                    }
+                    // dt.row(_selectRowObj).remove().draw();
+                });
+            });
             var detailRows = [];
+
+            $('#tbl_salesperson tbody').on('click','button[name="active_info"]',function(){
+                // $('#modal_confirmation').modal('show');
+                // _selectRowObj=$(this).closest('tr');
+                // var data=dt.row(_selectRowObj).data();
+                // _selectedID=data.product_id;
+                _selectRowObj=$(this).closest('tr');
+                var data=dt.row(_selectRowObj).data();
+                _selectedID=data.salesperson_id;
+                isActive=data.is_active;
+                $('#confirm_msg').text(isActive == 1 ? 'Inactive' : 'Active');
+                $('#modal_active').modal('show');
+            });
 
             $('#tbl_salesperson tbody').on( 'click', 'tr td.details-control', function () {
                 var tr = $(this).closest('tr');
@@ -386,6 +475,11 @@
                     $('#modal_new_salesperson').modal('hide');
                 }
             });
+            $("#searchbox_salesperson").keyup(function(){         
+                dt
+                    .search(this.value)
+                    .draw();
+            });
         })();
 
         var validateRequiredFields=function(){
@@ -401,6 +495,16 @@
                 }
             });
             return stat;
+        };
+
+        var setActiveInactive=function(){
+            return $.ajax({ 
+                "dataType":"json",
+                "type":"POST",
+                "url":"Salesperson/transaction/activate-deactivate",
+                "data":{salesperson_id : _selectedID, is_active: isActive == 1 ? 0 : 1},
+                "beforeSend": showSpinningProgress($('#btn_save'))
+            });
         };
 
         var createSalesperson=function(){
