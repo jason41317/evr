@@ -72,18 +72,28 @@ class Products extends CORE_Controller
 
             case 'getproduct':
                 $refproduct_id = $this->input->post('refproduct_id', TRUE);
+                $is_active = $this->input->post('is_active', TRUE);
                 $get = "";
 
                 if($refproduct_id == 1){
                     $get = array('products.refproduct_id'=>$refproduct_id,'products.is_deleted'=>FALSE);
+                    if ($is_active != -1) {
+                        $get = array('products.is_deleted' => FALSE, 'products.is_active' => $is_active);
+                    }
                 }
 
                 elseif($refproduct_id == 2){
                     $get = array('products.refproduct_id'=>$refproduct_id,'products.is_deleted'=>FALSE);
+                    if ($is_active != -1) {
+                        $get = array('products.is_deleted' => FALSE, 'products.is_active' => $is_active);
+                    }
                 }
 
                 else {
                     $get = array('products.is_deleted'=>FALSE);
+                    if ($is_active != -1) {
+                        $get = array('products.is_deleted' => FALSE, 'products.is_active' => $is_active);
+                    }
                 }
 
                 $response['data'] = $this->response_rows($get);
@@ -232,6 +242,35 @@ class Products extends CORE_Controller
                 }
 
                 break;
+
+            case 'activate-deactivate':
+                $m_products=$this->Products_model;
+
+                $product_id=$this->input->post('product_id',TRUE);
+
+                // $m_products->set('date_deleted','NOW()');
+                $m_products->is_active = $this->input->post('is_active',TRUE) ? 1 : 0;
+                // $m_products->is_deleted=1;
+                if($m_products->modify($product_id)){
+
+                    $product_desc= $m_products->get_list($product_id,'product_desc');
+                    $m_trans=$this->Trans_model;
+                    $m_trans->user_id=$this->session->user_id;
+                    $m_trans->set('trans_date','NOW()');
+                    $m_trans->trans_key_id=2; //CRUD
+                    $m_trans->trans_type_id=50; // TRANS TYPE
+                    $m_trans->trans_log='Updated Set as '.$m_products->is_active ? 'Active' : 'Inactive' .' Product: '.$product_desc[0]->product_desc;
+                    $m_trans->save();
+                                        
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Product information successfully '.($m_products->is_active ? 'Activated' : 'Deactivated').'.';
+                    $response['row_updated']=$this->response_rows($product_id);
+                    echo json_encode($response);
+                }
+
+                break;
+
             case 'product-history':
                 $product_id=$this->input->get('id');
                 $m_products=$this->Products_model;

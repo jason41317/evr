@@ -27,9 +27,14 @@ class Salesperson extends CORE_Controller {
         switch($txn) {
             case 'list':
                 $m_salesperson=$this->Salesperson_model;
+                $filter = array('salesperson.is_deleted' => FALSE);
+                $is_active = $this->input->post('is_active', TRUE);
+                if ($is_active != -1) {
+                    $filter = array('salesperson.is_deleted' => FALSE, 'salesperson.is_active' => $is_active);
+                }
                 $response['data']=$m_salesperson->get_list(
-                    array('salesperson.is_deleted'=>FALSE),
-                    'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
+                    $filter,
+                    'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname, is_active'
                 );
                 echo json_encode($response);
 
@@ -94,6 +99,26 @@ class Salesperson extends CORE_Controller {
                     'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
                 );
                 echo json_encode($response);
+
+                break;
+
+            case 'activate-deactivate':
+                $m_salesperson=$this->Salesperson_model;
+
+                $salesperson_id=$this->input->post('salesperson_id',TRUE);
+
+                $m_salesperson->is_active = $this->input->post('is_active',TRUE) ? 1 : 0;
+                // $m_products->is_deleted=1;
+                if($m_salesperson->modify($salesperson_id)){         
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Salesperson information successfully '.($m_salesperson->is_active ? 'Activated' : 'Deactivated').'.';
+                    $response['row_updated']=$m_salesperson->get_list(
+                        $salesperson_id,
+                        'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname, is_active'
+                    );
+                    echo json_encode($response);
+                }
 
                 break;
        	}

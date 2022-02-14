@@ -17,6 +17,9 @@
     <link href="assets/plugins/datapicker/datepicker3.css" rel="stylesheet">
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <style>
+        #tbl_products_filter{
+            display: none;
+        }
     </style>
     <?php echo $_switcher_settings; ?>
     <?php echo $_def_js_files; ?>
@@ -44,13 +47,13 @@
     <script>
 
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _selectedProductType; var _isTaxExempt=0;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _selectedProductType; var _isTaxExempt=0; var isActive=0; var _cboStatus;
     
     $(document).ready(function(){
         $('#modal_filter').modal('show');
         showList(false);
     });
-
+    
     var getProduct=function(){
         dt=$('#tbl_products').DataTable({
             "dom": '<"toolbar">frtip',
@@ -62,8 +65,9 @@ $(document).ready(function(){
             "bDestroy": true,
             "data": function ( d ) {
                     return $.extend( {}, d, {
-                        "refproduct_id": _selectedProductType//id of product type
-                        });
+                        "refproduct_id": _selectedProductType,//id of product type
+                        "is_active": _cboStatus.select2('val')
+                    });
                 }
             },
             "columns": [
@@ -92,17 +96,22 @@ $(document).ready(function(){
                 {
                     targets:[6],
                     render: function (data, type, full, meta){
+                        var variant = full.is_active == 1 ? 'warning' : 'success';
+                        var title = full.is_active == 1 ? 'Inactive' : 'Active';
+                        var icon = full.is_active == 1 ? 'times' : 'check';
+
+                        var btn_active='<button class="btn btn-'+variant+' btn-sm" name="active_info"   data-toggle="tooltip" data-placement="top" title="Set as '+title+'" style="margin-right: 5px;"><i class="fa fa-'+icon+'"></i> </button>';
                         var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                         var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
 
-                        return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                        return '<center>'+btn_active+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                     }
                 }
             ],
 
-            language: {
-                         searchPlaceholder: "Search Product Name"
-                     },
+            // language: {
+            //     searchPlaceholder: "Search Product Name"
+            // },
             "rowCallback":function( row, data, index ){
 
                 $(row).find('td').eq(5).attr({
@@ -430,6 +439,12 @@ $(document).ready(function(){
     });
 
     var bindEventHandlers=(function(){
+        $("#searchbox").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
         var detailRows = [];
 
         $('#tbl_products tbody').on( 'click', 'tr td.details-control', function () {
@@ -476,6 +491,20 @@ $(document).ready(function(){
             $('#expense_account_id').val(9);
         });
 
+        $('#btn_yes_active').click(function(){
+            setActiveInactive().done(function(response){
+                showNotification(response);
+                if(response.stat == 'success'){
+                    if (_cboStatus.select2('val') == '-1') {
+                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                    } else {
+                        dt.row(_selectRowObj).remove().draw();
+                    }
+                }
+                // dt.row(_selectRowObj).remove().draw();
+            });
+        });
+
         $('#tbl_products tbody').on('click','button[name="edit_info"]',function(){
             _txnMode="edit";
 
@@ -510,6 +539,19 @@ $(document).ready(function(){
             var data=dt.row(_selectRowObj).data();
             _selectedID=data.product_id;
 
+        });
+
+        $('#tbl_products tbody').on('click','button[name="active_info"]',function(){
+            // $('#modal_confirmation').modal('show');
+            // _selectRowObj=$(this).closest('tr');
+            // var data=dt.row(_selectRowObj).data();
+            // _selectedID=data.product_id;
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.product_id;
+            isActive=data.is_active;
+            $('#confirm_msg').text(isActive == 1 ? 'Inactive' : 'Active');
+            $('#modal_active').modal('show');
         });
         
 
@@ -584,7 +626,27 @@ $(document).ready(function(){
                 }
             });
         });
+
+        _cboStatus=$('#is_active').select2({
+            placeholder: "Please select status.",
+            allowClear: false
+        });
+        _cboStatus.select2('val', 1);
+
+        _cboStatus.on("select2:select", function (e) {
+            $('#tbl_products').DataTable().ajax.reload();
+        });
     })();
+
+    var setActiveInactive=function(){
+        return $.ajax({ 
+            "dataType":"json",
+            "type":"POST",
+            "url":"Products/transaction/activate-deactivate",
+            "data":{product_id : _selectedID, is_active: isActive == 1 ? 0 : 1},
+            "beforeSend": showSpinningProgress($('#btn_save'))
+        });
+    };
 
     var validateRequiredFields=function(f){
         var stat=true;
@@ -1014,7 +1076,26 @@ $(document).ready(function(){
                                                     <span class="fa fa-arrow-left" style="color: #9E9E9E;"></span>
                                                 </button>
                                                 <h2 style="margin-top: 0px !important;margin-bottom: 0px !important;">Products</h2><hr>
-                                                <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New product" ><i class="fa fa-plus-circle"></i> Create New Product</button>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <br/>
+                                                        <button class="btn btn-primary" id="btn_new" style="float: left; text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important;" data-toggle="modal" data-target="" data-placement="left" title="Create New product" ><i class="fa fa-plus-circle"></i> Create New Product</button>
+                                                    </div>
+                                                    <div class="col-md-3"></div>
+                                                    <div class="col-md-2">
+                                                        Status :<br />
+                                                        <select name="is_active" id="is_active" class="form-control">
+                                                            <option value="-1">ALL</option>
+                                                            <option value="1">ACTIVE</option>
+                                                            <option value="0">INACTIVE</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        Search :<br />
+                                                        <input type="text" id="searchbox" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <br />
                                                 <table id="tbl_products" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>    
@@ -1709,7 +1790,24 @@ $(document).ready(function(){
                     </div>
                 </div>
             </div>
-
+            
+            <div id="modal_active" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title"><span id="modal_mode"> </span>Confirmation</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p id="modal-body-message">Are you sure you want to set this product as <span id="confirm_msg"></span>?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btn_yes_active" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                            <button id="btn_close_active" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!---modal-->
 
 
                 <div id="modal_confirmation" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
