@@ -20,6 +20,9 @@
     <link href="assets/plugins/select2/select2.min.css" rel="stylesheet">
     <link href="assets/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
     <style>
+        #tbl_suppliers_filter {
+            display: none;
+        }
     </style>
     <?php echo $_switcher_settings; ?>
     <?php echo $_def_js_files; ?>
@@ -50,15 +53,30 @@
 
     <script>
 $(document).ready(function(){
-    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes;
+    var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboItemTypes; var _cboStatus; var isActive;
 
     var initializeControls=function(){
+        _cboStatus=$('#is_active').select2({
+            placeholder: "Please select status.",
+            allowClear: false
+        });
+
+        _cboStatus.select2('val', 1);
         var initializeControls=function() {
             dt=$('#tbl_suppliers').DataTable({
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "pageLength":15,
-                "ajax" : "Suppliers/transaction/list",
+                "ajax": {
+                    "url": "Suppliers/transaction/list",
+                    "type": "POST",
+                    "bDestroy": true,
+                    "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "is_active": _cboStatus.select2('val')
+                        });
+                    }
+                },
                 "columns": [
                     {
                         "targets": [0],
@@ -75,18 +93,23 @@ $(document).ready(function(){
                     {
                         targets:[6],
                         render: function (data, type, full, meta){
+                            var variant = full.is_active == 1 ? 'warning' : 'success';
+                            var title = full.is_active == 1 ? 'Inactive' : 'Active';
+                            var icon = full.is_active == 1 ? 'times' : 'check';
+
+                            var btn_active='<button class="btn btn-'+variant+' btn-sm" name="active_info"   data-toggle="tooltip" data-placement="top" title="Set as '+title+'" style="margin-right: 5px;"><i class="fa fa-'+icon+'"></i> </button>';
                             var btn_edit='<button class="btn btn-primary btn-sm" name="edit_info"   data-toggle="tooltip" data-placement="top" title="Edit" style="margin-left:-5px;"><i class="fa fa-pencil"></i> </button>';
                             var btn_trash='<button class="btn btn-danger btn-sm" name="remove_info"  data-toggle="tooltip" data-placement="top" title="Move to trash" style="margin-right:-5px;"><i class="fa fa-trash-o"></i> </button>';
-                            return '<center>'+btn_edit+'&nbsp;'+btn_trash+'</center>';
+                            return '<center>'+btn_active+'&nbsp;'+btn_edit+'&nbsp;'+btn_trash+'</center>';
                         }
                     }
                 ]
             });
-            var createToolBarButton=function() {
-                var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New supplier" >'+
-                    '<i class="fa fa-plus-circle"></i> New Supplier</button>';
-                $("div.toolbar").html(_btnNew);
-            }();
+            // var createToolBarButton=function() {
+            //     var _btnNew='<button class="btn btn-green"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New supplier" >'+
+            //         '<i class="fa fa-plus-circle"></i> New Supplier</button>';
+            //     $("div.toolbar").html(_btnNew);
+            // }();
         }();
 
         $('.numeric').autoNumeric('init');
@@ -96,6 +119,29 @@ $(document).ready(function(){
     }();
 
     var bindEventHandlers=(function(){
+        $("#searchbox_suppliers").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+        _cboStatus.on("select2:select", function (e) {
+            $('#tbl_suppliers').DataTable().ajax.reload();
+        });
+
+        $('#btn_yes_active').click(function(){
+            setActiveInactive().done(function(response){
+                showNotification(response);
+                if(response.stat == 'success'){
+                    if (_cboStatus.select2('val') == '-1') {
+                        dt.row(_selectRowObj).data(response.row_updated[0]).draw();
+                    } else {
+                        dt.row(_selectRowObj).remove().draw();
+                    }
+                }
+                // dt.row(_selectRowObj).remove().draw();
+            });
+        });
         var detailRows = [];
         $('#tbl_suppliers tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
@@ -125,6 +171,19 @@ $(document).ready(function(){
                     }
                 });
             }
+        });
+
+        $('#tbl_suppliers tbody').on('click','button[name="active_info"]',function(){
+            // $('#modal_confirmation').modal('show');
+            // _selectRowObj=$(this).closest('tr');
+            // var data=dt.row(_selectRowObj).data();
+            // _selectedID=data.product_id;
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+            _selectedID=data.supplier_id;
+            isActive=data.is_active;
+            $('#confirm_msg').text(isActive == 1 ? 'Inactive' : 'Active');
+            $('#modal_active').modal('show');
         });
 
         $('#btn_new').click(function(){
@@ -240,6 +299,16 @@ $(document).ready(function(){
 
         
     })();
+
+    var setActiveInactive=function(){
+        return $.ajax({ 
+            "dataType":"json",
+            "type":"POST",
+            "url":"Suppliers/transaction/activate-deactivate",
+            "data":{supplier_id : _selectedID, is_active: isActive == 1 ? 0 : 1},
+            "beforeSend": showSpinningProgress($('#btn_save'))
+        });
+    };
 
     var validateRequiredFields=function(f){
         var stat=true;
@@ -518,7 +587,26 @@ $(document).ready(function(){
                                     <div id="div_supplier_list">
                                         <div class="panel panel-default"  style="border-top: 3px solid #2196f3;">
                                             <div class="panel-body table-responsive">
-                                            <h2 class="h2-panel-heading"> Suppliers</h2><hr>
+                                                <h2 class="h2-panel-heading"> Suppliers</h2><hr>
+                                                <div class="row">
+                                                    <div class="col-lg-4"><br>
+                                                        <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New supplier" ><i class="fa fa-plus"></i> New Supplier</button>
+                                                    </div>
+                                                    <div class="col-lg-3" style="text-align: right;">
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        Status :<br />
+                                                        <select name="is_active" id="is_active" class="form-control">
+                                                            <option value="-1">ALL</option>
+                                                            <option value="1">ACTIVE</option>
+                                                            <option value="0">INACTIVE</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                            Search :<br />
+                                                            <input type="text" id="searchbox_suppliers" class="form-control">
+                                                    </div>
+                                                </div><br>
                                                 <table id="tbl_suppliers" class="table table-striped" cellspacing="0" width="100%">
                                                     <thead class="">
                                                     <tr>
@@ -559,6 +647,23 @@ $(document).ready(function(){
                         <div class="modal-footer">
                             <button id="btn_yes" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
                             <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!---modal-->
+            <div id="modal_active" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                            <h4 class="modal-title"><span id="modal_mode"> </span>Confirmation</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p id="modal-body-message">Are you sure you want to set this supplier as <span id="confirm_msg"></span>?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btn_yes_active" type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                            <button id="btn_close_active" type="button" class="btn btn-default" data-dismiss="modal">No</button>
                         </div>
                     </div>
                 </div>
