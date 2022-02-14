@@ -75,11 +75,11 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => 'localhost:3307',
 	'username' => 'root',
 	'password' => 'jdev',
 	// 'database' => 'evr_db',
-	'database' => 'eoption_luzon08112020',
+	'database' => 'evr_cebu',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
