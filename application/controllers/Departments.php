@@ -26,7 +26,12 @@ class Departments extends CORE_Controller {
         switch ($txn) {
             case 'list':
                 $m_departments = $this->Departments_model;
-                $response['data'] = $m_departments->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
+                $filter = array('is_deleted' => FALSE);
+                $is_active = $this->input->post('is_active', TRUE);
+                if ($is_active != -1) {
+                    $filter = array('is_deleted' => FALSE, 'is_active' => $is_active);
+                }
+                $response['data'] = $m_departments->get_list($filter);
                 echo json_encode($response);
                 break;
 
@@ -105,6 +110,22 @@ class Departments extends CORE_Controller {
                 $response['msg']='Department Information successfully updated.';
                 $response['row_updated']=$m_departments->get_department_list($department_id);
                 echo json_encode($response);
+
+                break;
+
+            case 'activate-deactivate':
+                $m_departments=$this->Departments_model;
+
+                $department_id=$this->input->post('department_id',TRUE);
+
+                $m_departments->is_active = $this->input->post('is_active',TRUE) ? 1 : 0;
+                if($m_departments->modify($department_id)){         
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Department information successfully '.($m_departments->is_active ? 'Activated' : 'Deactivated').'.';
+                    $response['row_updated']=$m_departments->get_department_list($department_id);
+                    echo json_encode($response);
+                }
 
                 break;
         }
