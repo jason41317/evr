@@ -14,7 +14,7 @@ class Departments_model extends CORE_Model {
                 FROM
                   departments as a
                 WHERE
-                    a.is_deleted=FALSE AND a.is_active=TRUE
+                    a.is_deleted=FALSE
                 ".($department_id==null?"":" AND a.department_id=$department_id")."
             ";
         return $this->db->query($sql)->result();
