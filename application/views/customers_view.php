@@ -168,6 +168,14 @@
                 });
             });
 
+            $('#btn_print').click(function(){
+                window.open('customers/transaction/print-masterfile?id='+_selectedBranch);
+            });  
+
+            $('#btn_export').click(function(){
+                window.open('customers/transaction/export-customer?id='+_selectedBranch);
+            }); 
+
             $('#tbl_customers tbody').on('click','button[name="active_info"]',function(){
                 // $('#modal_confirmation').modal('show');
                 // _selectRowObj=$(this).closest('tr');
@@ -725,7 +733,11 @@
                                                     <div class="col-lg-3"><br>
                                                         <button class="btn btn-primary" id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;margin-bottom: 0px !important; float: left;" data-toggle="modal" data-target="" data-placement="left" title=" New product" ><i class="fa fa-plus"></i>  New Customer</button>
                                                     </div>
-                                                    <div class="col-lg-4">
+                                                    <div class="col-lg-4" style="text-align: right;">
+                                                    &nbsp;<br>
+                                                        <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Customer Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                        <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" 
+                                                        data-placement="left" title="Export Supplier Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
                                                     </div>
                                                     <div class="col-lg-2">
                                                         Status :<br />
