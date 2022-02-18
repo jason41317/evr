@@ -1795,7 +1795,12 @@ class Templates extends CORE_Controller {
 
 
                 $data['methods']=$m_methods->get_list();
-                $data['departments']=$m_departments->get_list();
+                $data['departments']=$m_departments->get_list(
+                    array(
+                        'is_active'=>TRUE,
+                        'is_deleted'=>FALSE
+                    )
+                );
 
                 $data['suppliers']=$m_suppliers->get_list(
                     array(
