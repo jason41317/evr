@@ -41,7 +41,7 @@ class Cash_disbursement extends CORE_Controller
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
         $data['suppliers']=$this->Suppliers_model->get_list(array('is_deleted' => FALSE, 'is_active' => TRUE));
-        $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE');
+        $data['departments']=$this->Departments_model->get_list('is_deleted = FALSE AND is_active = TRUE');
         $data['accounts']=$this->Account_title_model->get_list('is_deleted = FALSE');
         $data['methods']=$this->Payment_method_model->get_list();
         $data['tax_types']=$this->Tax_types_model->get_list('is_deleted=0');

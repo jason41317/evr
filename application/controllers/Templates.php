@@ -1789,7 +1789,7 @@ class Templates extends CORE_Controller {
 
 
                 $data['methods']=$m_methods->get_list();
-                $data['departments']=$m_departments->get_list();
+                $data['departments']=$m_departments->get_list('is_active = 1 AND is_deleted = 0');
 
                 $data['customers']=$m_customers->get_list(
                     array(
@@ -1878,7 +1878,7 @@ class Templates extends CORE_Controller {
                 $data['payment_info']=$payment_info[0];
 
                 $data['methods']=$m_methods->get_list();
-                $data['departments']=$m_departments->get_list();
+                $data['departments']=$m_departments->get_list(array("is_deleted"=>FALSE,"is_active"=>TRUE));
                 $data['banks']=$m_banks->get_list(array("is_deleted"=>FALSE));
 
                 $data['suppliers']=$m_suppliers->get_list(
