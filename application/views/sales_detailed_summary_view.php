@@ -54,6 +54,10 @@
         .numeriCol {
             text-align: right;
         }
+
+        .select2-container{
+            min-width: 100%;
+        }
     </style>
 
 </head>
@@ -162,13 +166,35 @@
                                                                     </table>
                                                                 </div>
                                                                 <div id="vet_rep" class="tab-pane fade">
-                                                                    <strong>Search Salesperson :</strong><br>
-                                                                    <select id="cbo_salesperson" class="form-control" style="width: 100%;">
-                                                                        <option value="all">[All Salesperson]</option>
-                                                                        <?php foreach($salespersons as $salesperson) { ?>
-                                                                            <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->salesperson_name; ?></option>
-                                                                        <?php } ?>
-                                                                    </select>
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
+                                                                            <strong>Search Salesperson :</strong><br>
+                                                                            <select id="cbo_salesperson" class="form-control" style="width: 100%;">
+                                                                                <option value="all">[All Salesperson]</option>
+                                                                                <?php foreach($salespersons as $salesperson) { ?>
+                                                                                    <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->salesperson_name; ?></option>
+                                                                                <?php } ?>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <strong>Search Product Type :</strong><br>
+                                                                            <select id="cbo_product_type" class="form-control" style="width: 100%;">
+                                                                                <option value="all">[All]</option>
+                                                                                <?php foreach($product_types as $product_type) { ?>
+                                                                                    <option value="<?php echo $product_type->refproduct_id; ?>"><?php echo $product_type->product_type; ?></option>
+                                                                                <?php } ?>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <strong>Search Supplier :</strong><br>
+                                                                            <select id="cbo_supplier" class="form-control" style="width: 100%;">
+                                                                                <option value="all">[All Supplier]</option>
+                                                                                <?php foreach($suppliers as $supplier) { ?>
+                                                                                    <option value="<?php echo $supplier->supplier_id; ?>"><?php echo $supplier->supplier_name; ?></option>
+                                                                                <?php } ?>
+                                                                            </select>
+                                                                        </div> 
+                                                                    </div>
                                                                     <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_salesperson_report" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print" >
                                                                     <i class="fa fa-print"></i> Detailed Report</button>
                                                                     <button class="btn btn-primary pull-left" style="margin-right: 5px; margin-top: 10px; margin-bottom: 10px;" id="btn_print_salesperson_report_summary" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " title="Print" >
@@ -255,7 +281,7 @@
 
 <script>
     $(document).ready(function(){
-        var _cboAccounts; var dt; var _cboCustomers; var _cboSalesperson;    
+        var _cboAccounts; var dt; var _cboCustomers; var _cboSalesperson; var _cboProductType; var _cboSupplier;
         var _date_from = $('input[name="date_from"]');
         var _date_to = $('input[name="date_to"]');
 
@@ -267,12 +293,24 @@
                 allowClear: true
             });
 
+            _cboProductType = $('#cbo_product_type').select2({
+                placeholder: 'Please Select Product Type',
+                allowClear: true
+            });
+
+            _cboSupplier = $('#cbo_supplier').select2({
+                placeholder: 'Please Select Supplier',
+                allowClear: true
+            });
+
             _cboCustomers = $('#cbo_customers').select2({
                 placeholder: 'Please Select Customer',
                 allowClear: true
             });
 
             _cboSalesperson.select2('val','all');
+            _cboProductType.select2('val','all');
+            _cboSupplier.select2('val','all');
             _cboCustomers.select2('val', 'all');
 
             $('.date-picker').datepicker({
@@ -315,12 +353,22 @@
                 reloadList();
             });
 
-            $(document).on('select2:select change',_cboCustomers,function(){
+            _cboCustomers.on("select2:select", function (e) {
                 dt.destroy();
                 reloadList();
             });
 
-            $(document).on('select2:select change',_cboSalesperson,function(){
+            _cboSalesperson.on("select2:select", function (e) {
+                dtSalesperson.destroy();
+                reloadSalespersonList();
+            });
+
+            _cboProductType.on("select2:select", function (e) {
+                dtSalesperson.destroy();
+                reloadSalespersonList();
+            });
+
+            _cboSupplier.on("select2:select", function (e) {
                 dtSalesperson.destroy();
                 reloadSalespersonList();
             });
@@ -362,7 +410,9 @@
                         return $.extend( {}, d, {
                             "startDate":_date_from.val(),
                             "endDate":_date_to.val(),
-                            "sp_id":_cboSalesperson.val()
+                            "sp_id":_cboSalesperson.val(),
+                            "pt_id": _cboProductType.val(),
+                            "supp_id": _cboSupplier.val()
                         });
                     }
                 },
