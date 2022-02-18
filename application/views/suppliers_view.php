@@ -129,6 +129,14 @@ $(document).ready(function(){
             $('#tbl_suppliers').DataTable().ajax.reload();
         });
 
+        $('#btn_print').click(function(){
+            window.open('suppliers/transaction/print-masterfile');
+        });  
+
+        $('#btn_export').click(function(){
+            window.open('suppliers/transaction/export-supplier');
+        });
+
         $('#btn_yes_active').click(function(){
             setActiveInactive().done(function(response){
                 showNotification(response);
@@ -593,6 +601,9 @@ $(document).ready(function(){
                                                         <button class="btn btn-primary"  id="btn_new" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="New supplier" ><i class="fa fa-plus"></i> New Supplier</button>
                                                     </div>
                                                     <div class="col-lg-3" style="text-align: right;">
+                                                    &nbsp;<br>
+                                                        <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print Supplier Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
+                                                        <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export Supplier Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
                                                     </div>
                                                     <div class="col-lg-2">
                                                         Status :<br />
