@@ -10,7 +10,9 @@ class Sales_detailed_summary extends CORE_Controller {
             'Sales_invoice_model',
             'Company_model',
             'Customers_model',
-            'Salesperson_model'
+            'Salesperson_model',
+            'Refproduct_model',
+            'Suppliers_model'
         ));
 
     }
@@ -26,6 +28,13 @@ class Sales_detailed_summary extends CORE_Controller {
         $data['salespersons']=$this->Salesperson_model->get_list(
             'is_deleted=FALSE AND is_active=TRUE',
             'salesperson_id, CONCAT(firstname, " " , lastname, " - ", acr_name) AS salesperson_name, firstname, lastname, acr_name'
+        );
+        $data['product_types']=$this->Refproduct_model->get_list(
+            'is_deleted=FALSE'
+        );
+
+        $data['suppliers']=$this->Suppliers_model->get_list(
+            'is_deleted=FALSE AND is_active=TRUE'
         );
 
         $data['title']='Sales Report';
@@ -55,8 +64,10 @@ class Sales_detailed_summary extends CORE_Controller {
                 $start=date("Y-m-d",strtotime($this->input->get('startDate',TRUE)));
                 $end=date("Y-m-d",strtotime($this->input->get('endDate',TRUE)));
                 $salesperson_id=$this->input->get('sp_id',TRUE);
+                $product_type_id=$this->input->get('pt_id',TRUE);
+                $supplier_id=$this->input->get('supp_id',TRUE);
 
-                $response['data']=$m_sales_invoice->get_salesperson_sales_summary($start,$end,$salesperson_id);
+                $response['data']=$m_sales_invoice->get_salesperson_sales_summary($start,$end,$salesperson_id,$product_type_id,$supplier_id);
                 
                 echo(
                 json_encode($response)

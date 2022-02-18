@@ -376,7 +376,7 @@ class Sales_invoice_model extends CORE_Model
         return $this->db->query($sql)->result();
     }
 
-    function get_salesperson_sales_summary($start=null,$end=null,$salesperson_id){
+    function get_salesperson_sales_summary($start=null,$end=null,$salesperson_id,$refproduct_id=null,$supplier_id=null){
         $sql="SELECT
             main_sales.salesperson_id,
             main_sales.sales_invoice_id,
@@ -393,8 +393,11 @@ class Sales_invoice_model extends CORE_Model
             INNER JOIN salesperson AS sp ON sp.salesperson_id = si.salesperson_id)
                 INNER JOIN
             sales_invoice_items AS sii ON sii.sales_invoice_id = si.sales_invoice_id
+            INNER JOIN products AS p ON p.product_id = sii.product_id
         WHERE
             si.is_active = TRUE
+            ".($refproduct_id == 'all' || $refproduct_id == null ? '' : 'AND p.refproduct_id='."'".$refproduct_id."'")."
+            ".($supplier_id == 'all' || $supplier_id == null ? '' : 'AND p.supplier_id='."'".$supplier_id."'")."
                 AND si.is_deleted = FALSE
                 AND si.date_invoice BETWEEN '$start' AND '$end' ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND sp.salesperson_id='."'".$salesperson_id."'")."
         GROUP BY si.salesperson_id) as main_sales
@@ -405,9 +408,13 @@ class Sales_invoice_model extends CORE_Model
             FROM  adjustment_items aii 
                 LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
                 LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
+                LEFT JOIN sales_invoice_items sii ON sii.sales_invoice_id = si.sales_invoice_id
+                LEFT JOIN products p ON p.product_id = sii.product_id
                 WHERE ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
-                AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
-                si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type = 1 ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND si.salesperson_id='."'".$salesperson_id."'")."
+                AND  si.is_active = TRUE AND si.is_deleted = FALSE
+                ".($refproduct_id == 'all' || $refproduct_id == null ? '' : 'AND p.refproduct_id='."'".$refproduct_id."'")."
+                ".($supplier_id == 'all' || $supplier_id == null ? '' : 'AND p.supplier_id='."'".$supplier_id."'")."
+                AND si.date_invoice BETWEEN '$start' AND '$end' AND si.inv_type = 1 ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND si.salesperson_id='."'".$salesperson_id."'")."
                 GROUP BY si.salesperson_id) as main_returns on main_returns.salesperson_id = main_sales.salesperson_id
 
          ";
