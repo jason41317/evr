@@ -36,7 +36,7 @@ class Cash_receipt extends CORE_Controller
         $data['customers']=$this->Customers_model->get_list('is_deleted=0 AND is_active = 1');
         $data['accounts']=$this->Account_title_model->get_list();
         $data['methods']=$this->Payment_method_model->get_list('is_deleted=0');
-        $data['departments']=$this->Departments_model->get_list('is_deleted=0');
+        $data['departments']=$this->Departments_model->get_list('is_deleted=0 AND is_active=1');
 
 
         $data['title'] = 'Cash Receipt';
