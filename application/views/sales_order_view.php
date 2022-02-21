@@ -1043,7 +1043,7 @@ $(document).ready(function(){
     _objTypeHead.typeahead({minLength:1,hint:true}, {
         name: 'products',
         display: 'product_code',
-        limit : 20,
+        limit : 10000,
         source: products,
         templates: {
             header: [
@@ -1144,18 +1144,9 @@ $(document).ready(function(){
                 batch_no : '',
                 exp_date : ''
             }));
-
-
-
-
-
             reInitializeNumeric();
             reComputeTotal();
-
             }
-            
-
-
     });
 
         $('div.tt-menu').on('click','table.tt-suggestion',function(){
@@ -1179,8 +1170,6 @@ $(document).ready(function(){
 
     var bindEventHandlers=(function(){
         var detailRows = [];
-
-
         $('#tbl_sales_order tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
             var row = dt.row( tr );
