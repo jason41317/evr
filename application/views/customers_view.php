@@ -312,11 +312,11 @@
                 });
 
                 $('#btn_print').click(function(){
-                   window.open('customers/transaction/print-masterfile?id='+$('#cbo_department').val());
+                    window.open('customers/transaction/print-masterfile?id='+$('#cbo_department').val()+'&status='+$('#is_active').val());
                 });  
 
                 $('#btn_export').click(function(){
-                   window.open('customers/transaction/export-customer?id='+$('#cbo_department').val());
+                    window.open('customers/transaction/export-customer?id='+$('#cbo_department').val()+'&status='+$('#is_active').val());
                 });  
 
                 $('#btn_save').click(function(){
