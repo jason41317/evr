@@ -223,18 +223,26 @@ class Customers extends CORE_Controller {
                 $m_department=$this->Departments_model;
 
                 $department_id = $this->input->get('id', TRUE);
+                $is_active = $this->input->get('status', TRUE);
 
                 $filter = "";
+                $filter_active = "";
                 $data['department_name']="All Departments";
+                $data['status']="All";
 
                 if($department_id!=0){
                     $filter = " AND department_id=".$department_id;
                     $data['department_name'] = $m_department->get_list($department_id)[0]->department_name;
                 }
 
+                if($is_active!=-1){
+                    $filter_active = " AND is_active=".$is_active;
+                    $data['status'] = $is_active == 1 ? 'Active' : 'Inactive';
+                } 
+
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-                $data['customers']=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE '.$filter);
+                $data['customers']=$this->Customers_model->get_list('is_deleted=FALSE '.$filter.' '.$filter_active);
                     $this->load->view('template/customer_masterfile_content',$data);
 
             break;
@@ -246,19 +254,27 @@ class Customers extends CORE_Controller {
                 $m_company_info=$this->Company_model;
 
                 $department_id = $this->input->get('id', TRUE);
+                $is_active = $this->input->get('status', TRUE);
 
                 $filter = "";
+                $filter_active = "";
                 $department_name="All Departments";
+                $status="All";
 
                 if($department_id!=0){
                     $filter = " AND department_id=".$department_id;
                     $department_name = $m_department->get_list($department_id)[0]->department_name;
                 }
 
+                if($is_active!=-1){
+                    $filter_active = " AND is_active=".$is_active;
+                    $status = $is_active == 1 ? 'Active' : 'Inactive';
+                } 
+
 
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
-                $customers=$this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE '.$filter);
+                $customers=$this->Customers_model->get_list('is_deleted=FALSE '.$filter.' '.$filter_active);
 
 
 
@@ -286,8 +302,10 @@ class Customers extends CORE_Controller {
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
                 $excel->getActiveSheet()->setCellValue('A7','Department : '.$department_name)
                                         ->getStyle('A7')->getFont()->setItalic(TRUE);
-                $excel->getActiveSheet()->setCellValue('A8','')
+                $excel->getActiveSheet()->setCellValue('A8','Status : '.$status)
                                         ->getStyle('A8')->getFont()->setItalic(TRUE);
+                $excel->getActiveSheet()->setCellValue('A9','')
+                                        ->getStyle('A9')->getFont()->setItalic(TRUE);
 
                 $excel->getActiveSheet()->getColumnDimension('A')->setWidth('40');
                 $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
@@ -310,22 +328,22 @@ class Customers extends CORE_Controller {
                 );
 
 
-                $excel->getActiveSheet()->getStyle('A9:G9')->applyFromArray( $style_header );
+                $excel->getActiveSheet()->getStyle('A10:G10')->applyFromArray( $style_header );
 
-                $excel->getActiveSheet()->setCellValue('A9','Customer Name')
-                                        ->getStyle('A9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('B9','Contact Name')
-                                        ->getStyle('B9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('C9','Contact No')
-                                        ->getStyle('C9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('D9','Address')
-                                        ->getStyle('D9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('E9','Email Address')
-                                        ->getStyle('E9')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('F9','TIN')
-                                        ->getStyle('F9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A10','Customer Name')
+                                        ->getStyle('A10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('B10','Contact Name')
+                                        ->getStyle('B10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('C10','Contact No')
+                                        ->getStyle('C10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('D10','Address')
+                                        ->getStyle('D10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('E10','Email Address')
+                                        ->getStyle('E10')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('F10','TIN')
+                                        ->getStyle('F10')->getFont()->setBold(TRUE);
 
-                $i=10;
+                $i=11;
 
 
 
