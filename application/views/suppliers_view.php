@@ -130,11 +130,11 @@ $(document).ready(function(){
         });
 
         $('#btn_print').click(function(){
-            window.open('suppliers/transaction/print-masterfile');
+            window.open('suppliers/transaction/print-masterfile?status='+$('#is_active').val());
         });  
 
         $('#btn_export').click(function(){
-            window.open('suppliers/transaction/export-supplier');
+            window.open('suppliers/transaction/export-supplier?status='+$('#is_active').val());
         });
 
         $('#btn_yes_active').click(function(){

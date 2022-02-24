@@ -215,9 +215,16 @@ class Suppliers extends CORE_Controller {
             case 'print-masterfile':
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
+                $is_active = $this->input->get('status', TRUE); 
+                $filter = '';
+                $data['status'] = 'ALL';
+                if ($is_active != -1) {
+                    $filter = 'AND suppliers.is_active = '.$is_active;
+                    $data['status'] = $is_active == 1 ? 'Active' : 'Inactive';
+                }
                 $data['company_info']=$company_info[0];
                 $data['suppliers']= $this->Suppliers_model->get_list(
-                    array('suppliers.is_deleted'=>FALSE),
+                    'suppliers.is_deleted = 0 '.$filter,
                     'suppliers.*,tax_types.tax_type,tax_types.tax_rate',
                     array(
                         array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
@@ -235,8 +242,15 @@ class Suppliers extends CORE_Controller {
                 $m_company_info=$this->Company_model;
                 $company_info=$m_company_info->get_list();
                 $data['company_info']=$company_info[0];
+                $is_active = $this->input->get('status', TRUE); 
+                $filter = '';
+                $status = 'ALL';
+                if ($is_active != -1) {
+                    $filter = 'AND suppliers.is_active = '.$is_active;
+                    $status = $is_active == 1 ? 'Active' : 'Inactive';
+                }
                 $suppliers=$this->Suppliers_model->get_list(
-                        array('suppliers.is_deleted'=>FALSE),
+                        'suppliers.is_deleted = 0 '.$filter,
                         'suppliers.*,tax_types.tax_type,tax_types.tax_rate',
                         array(
                             array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
@@ -265,7 +279,7 @@ class Suppliers extends CORE_Controller {
 
                 $excel->getActiveSheet()->setCellValue('A6','Supplier Masterfile')
                                         ->getStyle('A6')->getFont()->setBold(TRUE);
-                $excel->getActiveSheet()->setCellValue('A7','')
+                $excel->getActiveSheet()->setCellValue('A7','Status : '.$status)
                                         ->getStyle('A7')->getFont()->setItalic(TRUE);
                 $excel->getActiveSheet()->setCellValue('A8','')
                                         ->getStyle('A8')->getFont()->setItalic(TRUE);
