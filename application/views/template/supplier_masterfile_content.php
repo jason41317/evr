@@ -46,7 +46,10 @@
             </td>
         </tr>
     </table>
-    <h2>Supplier Masterfile</h2>
+    <h2>
+        Supplier Masterfile <br/>
+        Status : <?php echo $status; ?> <br/>
+    </h2>
         <table width="100%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11" id="tbl_supplier">
             <thead>
             <tr>
