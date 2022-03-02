@@ -87,9 +87,13 @@ class Sales_order extends CORE_Controller
                 $m_sales_order=$this->Sales_order_model;
                 $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
+                $salesperson_id = $this->input->get('salesperson_id');
+                $status = $this->input->get('status');
                 $response['data']=$this->response_rows(
                     "sales_order.is_active=TRUE AND sales_order.is_deleted=FALSE
                     AND DATE(sales_order.date_order) BETWEEN '$tsd' AND '$ted'
+                    ".($salesperson_id==-1 || $salesperson_id==null?"":" AND sales_order.salesperson_id =".$salesperson_id)."
+                    ".($status==0 || $status==null?"":" AND sales_order.order_status_id =".$status)."
                     ".($id_filter==null?"" :" AND sales_order.sales_order_id=".$id_filter)
                 );
                 echo json_encode($response);

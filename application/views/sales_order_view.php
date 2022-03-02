@@ -165,30 +165,49 @@
         <div class="panel-body table-responsive" style="overflow-x: hidden;">
         <h2 class="h2-panel-heading">Sales Order</h2><hr>
         <div class="row">
-            <div class="col-lg-3"><br>
+            <div class="col-lg-2"><br>
                 <button class="btn btn-primary <?php echo (in_array('25-1',$this->session->user_rights)?'':'hidden'); ?>"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" ><i class="fa fa-plus-circle"></i> New Sales Order</button>
             </div>
-            <div class="col-lg-3">
-                    From :<br />
-                    <div class="input-group">
-                        <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
-                         <span class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                         </span>
-                    </div>
+            <div class="col-lg-2">
+                Salesperson :<br />
+                <select name="salesperson" id="salesperson" class="form-control">
+                    <option value="-1">ALL</option>
+                    <?php foreach($salespersons as $salesperson){ ?>
+                        <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->fullname; ?></option>
+                    <?php } ?>
+                </select>
             </div>
-            <div class="col-lg-3">
-                    To :<br />
-                    <div class="input-group">
-                        <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
-                         <span class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                         </span>
-                    </div>
+            <div class="col-lg-2">
+                Status :<br />
+                <select name="status" id="status" class="form-control">
+                    <option value="0">ALL</option>
+                    <option value="1">OPEN</option>
+                    <option value="2">CLOSED</option>
+                    <option value="3">PARTIALLY RECEIVED</option>
+                    <option value="4">CLOSED BY USER</option>
+                </select>
             </div>
-            <div class="col-lg-3">
-                    Search :<br />
-                     <input type="text" id="searchbox_tbl_sales_order" class="form-control">
+            <div class="col-lg-2">
+                From :<br />
+                <div class="input-group">
+                    <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                    <span class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                To :<br />
+                <div class="input-group">
+                    <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                    <span class="input-group-addon">
+                        <i class="fa fa-calendar"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-2">
+                Search :<br />
+                <input type="text" id="searchbox_tbl_sales_order" class="form-control">
             </div>
         </div><br>
             <table id="tbl_sales_order" class="table table-striped" cellspacing="0" width="100%">
@@ -836,6 +855,7 @@
 $(document).ready(function(){
     var dt; var _txnMode; var _selectedID; var _selectRowObj;
     var _cboDepartments, _cboSalesperson; var _cboCustomers; var _productType; var _lookUpPrice; var _defLookUp;
+    var _cboStatus; var _cboSalespersons;
 
     var oTableItems={
         qty : 'td:eq(0)',
@@ -859,6 +879,19 @@ $(document).ready(function(){
 
 
     var initializeControls=function(){
+        _cboSalespersons=$("#salesperson").select2({
+            placeholder: "Please select salesperson.",
+            allowClear: false
+        });
+
+        _cboSalespersons.select2('val',-1);
+
+        _cboStatus=$("#status").select2({
+            placeholder: "Please select status.",
+            allowClear: false
+        });
+
+        _cboStatus.select2('val',1);
 
         dt=$('#tbl_sales_order').DataTable({
             "dom": '<"toolbar">frtip',
@@ -877,8 +910,9 @@ $(document).ready(function(){
                 "data": function ( d ) {
                         return $.extend( {}, d, {
                             "tsd":$('#txt_start_date').val(),
-                            "ted":$('#txt_end_date').val()
-
+                            "ted":$('#txt_end_date').val(),
+                            "salesperson_id": _cboSalespersons.select2('val'),
+                            "status": _cboStatus.select2('val')
                         });
                     }
             }, 
@@ -901,7 +935,7 @@ $(document).ready(function(){
                     targets:[8],data: null,
                     render: function (data, type, full, meta){
                         if(data.order_status_id == 1  || data.order_status_id == 3){
-                           return so_btn_edit+"&nbsp;"+so_btn_trash+'&nbsp'+so_btn_mark_as_closed; 
+                            return so_btn_edit+"&nbsp;"+so_btn_trash+'&nbsp'+so_btn_mark_as_closed; 
                         }else{
                             return so_btn_edit+"&nbsp;"+so_btn_trash; 
                         }
@@ -1148,6 +1182,14 @@ $(document).ready(function(){
 
 
     var bindEventHandlers=(function(){
+        _cboSalespersons.on("select2:select", function (e) {
+                $('#tbl_sales_order').DataTable().ajax.reload();
+            });
+
+        _cboStatus.on("select2:select", function (e) {
+            $('#tbl_sales_order').DataTable().ajax.reload();
+        });
+
         var detailRows = [];
         $('#tbl_sales_order tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
@@ -1469,6 +1511,7 @@ $(document).ready(function(){
                 showNotification(response);
                 if(response.stat=="success"){
                     dt.row(_selectRowObj).data(response.row_updated[0]).draw(false);
+                    $('#tbl_sales_order').DataTable().ajax.reload();
                 }
 
             });
