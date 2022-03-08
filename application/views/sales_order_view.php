@@ -280,7 +280,7 @@
                     <div class="col-sm-5">
                         Customer : <br />
                         <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
-                            <option value="0">[ Create New Customer ]</option>
+                            <!-- <option value="0">[ Create New Customer ]</option> -->
                             <?php foreach($customers as $customer){ ?>
                                 <option data-address="<?php echo $customer->address; ?>" value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
                             <?php } ?>
@@ -559,7 +559,7 @@
                         <div class="col-md-8">
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Customer Name :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Customer Name :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -573,7 +573,7 @@
 
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Contact Person :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Contact Person :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -587,21 +587,21 @@
                         
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Address :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;"><font color="red"><b>*</b></font> Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="fa fa-home"></i>
-                                         </span>
-                                         <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
+                                        </span>
+                                        <textarea name="address" class="form-control" data-error-msg="Supplier address is required!" placeholder="Address" required ></textarea>
                                     </div>
                                 </div>
                             </div>
                         
                             <div class="col-md-12">
                                 <div class="col-md-4" id="label">
-                                     <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
+                                    <label class="control-label boldlabel" style="text-align:right;">Email Address :</label>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">

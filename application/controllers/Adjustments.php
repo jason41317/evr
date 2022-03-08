@@ -250,7 +250,7 @@ class Adjustments extends CORE_Controller
                 $m_adjustment->remarks=$this->input->post('remarks',TRUE);
                 $m_adjustment->adjustment_type='IN';
                 $m_adjustment->inv_type_id=$this->input->post('inv_type_id',TRUE);
-                $m_adjustment->is_returns=$this->input->post('adjustment_is_return',TRUE);
+                $m_adjustment->is_returns=$this->get_numeric_value($this->input->post('adjustment_is_return',TRUE));
                 $m_adjustment->customer_id=$this->input->post('customer_id',TRUE);
                 $m_adjustment->inv_no=$this->input->post('inv_no',TRUE);
                 $m_adjustment->date_adjusted=date('Y-m-d',strtotime($this->input->post('date_adjusted',TRUE)));

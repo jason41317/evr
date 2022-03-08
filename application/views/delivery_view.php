@@ -1993,8 +1993,8 @@ $(document).ready(function(){
         '<td style="display: none;"><input name="dr_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.dr_non_tax_amount+'" readonly></td>'+
         '<td style="display: none;"><input name="product_id[]" type="text" class="form-control" value="'+ d.product_id +'" readonly></td>'+
         '<td><input type="text" name="exp_date[]" class="date-expire form-control" placeholder="mm/dd/yyyy" data-error-msg="Expiration Date is required!" value="'+ (d.exp_date == undefined ? '' : d.exp_date) +'" required></td>' +
-            '<td><input name="batch_code[]" data-error-msg="Batch # is required!" type="text" class="form-control batch-code" value="'+d.batch_no+'"></td>'+
-            '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
+        '<td><input name="batch_code[]" data-error-msg="Batch # is required!" type="text" class="form-control batch-code" value="'+d.batch_no+'" required></td>'+
+        '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
         '</tr>';
     };
 
