@@ -277,10 +277,10 @@
 
 <div class="panel-body">
 <div>
-
+<form id="frm_deliveries" role="form" class="form-horizontal">
 <div class="row ">
     <div class="container-fluid">
-    <form id="frm_deliveries" role="form" class="form-horizontal">
+    
         <h4 style="margin-bottom: 6px; margin-left: 10px;"><b>Invoice # : <span id="span_invoice_no">INV-XXXX</span></b></h4>
         <!-- <div class="check-div">
             <input class="" type="checkbox" name="chk_save"><label for="chk_save" style="color: #3f51b5;"><strong>&nbsp;&nbsp;Update Cost on Sales Invoice</strong></label>
@@ -419,7 +419,7 @@
 
 
 
-    </form>
+    
     </div>
 </div>
 
@@ -530,6 +530,7 @@
 
     </div>
 </div>
+</form>
 </div>
 <div class="panel-footer">
     <div class="row">
@@ -1773,7 +1774,6 @@ $(document).ready(function(){
 
         $('div.form-group').removeClass('has-error');
         $('input[required],textarea[required],select[required]',f).each(function(){
-
             if($(this).is('select')){
                 if($(this).select2('val')==0||$(this).select2('val')==null){
                     showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
@@ -1783,7 +1783,7 @@ $(document).ready(function(){
                     return false;
                 }
             }else{
-                if($(this).val()==""){
+                if($(this).val()==""||$(this).val()==null){
                     showNotification({title:"Error!",stat:"error",msg:$(this).data('error-msg')});
                     $(this).closest('div.form-group').addClass('has-error');
                     $(this).focus();
@@ -1935,8 +1935,8 @@ $(document).ready(function(){
         '<td style="display: none;"><input name="dr_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.dr_non_tax_amount+'" readonly></td>'+
         '<td style="display: none;"><input name="product_id[]" type="text" class="form-control" value="'+ d.product_id +'" readonly></td>'+
         '<td><input type="text" name="exp_date[]" class="date-expire form-control" placeholder="mm/dd/yyyy" data-error-msg="Expiration Date is required!" value="'+ (d.exp_date == undefined ? '' : d.exp_date) +'" required></td>' +
-            '<td><input name="batch_code[]" type="text" class="form-control" value="'+d.batch_no+'"></td>'+
-            '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
+        '<td><input name="batch_code[]" type="text" class="form-control" value="'+d.batch_no+'" data-error-msg="Batch # is required!" required></td>'+
+        '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
         '</tr>';
     };
 

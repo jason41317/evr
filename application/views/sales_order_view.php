@@ -280,7 +280,7 @@
                     <div class="col-sm-5">
                         Customer : <br />
                         <select name="customer" id="cbo_customers" data-error-msg="Customer is required." required>
-                            <option value="0">[ Create New Customer ]</option>
+                            <!-- <option value="0">[ Create New Customer ]</option> -->
                             <?php foreach($customers as $customer){ ?>
                                 <option data-address="<?php echo $customer->address; ?>" value="<?php echo $customer->customer_id; ?>"><?php echo $customer->customer_name; ?></option>
                             <?php } ?>

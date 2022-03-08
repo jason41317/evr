@@ -114,6 +114,19 @@
 
                                     <div class="row">
                                         <div class="col-sm-12">
+                                            Status : <br />
+                                            <select name="status" id="cbo_status">
+                                                <option value="-1">All Status</option>
+                                                <option value="1">Active</option>
+                                                <option value="0">Inactive</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <br />
+
+                                    <div class="row">
+                                        <div class="col-sm-12">
                                             <input type="checkbox" id="chk_show_all" value="1">Show Items with 0 Qty
                                         </div>
                                     </div>
@@ -182,7 +195,7 @@
 
 <script>
     $(document).ready(function(){
-        var _cboDepartments; var _cboReport; var _cboSuppliers;
+        var _cboDepartments; var _cboReport; var _cboSuppliers; var _cboStatus;
 
 
 
@@ -202,7 +215,7 @@
             });
 
             $('#btn_export').click(function(){
-                window.open('Product_list/transaction/export?date='+$('#dt_date_filter').val()+'&type_id='+$('#cboProductType').select2('val')+'&show_all='+$('#chk_show_all:checked').val()+'&supid='+_cboSuppliers.select2('val'));
+                window.open('Product_list/transaction/export?date='+$('#dt_date_filter').val()+'&type_id='+$('#cboProductType').select2('val')+'&show_all='+$('#chk_show_all:checked').val()+'&supid='+_cboSuppliers.select2('val')+'&status='+_cboStatus.select2('val'));
 
             });
 
@@ -225,6 +238,14 @@
             });
 
             _cboSuppliers.select2("val",0);
+
+            _cboStatus=$("#cbo_status").select2({
+                placeholder: "Please select Status.",
+                allowClear: false,
+                enabled: false
+            });
+
+            _cboStatus.select2("val",-1);
 
             _cboReport=$("#cbo_report").select2({
                 placeholder: "Please select type.",
