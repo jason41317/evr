@@ -165,7 +165,7 @@ class Products_model extends CORE_Model {
 
 
     //inventory as of date,
-    function get_inventory($as_of_date,$product_type_id=3,$is_show_all=TRUE,$supplier_id=0){
+    function get_inventory($as_of_date,$product_type_id=3,$is_show_all=TRUE,$supplier_id=0,$status=-1){
         $sql="SELECT
 
                 m.*,
@@ -233,6 +233,7 @@ class Products_model extends CORE_Model {
                 LEFT JOIN tax_types as tt ON tt.tax_type_id=p.tax_type_id
                 LEFT JOIN units as u ON u.unit_id=p.unit_id
                 WHERE p.is_deleted=FALSE
+                ".($status==-1?"":" AND p.is_active=".$status)."
                 ".($product_type_id==3?"":" AND rp.refproduct_id=".$product_type_id)."
                 ".($is_show_all==TRUE?"":" AND m.on_hand>0")."
                 ".($supplier_id==0?"":" AND p.supplier_id=".$supplier_id)."
