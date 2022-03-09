@@ -715,7 +715,7 @@
                                                     &nbsp;<br>
                                                         <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" data-placement="left" title="Print Customer Masterfile" ><i class="fa fa-print"></i> Print</button> &nbsp;
                                                         <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" 
-                                                        data-placement="left" title="Export Supplier Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
+                                                        data-placement="left" title="Export Customer Masterfile" ><i class="fa fa-file-excel-o"></i> Export</button>
                                                     </div>
                                                     <div class="col-lg-2">
                                                         Status :<br />

@@ -145,26 +145,26 @@ echo $_side_bar_navigation;
                     <button class="btn btn-primary <?php echo (in_array('22-1',$this->session->user_rights)?'':'hidden'); ?>"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Issuance</button>
                 </div>
                 <div class="col-lg-3">
-                        From :<br />
-                        <div class="input-group">
-                            <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
-                             <span class="input-group-addon">
-                                    <i class="fa fa-calendar"></i>
-                             </span>
-                        </div>
+                    From :<br />
+                    <div class="input-group">
+                        <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                    </div>
                 </div>
                 <div class="col-lg-3">
-                        To :<br />
-                        <div class="input-group">
-                            <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
-                             <span class="input-group-addon">
-                                    <i class="fa fa-calendar"></i>
-                             </span>
-                        </div>
+                    To :<br />
+                    <div class="input-group">
+                        <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                    </div>
                 </div>
                 <div class="col-lg-3">
-                        Search :<br />
-                         <input type="text" id="searchbox_tbl_issuances" class="form-control">
+                    Search :<br />
+                    <input type="text" id="searchbox_tbl_issuances" class="form-control">
                 </div>
             </div><br>
             <table id="tbl_issuances" class="table table-striped" cellspacing="0" width="100%">

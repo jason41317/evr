@@ -15,8 +15,7 @@ class Issuance_department extends CORE_Controller
         $this->load->model('Users_model');
         $this->load->model('Trans_model');
         $this->load->model('Account_integration_model');
-
-        
+        $this->load->library('excel');
 
     }
     public function index() {
@@ -82,8 +81,10 @@ class Issuance_department extends CORE_Controller
 
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_issuance=$this->Issuance_department_model;
+                $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
+                $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $response['data']=$this->response_rows(
-                    'issuance_department_info.is_active=TRUE AND issuance_department_info.is_deleted=FALSE'.($id_filter==null?'':' AND issuance_department_info.issuance_department_id='.$id_filter)
+                    "issuance_department_info.is_active=TRUE AND issuance_department_info.is_deleted=FALSE AND DATE(issuance_department_info.date_issued) BETWEEN '$tsd' AND '$ted'".($id_filter==null?'':' AND issuance_department_info.issuance_department_id='.$id_filter)
                 );
                 echo json_encode($response);
                 break;
@@ -335,6 +336,106 @@ class Issuance_department extends CORE_Controller
                 echo json_encode($response);
                 break;
             //***************************************************************************************
+
+            case 'export':
+                $excel = $this->excel;
+
+                $m_company_info=$this->Company_model;
+
+                $from = date('Y-m-d',strtotime($this->input->get('from')));
+                $to = date('Y-m-d',strtotime($this->input->get('to')));
+
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+                $issuances=$this->response_rows(
+                    "issuance_department_info.is_active=TRUE AND issuance_department_info.is_deleted=FALSE AND DATE(issuance_department_info.date_issued) BETWEEN '$from' AND '$to'"
+                );
+
+
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:C2')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
+
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Item Transfer");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A1:B1');
+                $excel->getActiveSheet()->mergeCells('A2:C2');
+                $excel->getActiveSheet()->mergeCells('A3:B3');
+                $excel->getActiveSheet()->mergeCells('A4:B4');
+
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+
+                $excel->getActiveSheet()->setCellValue('A6','Customer Masterfile')
+                                        ->getStyle('A6')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A7','Period : '.date('F d, Y', strtotime($from)).' to '.date('F d, Y', strtotime($to)))
+                                        ->getStyle('A7')->getFont()->setItalic(TRUE);
+                $excel->getActiveSheet()->setCellValue('A8','')
+                                        ->getStyle('A8')->getFont()->setItalic(TRUE);
+
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('40');
+    
+
+                $style_header = array(
+
+                    'fill' => array(
+                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                        'color' => array('rgb'=>'CCFF99'),
+                    ),
+                    'font' => array(
+                        'bold' => true,
+                    )
+                );
+
+
+                $excel->getActiveSheet()->getStyle('A9:D9')->applyFromArray( $style_header );
+
+                $excel->getActiveSheet()->setCellValue('A9','Transfer #')
+                                        ->getStyle('A9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('B9','From Department')
+                                        ->getStyle('B9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('C9','To Department')
+                                        ->getStyle('C9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('D9','Remarks')
+                                        ->getStyle('D9')->getFont()->setBold(TRUE);
+
+                $i=10;
+
+
+
+                foreach ($issuances as $issuance) {
+                    $excel->getActiveSheet()
+                        ->setCellValue('A'.$i,$issuance->trn_no)
+                        ->setCellValue('B'.$i,$issuance->from_department_name)
+                        ->setCellValue('C'.$i,$issuance->to_department_name)
+                        ->setCellValue('D'.$i,$issuance->remarks);
+                    $i++;
+                }
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename="Item Transfer '.date("F d, Y", strtotime($from)).' to '.date("F d, Y", strtotime($to)).'.xlsx"');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output');
+                break;
         }
     }
 //**************************************user defined*************************************************

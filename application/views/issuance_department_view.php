@@ -79,6 +79,10 @@
             padding-left: 7px!important;
         }
 
+        #tbl_issuances_filter{
+            display: none;
+        }
+
         @media screen and (max-width: 480px) {
             table{
                 min-width: 800px;
@@ -120,7 +124,38 @@ echo $_side_bar_navigation;
             <b style="color: white; font-size: 12pt;"><i class="fa fa-bars"></i>&nbsp; Issuance</b>
         </div> -->
         <div class="panel-body table-responsive">
-        <h2 class="h2-panel-heading">Issuance to Department<small> | <a href="assets/manual/inventory/Issuance_to_Department.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
+            <h2 class="h2-panel-heading">Issuance to Department<small> | <a href="assets/manual/inventory/Issuance_to_Department.pdf" target="_blank" style="color:#999999;"><i class="fa fa-question-circle"></i></a></small></h2><hr>
+            <div class="row">
+                <div class="col-lg-2"><br>
+                    <button class="btn btn-primary" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Record Item to Transfer" ><i class="fa fa-plus"></i> Record Item to Transfer</button>
+                </div>
+                <div class="col-lg-1"><br>
+                    <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" 
+                    data-placement="left" title="Export Item Transfer" ><i class="fa fa-file-excel-o"></i> Export</button>
+                </div>
+                <div class="col-lg-3">
+                    From :<br />
+                    <div class="input-group">
+                        <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    To :<br />
+                    <div class="input-group">
+                        <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    Search :<br />
+                    <input type="text" id="searchbox_tbl_issuances" class="form-control">
+                </div>
+            </div><br>
             <table id="tbl_issuances" class="table table-striped" cellspacing="0" width="100%">
                 <thead class="">
                 <tr>
@@ -596,7 +631,17 @@ dt_si = $('#tbl_si_list').DataTable({
             "dom": '<"toolbar">frtip',
             "order": [[ 1, "desc" ]],
             "bLengthChange":false,  
-            "ajax" : "Issuance_department/transaction/list",
+            "ajax" : {
+                "url" : "Issuance_department/transaction/list",
+                "bDestroy": true,            
+                "data": function ( d ) {
+                        return $.extend( {}, d, {
+                            "tsd":$('#txt_start_date').val(),
+                            "ted":$('#txt_end_date').val()
+
+                        });
+                    }
+            }, 
             "columns": [
                 {
                     "targets": [0],
@@ -623,11 +668,11 @@ dt_si = $('#tbl_si_list').DataTable({
         $('#btn_receive_si').click(function(){
             $('#modal_si_list').modal('show');
         });
-        var createToolBarButton=function(){
-            var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Record Item to Transfer" >'+
-                '<i class="fa fa-plus"></i> Record Item to Transfer</button>';
-            $("div.toolbar").html(_btnNew);
-        }();
+        // var createToolBarButton=function(){
+        //     var _btnNew='<button class="btn btn-primary"  id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;" data-toggle="modal" data-target="" data-placement="left" title="Record Item to Transfer" >'+
+        //         '<i class="fa fa-plus"></i> Record Item to Transfer</button>';
+        //     $("div.toolbar").html(_btnNew);
+        // }();
 
         _cboDepartments=$("#cbo_departments").select2({
             placeholder: "Issue item from Department.",
@@ -1194,6 +1239,19 @@ dt_si = $('#tbl_si_list').DataTable({
             $('#modal_search_list').modal('hide');
         });
 
+        $("#searchbox_tbl_issuances").keyup(function(){         
+            dt
+                .search(this.value)
+                .draw();
+        });
+
+        $("#txt_start_date,#txt_end_date").on("change", function () {        
+            $('#tbl_issuances').DataTable().ajax.reload()
+        });
+
+        $('#btn_export').click(function(){
+            window.open('Issuance_department/transaction/export?from='+$('#txt_start_date').val()+'&to='+$('#txt_end_date').val());
+        });  
     })();
 
     var validateRequiredFields=function(f){
