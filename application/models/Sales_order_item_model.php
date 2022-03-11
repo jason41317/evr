@@ -93,7 +93,7 @@ class Sales_order_item_model extends CORE_Model
                 (
                     SELECT so.sales_order_id,so.so_no,'' as date_invoice,soi.product_id,soi.so_price as price,SUM(soi.so_qty) as SoQty,0 as InvQty,soi.product_category
                     FROM sales_order as so
-                    INNER JOIN (SELECT *, IF(ROUND(so_price) = 0, 'free','paid') as product_category FROM sales_order_items) soi ON so.sales_order_id=soi.sales_order_id
+                    INNER JOIN (SELECT *, IF(ROUND(so_price) = 0, 'free','free') as product_category FROM sales_order_items) soi ON so.sales_order_id=soi.sales_order_id
                     WHERE  so.is_active=TRUE AND so.is_deleted=FALSE AND (so.order_status_id=1 OR so.order_status_id=3) AND so.is_closed = FALSE
                     GROUP BY so.so_no,soi.product_id,soi.product_category
 
@@ -102,7 +102,7 @@ class Sales_order_item_model extends CORE_Model
                     SELECT so.sales_order_id,so.so_no,max(si.date_invoice),sii.product_id,sii.inv_price as price,0 as SoQty,SUM(sii.inv_qty) as InvQty,sii.product_category
                     FROM (sales_invoice as si
                     INNER JOIN sales_order as so ON si.sales_order_id=so.sales_order_id)
-                    INNER JOIN (SELECT *, IF(ROUND(inv_price) = 0, 'free','paid') as product_category FROM sales_invoice_items) as sii ON si.sales_invoice_id=sii.sales_invoice_id
+                    INNER JOIN (SELECT *, IF(ROUND(inv_price) = 0, 'free','free') as product_category FROM sales_invoice_items) as sii ON si.sales_invoice_id=sii.sales_invoice_id
                     WHERE  si.is_active=TRUE AND si.is_deleted=FALSE
                     GROUP BY so.so_no,sii.product_id,sii.product_category
 
