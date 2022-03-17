@@ -213,7 +213,7 @@
         <div class="panel-body table-responsive" style="overflow-x: hidden;">
             <h2 style="margin-bottom: 0;" class="h2-panel-heading"> Open Sales Report</h2><hr>
             <div class="row">
-                <div class="col-lg-6">&nbsp; <br>
+                <div class="col-lg-4">&nbsp; <br>
                 <button class="btn btn-primary pull-left"  id="btn_print" title="Print">
                     <i class="fa fa-print"></i> Print Report
                 </button>
@@ -222,9 +222,20 @@
                     <i class="fa fa-file-excel-o"></i> Export Report
                 </button>
                 </div>
-                <div class="col-lg-6">
-                        Search :<br />
-                         <input type="text" id="searchbox_tbl_delivery_invoice" class="form-control">
+                <div class="col-lg-4">
+                    Customer :<br />
+                    <select name="customer_id" id="customer_id" class="form-control">
+                        <option value="0">ALL</option>
+                        <?php foreach($customers as $customer) {?>
+                            <option value="<?php echo $customer->customer_id;?>">
+                                <?php echo $customer->customer_name;?>
+                            </option>
+                        <?php }?>
+                    </select>
+                </div>
+                <div class="col-lg-4">
+                    Search :<br />
+                        <input type="text" id="searchbox_tbl_delivery_invoice" class="form-control">
                 </div>
             </div><br>
             <table id="tbl_delivery_invoice" class="table table-striped" cellspacing="0" width="100%">
@@ -318,9 +329,15 @@
 
 
 $(document).ready(function(){
-    var dt; var _selectedID; var _selectRowObj; 
+    var dt; var _selectedID; var _selectRowObj; var _cboCustomer;
 
     var initializeControls=function(){
+        _cboCustomer=$('#customer_id').select2({
+            placeholder: "Please select customer.",
+            allowClear: false
+        });
+
+        _cboCustomer.select2('val', 0);
 
         dt=$('#tbl_delivery_invoice').DataTable({
             "dom": '<"toolbar">frtip',
@@ -328,10 +345,19 @@ $(document).ready(function(){
             "language": {
                 "searchPlaceholder":"Search"
             },
-            "ajax" : "Open_sales/transaction/list",
+            "ajax": {
+                "url": "Open_sales/transaction/list",
+                "type": "POST",
+                "bDestroy": true,
+                "data": function ( d ) {
+                    return $.extend( {}, d, {
+                        "customer_id": _cboCustomer.select2('val')
+                    });
+                }
+            },
             "columns": [
                 {
-                     targets:[0],data: "so_no" 
+                    targets:[0],data: "so_no" 
                 },
                 { targets:[1],data: "last_invoice_date" },
                 { targets:[2],data: "product_code" },
@@ -339,29 +365,28 @@ $(document).ready(function(){
                 { targets:[4],data: "product_type" },
                 { targets:[5],data: "SoQtyTotal" },
                 { targets:[6],data: "SoQtyDelivered" },
-                { targets:[7],data: "SoQtyBalance" }
-
-
+                { targets:[7],data: "SoQtyBalance" },
+                { 
+                    visible: false,
+                    targets:[8],data: "customer_name" 
+                }
             ],
             "order": [[ 0, 'asc' ]],
             "displayLength": 25,
             "drawCallback": function ( settings ) {
-            var api = this.api();
-            var rows = api.rows( {page:'current'} ).nodes();
-            var last=null;
-
-                        api.column(0, {page:'current'} ).data().each( function ( group, i ) {
-                            if ( last !== group ) {
-                                $(rows).eq( i ).before(
-                                    '<tr class="group"><td colspan="8" style="background-color:orange;"><strong>'+'Sales Order #: <i>'+group+'</i></strong></td></tr>'
-                                );
-
-                                last = group;
-                            }
-                        } );
+                var api = this.api();
+                var rows = api.rows( {page:'current'} ).nodes();
+                var last=null;
+                api.column(0, {page:'current'} ).data().each( function ( group, i, data ) {
+                    if ( last !== group ) {
+                        var customer_name = data.rows(i).data()[0].customer_name
+                        $(rows).eq( i ).before(
+                            '<tr class="group"><td colspan="8" style="background-color:orange;"><strong>'+'Sales Order #: <i>'+group+'</i> | Customer : <i>'+customer_name+'</i></strong></td></tr>'
+                        );
+                        last = group;
                     }
-
-
+                } );
+            }
         });
 
     }();
@@ -378,6 +403,10 @@ $(document).ready(function(){
             dt
                 .search(this.value)
                 .draw();
+        });
+
+        _cboCustomer.on("select2:select", function (e) {
+            $('#tbl_delivery_invoice').DataTable().ajax.reload();
         });
 
         $('#btn_print').click(function(){
