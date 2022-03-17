@@ -13,6 +13,7 @@ class Open_sales extends CORE_Controller
         $this->load->model('Products_model');
         $this->load->model('Company_model');
         $this->load->model('Users_model');
+        $this->load->model('Customers_model');
         $this->load->library('excel');
     }
 
@@ -25,6 +26,8 @@ class Open_sales extends CORE_Controller
         $data['_side_bar_navigation'] = $this->load->view('template/elements/side_bar_navigation', '', TRUE);
         $data['_top_navigation'] = $this->load->view('template/elements/top_navigation', '', TRUE);
 
+        $data['customers'] = $this->Customers_model->get_list('is_active=TRUE AND is_deleted=FALSE');
+
         $data['title'] = 'Open Sales';
 
         (in_array('8-10',$this->session->user_rights)? 
@@ -36,8 +39,9 @@ class Open_sales extends CORE_Controller
     function transaction($txn = null,$id_filter=null) {
         switch ($txn){
             case'list';
+                $customer_id = $this->input->post('customer_id', TRUE);
                 $m_sales=$this->Sales_order_item_model;
-                $response['data']=$m_sales->get_list_open_sales();
+                $response['data']=$m_sales->get_list_open_sales($customer_id);
                 echo json_encode($response);
             break;
 

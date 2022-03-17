@@ -301,7 +301,8 @@ class Sales_invoice_model extends CORE_Model
                   sii.cost_upon_invoice
                 )as purchase_cost, /**GET THE COST OF THE PRODUCT WHEN IT WAS INVOICED**/
 
-                IFNULL(si.total_overall_discount_amount - IFNULL(returns.return_discount,0), 0) as discount_amount
+                /**IFNULL(si.total_overall_discount_amount - IFNULL(returns.return_discount,0), 0) as discount_amount**/
+                IFNULL(((sii.inv_price * sii.inv_qty) - sii.inv_line_total_price) - IFNULL(returns.return_discount,0), 0) as discount_amount
 
 
 
