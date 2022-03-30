@@ -379,7 +379,7 @@ $(document).ready(function(){
                 var last=null;
                 api.column(0, {page:'current'} ).data().each( function ( group, i, data ) {
                     if ( last !== group ) {
-                        var customer_name = data.rows(i).data()[0].customer_name
+                        var customer_name = api.rows( {page:'current'} ).data()[i].customer_name
                         $(rows).eq( i ).before(
                             '<tr class="group"><td colspan="8" style="background-color:orange;"><strong>'+'Sales Order #: <i>'+group+'</i> | Customer : <i>'+customer_name+'</i></strong></td></tr>'
                         );
