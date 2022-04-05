@@ -202,6 +202,20 @@
             margin-left: 10px;
         } 
 
+        .btn-po{
+            border: none; 
+            text-shadow: 0px 0px 7px rgba(150, 150, 150, 1);
+            background: rgba(0,173,109,1);
+            background: -moz-linear-gradient(top, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,173,109,1)), color-stop(100%, rgba(0,128,75,1)));
+            background: -webkit-linear-gradient(top, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            background: -o-linear-gradient(top, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            background: -ms-linear-gradient(top, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            background: linear-gradient(to bottom, rgba(0,173,109,1) 0%, rgba(0,128,75,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#499bea', endColorstr='#207ce5', GradientType=0 );
+            margin-left: 10px;
+        } 
+
     </style>
 </head>
 
@@ -718,6 +732,7 @@
                     <div class="col-sm-8" style="margin-top: 10px;">
                         <button id="btn_print_vismin" class="btn btn-success btn-vismin pull-right"><i class="fa fa-print"></i> Print Sales Invoice (V.2)</button>
                         <button id="btn_print" class="btn btn-primary btn-luzon pull-right"><i class="fa fa-print"></i> Print Sales Invoice (V.1)</button>
+                        <button id="btn_print_po" class="btn btn-warning btn-po pull-right"><i class="fa fa-print"></i> Print PO</button>
                     </div>
                 </div>
             </div>
@@ -1382,6 +1397,10 @@ $(document).ready(function(){
 
         $('#btn_print_vismin').click(function(){
             window.open("Sales_invoice/transaction/print/"+ _selectedPrint+"/2");
+        });
+
+        $('#btn_print_po').click(function(){
+            window.open("Templates/layout/sales-po-report/"+ _selectedPrint+"?type=preview");
         });
 
         $('#link_browse').click(function(){

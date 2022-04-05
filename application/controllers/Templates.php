@@ -684,65 +684,52 @@ class Templates extends CORE_Controller {
 
 
             //****************************************************
-            case 'sales-order': //sales order
-                $m_sales_order=$this->Sales_order_model;
-                $m_sales_order_items=$this->Sales_order_item_model;
+            case 'sales-po-report':
+                $m_sales_invoice=$this->Sales_invoice_model;
+                $m_sales_invoice_items=$this->Sales_invoice_item_model;
+                $m_company=$this->Company_model;
+                $company_info = $m_company->get_list();
+
                 $type=$this->input->get('type',TRUE);
 
-                $info=$m_sales_order->get_list(
+                $data['company_info']=$company_info[0];
+
+                $info=$m_sales_invoice->get_list(
                     $filter_value,
-                    'sales_order.*,departments.department_name,customers.customer_name,CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson',
+                    'sales_invoice.*,
+                    departments.department_name,
+                    customers.customer_name,customers.address,
+                    CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson,
+                    CONCAT_WS(" ",ua.user_fname,ua.user_mname,ua.user_lname) as prepared_by,
+                    CONCAT_WS(" ",uao.user_fname,uao.user_mname,uao.user_lname) as so_prepared_by,
+                    ,so.date_order',
                     array(
-                        array('departments','departments.department_id=sales_order.department_id','left'),
-                        array('salesperson','salesperson.salesperson_id=sales_order.salesperson_id','left'),
-                        array('customers','customers.customer_id=sales_order.customer_id','left')
+                        array('user_accounts ua','ua.user_id=sales_invoice.posted_by_user','left'),
+                        array('departments','departments.department_id=sales_invoice.department_id','left'),
+                        array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left'),
+                        array('customers','customers.customer_id=sales_invoice.customer_id','left'),
+                        array('sales_order so','so.sales_order_id=sales_invoice.sales_order_id','left'),
+                        array('user_accounts uao','uao.user_id=so.posted_by_user','left')
                     )
                 );
 
 
-                $data['sales_order']=$info[0];
-                $data['sales_order_items']=$m_sales_order_items->get_list(
-                    array('sales_order_items.sales_order_id'=>$filter_value),
-                    'sales_order_items.*,products.product_desc,units.unit_name',
+                $data['sales_invoice']=$info[0];
+                $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
+                    array('sales_invoice_items.sales_invoice_id'=>$filter_value),
+                    'sales_invoice_items.*,products.product_desc,units.unit_name',
                     array(
-                        array('products','products.product_id=sales_order_items.product_id','left'),
-                        array('units','units.unit_id=sales_order_items.unit_id','left')
+                        array('products','products.product_id=sales_invoice_items.product_id','left'),
+                        array('units','units.unit_id=sales_invoice_items.unit_id','left')
                     )
                 );
-
-
-
-                //show only inside grid with menu button
-                if($type=='fullview'||$type==null){
-                    echo $this->load->view('template/so_content',$data,TRUE);
-                    echo $this->load->view('template/so_content_menus',$data,TRUE);
-                }
-
-                //show only inside grid without menu button
-                if($type=='contentview'){
-                    echo $this->load->view('template/so_content',$data,TRUE);
-                }
-
-
-                //download pdf
-                if($type=='pdf'){
-                    $file_name=$info[0]->so_no;
-                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
-                    $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                    $content=$this->load->view('template/so_content',$data,TRUE); //load the template
-                    $pdf->setFooter('{PAGENO}');
-                    $pdf->WriteHTML($content);
-                    //download it.
-                    $pdf->Output($pdfFilePath,"D");
-
-                }
 
                 //preview on browser
                 if($type=='preview'){
-                    $file_name=$info[0]->slip_no;
-                    $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                    // $file_name=$info[0]->slip_no;
+                    // $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                     $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
-                    $content=$this->load->view('template/so_content',$data,TRUE); //load the template
+                    $content=$this->load->view('template/sales_po_report',$data,TRUE); //load the template
                     $pdf->setFooter('{PAGENO}');
                     $pdf->WriteHTML($content);
                     //download it.
@@ -750,6 +737,73 @@ class Templates extends CORE_Controller {
                 }
 
                 break;
+
+                case 'sales-order': //sales order
+                    $m_sales_order=$this->Sales_order_model;
+                    $m_sales_order_items=$this->Sales_order_item_model;
+                    $type=$this->input->get('type',TRUE);
+    
+                    $info=$m_sales_order->get_list(
+                        $filter_value,
+                        'sales_order.*,departments.department_name,customers.customer_name,CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson',
+                        array(
+                            array('departments','departments.department_id=sales_order.department_id','left'),
+                            array('salesperson','salesperson.salesperson_id=sales_order.salesperson_id','left'),
+                            array('customers','customers.customer_id=sales_order.customer_id','left')
+                        )
+                    );
+    
+    
+                    $data['sales_order']=$info[0];
+                    $data['sales_order_items']=$m_sales_order_items->get_list(
+                        array('sales_order_items.sales_order_id'=>$filter_value),
+                        'sales_order_items.*,products.product_desc,units.unit_name',
+                        array(
+                            array('products','products.product_id=sales_order_items.product_id','left'),
+                            array('units','units.unit_id=sales_order_items.unit_id','left')
+                        )
+                    );
+    
+    
+    
+                    //show only inside grid with menu button
+                    if($type=='fullview'||$type==null){
+                        echo $this->load->view('template/so_content',$data,TRUE);
+                        echo $this->load->view('template/so_content_menus',$data,TRUE);
+                    }
+    
+                    //show only inside grid without menu button
+                    if($type=='contentview'){
+                        echo $this->load->view('template/so_content',$data,TRUE);
+                    }
+    
+    
+                    //download pdf
+                    if($type=='pdf'){
+                        $file_name=$info[0]->so_no;
+                        $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                        $content=$this->load->view('template/so_content',$data,TRUE); //load the template
+                        $pdf->setFooter('{PAGENO}');
+                        $pdf->WriteHTML($content);
+                        //download it.
+                        $pdf->Output($pdfFilePath,"D");
+    
+                    }
+    
+                    //preview on browser
+                    if($type=='preview'){
+                        $file_name=$info[0]->slip_no;
+                        $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                        $content=$this->load->view('template/so_content',$data,TRUE); //load the template
+                        $pdf->setFooter('{PAGENO}');
+                        $pdf->WriteHTML($content);
+                        //download it.
+                        $pdf->Output();
+                    }
+    
+                    break;
 
 
             case 'supplier':
