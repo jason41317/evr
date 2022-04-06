@@ -966,6 +966,188 @@ class Products_model extends CORE_Model {
         return $this->db->query($sql)->result();
     }
 
+    function batch_inventory_history($unq_id,$department_id=0,$as_of_date){
+        $this->db->query("SET @nBalance:=0.00;");
+        $sql="
+            SELECT  m.*,
+                    @nBalance:=(@nBalance+(m.qty_in-m.qty_out)) as balance 
+
+            FROM
+
+            (SELECT main.* FROM
+
+            (
+                /*Delivery Invoice*/
+                SELECT 
+                    di.date_delivered as txn_date,
+                    di.dr_invoice_no as ref_no,
+                    'Purchase Invoice' as txn_type,
+                    CONCAT(s.supplier_name,' (Supplier)') as description,
+                    dii.product_id,
+                    dii.batch_no,
+                    dii.exp_date,
+                    CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date) as unq_id,
+                    SUM(dii.dr_qty) as qty_in,
+                    0 as qty_out,
+                    di.date_created
+                FROM delivery_invoice_items as dii
+                INNER JOIN delivery_invoice as di ON dii.dr_invoice_id=di.dr_invoice_id
+                LEFT JOIN suppliers s ON s.supplier_id = di.supplier_id
+                WHERE di.is_active=TRUE AND di.is_deleted=FALSE
+                AND CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date) = '$unq_id'
+                ".($department_id==0?"":" AND di.department_id=".$department_id."")."
+                ".($as_of_date==null?"":" AND di.date_delivered <= '".$as_of_date."'")."
+                GROUP BY dii.product_id,dii.batch_no,dii.exp_date,di.dr_invoice_id
+                
+                /*Adjustment IN*/
+                UNION ALL
+                    
+                    SELECT 
+                        ai.date_adjusted as txn_date,
+                        ai.adjustment_code as ref_no,
+                        'Adjustment IN' as txn_type,
+                        'Inventory Adjustment' as description,
+                        aii.product_id,
+                        aii.batch_no,
+                        aii.exp_date,
+                        CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
+                        SUM(aii.adjust_qty) as qty_in,
+                        0 as qty_out,
+                        ai.date_created
+                    FROM adjustment_items as aii
+                    INNER JOIN adjustment_info as ai
+                    ON aii.adjustment_id=ai.adjustment_id
+                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    AND CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date) = '$unq_id'
+                    ".($department_id==0?"":" AND ai.department_id=".$department_id."")."
+                    ".($as_of_date==null?"":" AND ai.date_adjusted <= '".$as_of_date."'")."                  
+                    GROUP BY aii.product_id,aii.batch_no,aii.exp_date,ai.adjustment_id
+                
+                /*Sales Invoice*/
+                UNION ALL
+                
+                    SELECT 
+                        si.date_invoice as txn_date,
+                        si.sales_inv_no as ref_no,
+                        'Charge Invoice' as txn_type,
+                        CONCAT(c.customer_name,' (Customer)') as description,
+                        sii.product_id,
+                        sii.batch_no,
+                        sii.exp_date,
+                        CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date)as unq_id,
+                        0 as qty_in,
+                        SUM(sii.inv_qty) as qty_out,
+                        si.date_created
+                    FROM sales_invoice_items as sii
+                    INNER JOIN sales_invoice as si ON sii.sales_invoice_id=si.sales_invoice_id
+                    LEFT JOIN customers c ON c.customer_id = si.customer_id
+                    WHERE si.is_active=TRUE AND si.is_deleted=FALSE AND si.inv_type=1
+                    AND CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date) = '$unq_id'
+                    ".($department_id==0?"":" AND si.department_id=".$department_id."")."
+                    ".($as_of_date==null?"":" AND si.date_invoice <= '".$as_of_date."'")."                    
+                    GROUP BY sii.product_id,sii.batch_no,sii.exp_date,si.sales_invoice_id
+                    
+                /*Other Sales Invoice*/
+                UNION ALL
+                
+                    SELECT 
+                        si.date_invoice as txn_date,
+                        si.sales_inv_no as ref_no,
+                        'Charge Invoice' as txn_type,
+                        CONCAT(IFNULL(d.department_name,''),' (Branch)') as Description,
+                        sii.product_id,
+                        sii.batch_no,
+                        sii.exp_date,
+                        CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date)as unq_id,
+                        SUM(sii.inv_qty) as qty_in,
+                        0 as qty_out,
+                        si.date_created
+                    FROM sales_invoice_items as sii
+                    INNER JOIN sales_invoice as si ON sii.sales_invoice_id=si.sales_invoice_id
+                    LEFT JOIN departments d ON d.department_id = si.issue_to_department
+                    WHERE si.is_active=TRUE AND si.is_deleted=FALSE AND si.inv_type=2
+                    AND CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date) = '$unq_id'
+                    ".($department_id==0?"":" AND si.issue_to_department=".$department_id."")."
+                    ".($as_of_date==null?"":" AND si.date_invoice <= '".$as_of_date."'")."                    
+                    GROUP BY sii.product_id,sii.batch_no,sii.exp_date,si.sales_invoice_id
+                
+                
+                /*Other Sales Invoice*/
+                UNION ALL
+                
+                    SELECT 
+                        si.date_invoice as txn_date,
+                        si.sales_inv_no as ref_no,
+                        'Charge Invoice' as txn_type,
+                        CONCAT(IFNULL(d.department_name,''),' (Branch)') as Description,
+                        sii.product_id,
+                        sii.batch_no,
+                        sii.exp_date,
+                        CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date)as unq_id,
+                        0 as qty_in,
+                        SUM(sii.inv_qty) as qty_out,
+                        si.date_created
+                    FROM sales_invoice_items as sii
+                    INNER JOIN sales_invoice as si ON sii.sales_invoice_id=si.sales_invoice_id
+                    LEFT JOIN departments d ON d.department_id = si.department_id
+                    WHERE si.is_active=TRUE AND si.is_deleted=FALSE AND si.inv_type=2
+                    AND CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date) = '$unq_id'
+                    ".($department_id==0?"":" AND si.department_id=".$department_id."")."
+                    ".($as_of_date==null?"":" AND si.date_invoice <= '".$as_of_date."'")."                    
+                    GROUP BY sii.product_id,sii.batch_no,sii.exp_date,si.sales_invoice_id
+
+                /*Issuance*/
+                UNION ALL
+                
+                    SELECT 
+                        iin.date_issued as txn_date,
+                        iin.slip_no as ref_no,
+                        'Issuance' as txn_type,
+                        iin.issued_to_person as description,
+                        iss.product_id,
+                        iss.batch_no,
+                        iss.exp_date,
+                        CONCAT_WS('-',iss.batch_no,iss.product_id,iss.exp_date)as unq_id,
+                        0 as qty_in,
+                        SUM(iss.issue_qty) as qty_out,
+                        iin.date_created
+                    FROM issuance_items as iss 
+                    INNER JOIN issuance_info as iin ON iin.issuance_id=iss.issuance_id
+                    WHERE iin.is_active=TRUE AND iin.is_deleted=FALSE
+                    AND CONCAT_WS('-',iss.batch_no,iss.product_id,iss.exp_date) = '$unq_id'
+                    ".($department_id==0?"":" AND iin.issued_department_id=".$department_id."")."
+                    ".($as_of_date==null?"":" AND iin.date_issued <= '".$as_of_date."'")."
+                    GROUP BY iss.product_id,iss.batch_no,iss.exp_date,iin.issuance_id
+                
+                /*Adjustment OUT*/
+                UNION ALL
+                
+                    SELECT 
+                        ai.date_adjusted as txn_date,
+                        ai.adjustment_code as ref_no,
+                        'Adjustment OUT' as txn_type,
+                        'Inventory Adjustment' as description, 
+                        aii.product_id,
+                        aii.batch_no,
+                        aii.exp_date,
+                        CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
+                        0 as qty_in,
+                        SUM(aii.adjust_qty) as qty_out,
+                        ai.date_created
+                    FROM adjustment_items as aii
+                    INNER JOIN adjustment_info as ai
+                    ON aii.adjustment_id=ai.adjustment_id
+                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    AND CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date) = '$unq_id'
+                    ".($department_id==0?"":" AND ai.department_id=".$department_id."")."
+                    ".($as_of_date==null?"":" AND ai.date_adjusted <= '".$as_of_date."'")."           
+                    GROUP BY aii.product_id,aii.batch_no,aii.exp_date,ai.adjustment_id
+            ) as main 
+
+            ORDER BY main.txn_date ASC, main.date_created ASC ) as m ";
+        return $this->db->query($sql)->result();
+    }
+
 
 
 
