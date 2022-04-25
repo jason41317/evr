@@ -340,6 +340,7 @@
                     <select name="lookup_price" id="cboLookupPrice">
                         <option value="1">SRP (Recommended)</option>
                         <option value="3">Dealer Price</option>
+                        <option value="4">Vet Price</option>
                     </select>
                 </div>
             </div>

@@ -450,7 +450,7 @@
                             <option value="1">SRP (Recommended)</option>
                             <option value="2">Distributor Price</option>
                             <option value="3">Dealer Price</option>
-                            <option value="4">Public Price</option>
+                            <option value="4">Vet Price</option>
                             <option value="5">Discounted Price</option>
                             <option value="6">Purchase Cost</option>
                         </select>
