@@ -871,7 +871,7 @@ $(document).ready(function(){
         '<td>Distributor Price : </td><td>'+ accounting.formatNumber(d.distributor_price,2)+'</td>' +
         '</tr>' +
         '<tr>' +
-        '<td>Public Price : </td><td>'+ accounting.formatNumber(d.public_price,2)+'</td>' +
+        '<td>Vet Price : </td><td>'+ accounting.formatNumber(d.public_price,2)+'</td>' +
         '</tr>' +
         '</tbody></table><br />';
     };
@@ -1622,7 +1622,7 @@ $(document).ready(function(){
 
 
                 <div class="form-group" style="margin-bottom:0px;">
-                    <label class="">Public Price :</label>
+                    <label class="">Vet Price :</label>
                     <div class="input-group">
                                                     <span class="input-group-addon">
                                                         <i class="fa fa-toggle-off"></i>
