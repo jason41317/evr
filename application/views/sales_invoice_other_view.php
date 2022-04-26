@@ -618,7 +618,7 @@
                         <th>Dealer</th>
                         <th>Distributor</th>
                         <th>Discounted</th>
-                        <th>Public</th>
+                        <th>Vet</th>
                         <th>Cost</th>
                         <th>Action</th>
                     </tr>
@@ -945,7 +945,7 @@
                     '<td width="8%" align="right"><b>Dealer</b></td>'+
                     '<td width="8%" align="right"><b>Distributor</b></td>'+
                     '<td width="8%" align="right"><b>Discounted</b></td>'+
-                    '<td width="8%" align="right"><b>Public</b></td>'+
+                    '<td width="8%" align="right"><b>Vet</b></td>'+
                     '<td width="8%" align="right" style="padding-right: 1%;"><b>Cost</b></td>'+
                     '</tr></table>'
                 ].join('\n'),
