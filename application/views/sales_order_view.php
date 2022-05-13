@@ -1089,7 +1089,7 @@ $(document).ready(function(){
                 '<td width="10%" align="right"><b>Dealer</b></td>'+
                 '<td width="10%" align="right"><b>Distributor</b></td>'+
                 '<td width="10%" align="right"><b>Discounted</b></td>'+
-                '<td width="10%" align="right" style="padding-right:1%;"><b>Public</b></td></tr></table>'
+                '<td width="10%" align="right" style="padding-right:1%;"><b>Vet</b></td></tr></table>'
 
             ].join('\n'),
 

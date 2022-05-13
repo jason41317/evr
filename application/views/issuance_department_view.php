@@ -444,7 +444,7 @@ echo $_side_bar_navigation;
                         <th style="text-align: right;">Dealer</th>
                         <th style="text-align: right;">Distributor</th>
                         <th style="text-align: right;">Discounted</th>
-                        <th style="text-align: right;">Public</th>
+                        <th style="text-align: right;">Vet</th>
                         <th style="text-align: right;">Cost</th>
                         <th>Action</th>
                     </tr>
