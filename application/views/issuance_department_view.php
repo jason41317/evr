@@ -133,7 +133,11 @@ echo $_side_bar_navigation;
                     <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" 
                     data-placement="left" title="Export Item Transfer" ><i class="fa fa-file-excel-o"></i> Export</button>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-2"><br>
+                    <button class="btn btn-success" id="btn_export_product" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" 
+                    data-placement="left" title="Export Item Transfer" ><i class="fa fa-file-excel-o"></i> Export Per Product</button>
+                </div>
+                <div class="col-lg-2">
                     From :<br />
                     <div class="input-group">
                         <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
@@ -142,7 +146,7 @@ echo $_side_bar_navigation;
                         </span>
                     </div>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-2">
                     To :<br />
                     <div class="input-group">
                         <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
@@ -1251,6 +1255,10 @@ dt_si = $('#tbl_si_list').DataTable({
 
         $('#btn_export').click(function(){
             window.open('Issuance_department/transaction/export?from='+$('#txt_start_date').val()+'&to='+$('#txt_end_date').val());
+        }); 
+        
+        $('#btn_export_product').click(function(){
+            window.open('Issuance_department/transaction/export-product?from='+$('#txt_start_date').val()+'&to='+$('#txt_end_date').val());
         });  
     })();
 
