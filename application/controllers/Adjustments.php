@@ -15,6 +15,8 @@ class Adjustments extends CORE_Controller
         $this->load->model('Products_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Trans_model');
+        $this->load->model('Company_model');
+        $this->load->library('excel');
     }
 
     public function index() {
@@ -354,6 +356,141 @@ class Adjustments extends CORE_Controller
                 break;
 
             //***************************************************************************************
+
+            case 'export-product':
+                $excel = $this->excel;
+
+                $m_company_info=$this->Company_model;
+                $m_adjustment_item=$this->Adjustment_item_model;
+
+                $from = date('Y-m-d',strtotime($this->input->get('from')));
+                $to = date('Y-m-d',strtotime($this->input->get('to')));
+                $type = $this->input->get('type');
+
+
+                $company_info=$m_company_info->get_list();
+                $data['company_info']=$company_info[0];
+                $items=$m_adjustment_item->per_product($type, $from, $to);
+
+
+                $excel->setActiveSheetIndex(0);
+
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A1:B1')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A2:C2')->setWidth('50');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A3')->setWidth('30');
+                $excel->getActiveSheet()->getColumnDimensionByColumn('A4')->setWidth('40');
+
+                //name the worksheet
+                $excel->getActiveSheet()->setTitle("Item Adjustment per Product");
+                $excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->mergeCells('A1:B1');
+                $excel->getActiveSheet()->mergeCells('A2:C2');
+                $excel->getActiveSheet()->mergeCells('A3:B3');
+                $excel->getActiveSheet()->mergeCells('A4:B4');
+
+                $excel->getActiveSheet()->setCellValue('A1',$company_info[0]->company_name)
+                                        ->setCellValue('A2',$company_info[0]->company_address)
+                                        ->setCellValue('A3',$company_info[0]->landline.'/'.$company_info[0]->mobile_no)
+                                        ->setCellValue('A4',$company_info[0]->email_address);
+
+                $excel->getActiveSheet()->setCellValue('A6','Item Adjustment per Product')
+                                        ->getStyle('A6')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('A7','Period : '.date('F d, Y', strtotime($from)).' to '.date('F d, Y', strtotime($to)))
+                                        ->getStyle('A7')->getFont()->setItalic(TRUE);
+                $excel->getActiveSheet()->setCellValue('A8','')
+                                        ->getStyle('A8')->getFont()->setItalic(TRUE);
+
+                $excel->getActiveSheet()->getColumnDimension('A')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('B')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('C')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('D')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('E')->setWidth('40');
+                $excel->getActiveSheet()->getColumnDimension('F')->setWidth('25');
+                $excel->getActiveSheet()->getColumnDimension('G')->setWidth('15');
+                $excel->getActiveSheet()->getColumnDimension('H')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('I')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('J')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('K')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('L')->setWidth('20');
+                $excel->getActiveSheet()->getColumnDimension('M')->setWidth('40');
+    
+
+                $style_header = array(
+
+                    'fill' => array(
+                        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                        'color' => array('rgb'=>'CCFF99'),
+                    ),
+                    'font' => array(
+                        'bold' => true,
+                    )
+                );
+
+
+                $excel->getActiveSheet()->getStyle('A9:M9')->applyFromArray( $style_header );
+
+                $excel->getActiveSheet()->setCellValue('A9','Adjustment #')
+                                        ->getStyle('A9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('B9','Department')
+                                        ->getStyle('B9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('C9','Adjustment Type')
+                                        ->getStyle('C9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('D9','Date')
+                                        ->getStyle('D9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('E9','Product')
+                                        ->getStyle('E9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('F9','Product Type')
+                                        ->getStyle('F9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('G9','Qty')
+                                        ->getStyle('G9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('H9','Unit')
+                                        ->getStyle('H9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('I9','Exp Date')
+                                        ->getStyle('I9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('J9','Batch No')
+                                        ->getStyle('J9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('K9','Price')
+                                        ->getStyle('K9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('L9','Total')
+                                        ->getStyle('L9')->getFont()->setBold(TRUE);
+                $excel->getActiveSheet()->setCellValue('M9','Remarks')
+                                        ->getStyle('M9')->getFont()->setBold(TRUE);
+
+                $i=10;
+
+                foreach ($items as $item) {
+                    $excel->getActiveSheet()
+                        ->setCellValue('A'.$i,$item->adjustment_code)
+                        ->setCellValue('B'.$i,$item->department_name)
+                        ->setCellValue('C'.$i,$item->adjustment_type)
+                        ->setCellValue('D'.$i,$item->date_adjusted)
+                        ->setCellValue('E'.$i,$item->product_desc)
+                        ->setCellValue('F'.$i,$item->product_type)
+                        ->setCellValue('G'.$i,$item->adjust_qty)
+                        ->setCellValue('H'.$i,$item->unit_name)
+                        ->setCellValue('I'.$i,$item->exp_date)
+                        ->setCellValue('J'.$i,$item->batch_no)
+                        ->setCellValue('K'.$i,$item->adjust_price)
+                        ->setCellValue('L'.$i,$item->adjust_line_total_price)
+                        ->setCellValue('M'.$i,$item->remarks);
+                    $i++;
+                }
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename="Item Adjustment per Product '.date("F d, Y", strtotime($from)).' to '.date("F d, Y", strtotime($to)).'.xlsx"');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output');
+                break;
+            
         }
 
     }
