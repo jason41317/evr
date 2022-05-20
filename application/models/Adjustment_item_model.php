@@ -15,12 +15,7 @@ class Adjustment_item_model extends CORE_Model {
             ai.adjustment_code,
             d.department_name,
             IF(ai.adjustment_type = 'IN', IF(ai.is_returns = 1, 'Sales Return', 'IN'), 
-                CASE 
-                    WHEN inv_type_id = 1 THEN 'Sales Return'
-                    WHEN inv_type_id = 2 THEN 'Sales Return'
-                    WHEN inv_type_id = 3 THEN 'Purchase Return'
-                    ELSE ai.adjustment_type
-                END) as adjustment_type,
+                ai.adjustment_type) as adjustment_type,
             ai.date_adjusted,
             p.product_desc,
             rp.product_type,
