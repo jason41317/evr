@@ -137,7 +137,11 @@
                                                 <div class="col-lg-3"><br>
                                                         <button class="btn btn-primary <?php echo (in_array('24-1',$this->session->user_rights)?'':'hidden'); ?>" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Adjustment</button>
                                                 </div>
-                                                <div class="col-lg-3">
+                                                <div class="col-lg-2"><br>
+                                                    <button class="btn btn-success" id="btn_export_product" style="text-transform: none; font-family: Tahoma, Georgia, Serif;padding: 6px 10px!important;" data-toggle="modal" 
+                                                    data-placement="left" title="Export Item Adjustment" ><i class="fa fa-file-excel-o"></i> Export Per Product</button>
+                                                </div>
+                                                <div class="col-lg-2">
                                                         From :<br />
                                                         <div class="input-group">
                                                             <input type="text" id="txt_start_date" name="" class="date-picker form-control" value="<?php echo date("m").'/01/'.date("Y"); ?>">
@@ -146,7 +150,7 @@
                                                              </span>
                                                         </div>
                                                 </div>
-                                                <div class="col-lg-3">
+                                                <div class="col-lg-2">
                                                         To :<br />
                                                         <div class="input-group">
                                                             <input type="text" id="txt_end_date" name="" class="date-picker form-control" value="<?php echo date("m/t/Y"); ?>">
@@ -1013,7 +1017,9 @@
 
 
 
-
+            $('#btn_export_product').click(function(){
+                window.open('Adjustments/transaction/export-product?type=OUT&from='+$('#txt_start_date').val()+'&to='+$('#txt_end_date').val());
+            }); 
 
 
 
