@@ -75,7 +75,7 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost:3307',
+	'hostname' => 'JDEV-SERVER:3307',
 	'username' => 'root',
 	'password' => 'jdev',
 	// 'database' => 'evr_db',
