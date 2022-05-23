@@ -1028,15 +1028,15 @@ $(document).ready(function(){
         vat_input : 'td:eq(8)',
         net_vat : 'td:eq(9)',
         batch_no : 'td:eq(11)',
-        exp_date : 'td:eq(13)'
+        exp_date : 'td:eq(13)',
+        cost_upon_invoice: 'td:eq(15)'
 
     };
 
     var oTableSearch={
         sBatch : 'td:eq(2)',
         sExpDate : 'td:eq(3)',
-
-
+        cost: 'td:eq(10)'
     };
 
 
@@ -2003,6 +2003,7 @@ $(document).ready(function(){
 
         $('#tbl_search_list > tbody').on('click','button[name="accept_search"]',function(){
             var row=$(this).closest('tr');
+            _selectRowTblItems.find(oTableItems.cost_upon_invoice).find('input').val(row.find(oTableSearch.cost).text());
             _selectRowTblItems.find(oTableItems.batch_no).find('input').val(row.find(oTableSearch.sBatch).text());
             _selectRowTblItems.find(oTableItems.exp_date).find('input').val(row.find(oTableSearch.sExpDate).text());
             $('#modal_search_list').modal('hide');
