@@ -1237,7 +1237,8 @@ dt_si = $('#tbl_si_list').DataTable({
             _selectRowTblItems.find(oTableItems.exp_date).find('input').val(row.find(oTableSearch.sExpDate).text());
             _selectRowTblItems.find(oTableItems.batch_no).find('input').val(row.find(oTableSearch.sBatch).text());
             _selectRowTblItems.find(oTableItems.cost_upon_invoice).find('input').val(row.find(oTableSearch.sCost).text());
-
+            _selectRowTblItems.find(oTableItems.unit_price).find('input').val(row.find(oTableSearch.sCost).text());
+            $('.trigger-number').keyup();
             showNotification({title:"Success!",stat:"success",msg:'The item you selected was updated.'});
 
             $('#modal_search_list').modal('hide');
