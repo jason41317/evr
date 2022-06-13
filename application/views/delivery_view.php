@@ -368,7 +368,8 @@
                             <span class="input-group-addon">
                                 <i class="fa fa-calendar"></i>
                             </span>
-                        <input type="text" name="terms" class="form-control">
+                        <!-- <input type="text" name="terms" class="form-control"> -->
+                        <input type="number" id="txt_terms" name="terms" class="form-control" value="" placeholder="Term in Days">
                     </div>
                 </div>
             </div>
@@ -881,6 +882,8 @@ $(document).ready(function(){
 
     var initializeControls=function(){
 
+        $('#txt_terms').val(0);
+
         dt_po=$('#tbl_po_list').DataTable({
             "bLengthChange":false,
             "order": [[ 7, "desc" ]],
@@ -1157,11 +1160,49 @@ $(document).ready(function(){
         });
 
 
+        $('#txt_terms').on('keyup',function(){
+           var term_days=$(this).val();
+            var d=$('input[name="date_delivered"]').val();
+            var dd= moment(d);
+            var nextDate = moment(dd, 'MM/DD/YYYY').add('days', term_days).format('MM/DD/YYYY');
+            $('input[name="date_due"]').val(nextDate);
+        });
+
+        $('#txt_terms').on('change',function(){
+            var term_days=$(this).val();
+            var d=$('input[name="date_delivered"]').val();
+            var dd= moment(d);
+            var nextDate = moment(dd, 'MM/DD/YYYY').add('days', term_days).format('MM/DD/YYYY');
+            $('input[name="date_due"]').val(nextDate);
+        });
+
+        $('input[name="date_delivered"').on('change', function() {
+            recomputeTerms();
+        });
+
+        $('input[name="date_due"').on('change', function() {
+            recomputeTerms();
+        });
+
+
     }();
 
 
 
+    function recomputeTerms() {
+        const dueDate =  $('input[name="date_due"]').val();
+        const dateDelivered = $('input[name="date_delivered"]').val();
 
+        if(!dueDate || !dateDelivered) {
+            return
+        }
+
+        const timeDueDate = new Date(dueDate).getTime();
+        const timeDelivered = new Date(dateDelivered).getTime();
+        const termsDay = Math.floor((timeDueDate - timeDelivered)/(24 * 3600 * 1000));
+
+        $('#txt_terms').val(termsDay)
+    }
 
 
     var bindEventHandlers=(function(){
@@ -1203,9 +1244,6 @@ $(document).ready(function(){
 
             }
         } );
-
-
-
 
         $('#tbl_po_list tbody').on( 'click', 'tr td.details-control', function () {
             var tr = $(this).closest('tr');
@@ -1335,7 +1373,7 @@ $(document).ready(function(){
             $('input,textarea').each(function(){
                 var _elem=$(this);
                 $.each(data,function(name,value){
-                    if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                    if(_elem.attr('name') == name && _elem.attr('type')!='password' && name != 'terms'){
                         _elem.val(value);
                     }
                 });
@@ -1344,6 +1382,7 @@ $(document).ready(function(){
 
             $('#modal_po_list').modal('hide');
             resetSummary();
+            recomputeTerms();
 
 
             var exp_date = <?php echo json_encode(date("m/d/Y")); ?>;
@@ -1403,17 +1442,12 @@ $(document).ready(function(){
 
 
                    reComputeTotal();
-
-
                 }
             });
 
 
 
         });
-
-
-
 
 
         $('#btn_create_user_suppliers').click(function(){
@@ -1492,6 +1526,7 @@ $(document).ready(function(){
                     $('textarea[name="remarks"]').html(data.remarks);
                     $('#cbo_suppliers').select2('val',data.supplier_id);
                     $('#cbo_departments').select2('val',data.department_id);
+                    $('#txt_terms').html('val',data.terms);
 
                     $('input,textarea').each(function(){
                         var _elem=$(this);
@@ -1641,10 +1676,6 @@ $(document).ready(function(){
             });
         });
 
-
-
-
-
         $('input[name="file_upload[]"]').change(function(event){
             var _files=event.target.files;
 
@@ -1681,7 +1712,7 @@ $(document).ready(function(){
         });
 
         $('#btn_save').click(function(){
-            
+
             if(validateRequiredFields($('#frm_deliveries'))){
                 if(_txnMode=="new"){
                     createDeliverInvoice().done(function(response){
