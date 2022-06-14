@@ -33,7 +33,7 @@
 
                         <span><strong>PO # : </strong> <?php echo  $delivery_info->po_no; ?></span><br />
                         <span><strong>Reference : </strong> <?php echo  $delivery_info->external_ref_no; ?></span><br />
-                        <span><strong>Delivery Date : </strong> <?php echo  date_format(new DateTime($delivery_info->date_delivered),"m/d/Y"); ?></span><br />
+                        <span><strong>Delivery Date : </strong> <?php echo  date_format(new DateTime($delivery_info->date_created),"m/d/Y"); ?></span><br />
                         <span><strong>Due Date : </strong> <?php echo  date_format(new DateTime($delivery_info->date_due),"m/d/Y"); ?></span><br />
                         <span><strong>Terms : </strong> <?php echo $delivery_info->term_description; ?></span>
                     </p>
