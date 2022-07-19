@@ -341,7 +341,7 @@
                         <option value="1">SRP (Recommended)</option>
                         <option value="2">Distributor Price</option>
                         <option value="3">Dealer Price</option>
-                        <option value="4">Vet Price</option>
+                        <option value="4">Selling/Vet Price</option>
                         <option value="5">Discounted Price</option>
                     </select>
                 </div>
@@ -1081,7 +1081,7 @@ $(document).ready(function(){
                 '<td width="10%" align="right"><b>Dealer</b></td>'+
                 '<td width="10%" align="right"><b>Distributor</b></td>'+
                 '<td width="10%" align="right"><b>Discounted</b></td>'+
-                '<td width="10%" align="right" style="padding-right:1%;"><b>Vet</b></td></tr></table>'
+                '<td width="10%" align="right" style="padding-right:1%;"><b>Selling/Vet</b></td></tr></table>'
             ].join('\n'),
 
             suggestion: Handlebars.compile('<table class="tt-items"><tr>'+

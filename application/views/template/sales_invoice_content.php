@@ -54,7 +54,9 @@
                             <strong><?php echo $sales_info->cod_pdc; ?></strong>
                     </td>
                     <td class="table-cellpadding" width="6%">TIN :</td>
-                    <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;" width="30%"></td>
+                    <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;" width="30%">
+                        <strong><?php echo $sales_info->tin_no; ?></strong>
+                    </td>
                 </tr>
             </table>
         </div>
