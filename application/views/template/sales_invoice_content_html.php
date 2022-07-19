@@ -40,7 +40,7 @@
             <br>
             <br>
             <br>
-            <table class="" width="100%" style="margin-top: 6px;">
+            <table class="" width="100%">
                 <br>
                 <tr>
                     <td class="table-cellpadding " width="8%"><!-- SOLD To : -->&nbsp;</td>
@@ -70,6 +70,10 @@
                     <span style="position: absolute; margin-top: 48px; margin-left: 465px;font-size: 12px;font-family: 'Times New Roman', serif; font-weight: 200;">
                         <?php  if($sales_info->terms > 0){ echo $sales_info->terms; } ?>
                          <?php echo $sales_info->cod_pdc;?>
+                    </span>
+
+                    <span style="position: absolute; margin-top: 48px; margin-left:590px;font-size: 12px;font-family: 'Times New Roman', serif; font-weight: 200;">
+                         <?php echo $sales_info->tin_no;?>
                     </span>
 
                     <span style="position: absolute; margin-top: 25px; margin-left: 60px;font-size: 12px;font-family: 'Times New Roman', serif; font-weight: 200; width: 180px;"><?php echo $sales_info->address; ?></span>

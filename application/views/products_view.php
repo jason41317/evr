@@ -366,7 +366,7 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group" style="margin-bottom:3px;">
-                                                                        <label class="">Vet Price :</label>
+                                                                        <label class="">Selling/Vet Price :</label>
                                                                         <div class="input-group">
                                                                             <span class="input-group-addon">
                                                                                 <i class="fa fa-toggle-off"></i>

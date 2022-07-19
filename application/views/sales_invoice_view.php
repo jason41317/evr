@@ -465,7 +465,7 @@
                             <option value="1">SRP (Recommended)</option>
                             <option value="2">Distributor Price</option>
                             <option value="3">Dealer Price</option>
-                            <option value="4">Vet Price</option>
+                            <option value="4">Selling/Vet Price</option>
                             <option value="5">Discounted Price</option>
                             <option value="6">Purchase Cost</option>
                         </select>
@@ -949,7 +949,7 @@
                         <th>Dealer</th>
                         <th>Distributor</th>
                         <th>Discounted</th>
-                        <th>Vet</th>
+                        <th>Selling/Vet</th>
                         <th>Cost</th>
                         <th>Action</th>
                     </tr>
@@ -1236,7 +1236,7 @@ $(document).ready(function(){
                     '<td width="8%" align="right"><b>Dealer</b></td>'+
                     '<td width="8%" align="right"><b>Distributor</b></td>'+
                     '<td width="8%" align="right"><b>Discounted</b></td>'+
-                    '<td width="8%" align="right"><b>Vet</b></td>'+
+                    '<td width="8%" align="right"><b>Selling/Vet</b></td>'+
                     '<td width="8%" align="right" style="padding-right: 1%;"><b>Cost</b></td>'+
                     '</tr></table>'
                 ].join('\n'),

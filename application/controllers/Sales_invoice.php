@@ -141,7 +141,7 @@ class Sales_invoice extends CORE_Controller
 
                 $info=$m_sales_invoice->get_list(
                     $id_filter,
-                    'sales_invoice.*,departments.department_name,customers.customer_name, sales_invoice.address,sales_order.so_no,salesperson.*',
+                    'sales_invoice.*,departments.department_name,customers.tin_no,customers.customer_name, sales_invoice.address,sales_order.so_no,salesperson.*',
                     array(
                         array('departments','departments.department_id=sales_invoice.issue_to_department','left'),
                         array('customers','customers.customer_id=sales_invoice.customer_id','left'),
@@ -627,7 +627,8 @@ class Sales_invoice extends CORE_Controller
                         'sales_invoice.sales_inv_no',
                         'sales_invoice.remarks',
                         'DATE_FORMAT(sales_invoice.date_invoice,"%m/%d/%Y") as date_invoice',
-                        'customers.customer_name'
+                        'customers.customer_name',
+                        'customers.tin_no'
                     ),
 
                     array(
