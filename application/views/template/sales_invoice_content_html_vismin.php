@@ -69,6 +69,10 @@
                          <?php echo $sales_info->cod_pdc;?>
                     </span>
 
+                    <span style="position: absolute; margin-top: 48px; margin-left:590px;font-size: 12px;font-family: 'Times New Roman', serif; font-weight: 200;">
+                         <?php echo $sales_info->tin_no;?>
+                    </span>
+
                     <span style="position: absolute; margin-top: 30px; margin-left: 60px;font-size: 12px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo $sales_info->address; ?></span>
                 </tr>
                 <tr>
