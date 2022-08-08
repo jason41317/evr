@@ -617,7 +617,8 @@ class Templates extends CORE_Controller {
                 $data['company_info']=$company_info[0];
 
                 $data['sales_info']=$info[0];
-                $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
+
+                $invoiceItems = $m_sales_invoice_items->get_list(
                     array('sales_invoice_items.sales_invoice_id'=>$filter_value),
                     'sales_invoice_items.*,products.product_desc,products.size,units.unit_name',
                     array(
@@ -625,6 +626,14 @@ class Templates extends CORE_Controller {
                         array('units','units.unit_id=sales_invoice_items.unit_id','left')
                     )
                 );
+                $data['sales_invoice_items'] = $invoiceItems;
+
+                $discount = 0;
+                foreach($invoiceItems as $item) {
+                    $discount = $discount  + $item->inv_line_total_discount;
+                }
+
+                $data['discount'] = $discount + $info[0]->total_overall_discount_amount;
 
                 //show only inside grid with menu button
                 if($type=='fullview'||$type==null){

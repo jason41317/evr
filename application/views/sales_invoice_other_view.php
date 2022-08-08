@@ -366,8 +366,8 @@
                                                             <th width="5%">UM</th>
                                                             <th width="30%">Item</th>
                                                             <th width="20%" style="text-align: right;">Unit Price</th>
-                                                            <th width="12%" style="text-align: right;display: none;">Discount</th>
-                                                            <th style="display: none;">T.D</th> <!-- total discount -->
+                                                            <th width="10%" style="text-align: right;">Discount %</th>
+                                                            <th width="10%" style="text-align: right;">Total Discount</th> <!-- total discount -->
                                                             <th style="display: none;">Tax %</th>
                                                             <th width="10%" style="text-align: right;">Total</th>
                                                             <th class="hidden">Total Price</th>
@@ -404,21 +404,21 @@
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
-                                                            <td colspan="9" style="height: 50px;">&nbsp;</td>
+                                                            <td colspan="10" style="height: 50px;">&nbsp;</td>
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
+                                                            <td colspan="4" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
                                                             <td align="right">
                                                                 <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00">
                                                                 <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" readonly>
                                                             </td>
-                                                            <td colspan="3" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
+                                                            <td colspan="4" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                                             <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
+                                                            <td colspan="4" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                                                             <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                                                            <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                                            <td colspan="4" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                                                             <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                                                         </tr>
                                                         </tfoot>
@@ -1581,17 +1581,28 @@
 
 
 
-                if(discount>price){
-                    showNotification({title:"Invalid",stat:"error",msg:"Discount must not greater than unit price."});
+                // if(discount>price){
+                //     showNotification({title:"Invalid",stat:"error",msg:"Discount must not greater than unit price."});
+                //     row.find(oTableItems.discount).find('input.numeric').val('0.00');
+                //     //$(this).trigger('keyup');
+                //     //return;
+                // }
+
+                if (discount > 100) {
+                    showNotification({
+                        title: "Invalid",
+                        stat: "error",
+                        msg: "Discount %  must not greater than 100%"
+                    });
                     row.find(oTableItems.discount).find('input.numeric').val('0.00');
                     //$(this).trigger('keyup');
-                    //return;
+                    discount = 0;
                 }
 
                 var global_discount = $('#txt_overall_discount').val();
                 var line_total = price*qty; //ok not included in the output (view) and not saved in the database
-                var line_total_discount=discount*qty; 
-                // var line_total_discount=line_total*(discount/100);
+                // var line_total_discount=discount*qty; 
+                var line_total_discount = line_total * (discount / 100);
                 var new_line_total=line_total-line_total_discount; 
                 var total_after_global = new_line_total-(new_line_total*(global_discount/100));
                 var net_vat=total_after_global/(1+tax_rate);
@@ -1884,8 +1895,8 @@
                 '<td width="5%">'+ d.unit_name+'</td>'+
                 '<td width="10%">'+d.product_desc+'</td>'+
                 '<td width="11%"><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,4)+'" style="text-align:right;"></td>'+
-                '<td width="11%" style="display:none;"><input name="inv_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_discount,4)+'" style="text-align:right;"></td>'+
-                '<td style="display: none;" width="11%"><input name="inv_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_discount,4)+'" readonly></td>'+
+                '<td width="11%"><input name="inv_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_discount,4)+'" style="text-align:right;"></td>'+
+                '<td width="11%"><input name="inv_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_discount,4)+'" readonly></td>'+
                 '<td width="11%" style="display:none;"><input name="inv_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_tax_rate,4)+'"></td>'+
                 '<td width="11%" align="right"><input name="inv_line_total_gross[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_gross,4)+'" readonly></td>'+
                 '<td class="hidden"><input name="inv_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.inv_line_total_price,4)+'" readonly></td>'+
@@ -1920,6 +1931,13 @@
                 inv_tax_amount+=parseFloat(accounting.unformat($(oTableItems.vat_input,$(this)).find('input.numeric').val()));
                 after_tax+=parseFloat(accounting.unformat($(oTableItems.total,$(this)).find('input.numeric').val()));
             });
+
+
+            if(discounts > 0 ) {
+                //if has line item discount 
+                //set global discount to 0 to prevent double discount
+                $('#txt_overall_discount').val(0)
+            }
 
             var global_discount = (gross - discounts) * ($('#txt_overall_discount').val() / 100);
 

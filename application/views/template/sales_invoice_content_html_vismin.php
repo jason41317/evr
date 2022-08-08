@@ -120,7 +120,7 @@
                     <td width="3%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($item->inv_qty,0); ?></td>
                     <td width="3%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo $item->size; ?></td>
                     <td width="20%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><span style="float: left;"><?php echo date('M-Y',strtotime($item->exp_date)); ?></span>  <span style="float: right;"><?php echo number_format($item->inv_price,2); ?></span></td>
-                    <td width="20%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($item->inv_line_total_price,2); ?></td>
+                    <td width="20%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($item->inv_qty * $item->inv_price,2); ?></td>
                 </tr>
                 <?php 
                     $total = $item->inv_line_total_price;
@@ -144,6 +144,23 @@
                     <td class="" >&nbsp;</td>
                     <td  class="table-cellpadding  tbl-left">&nbsp;</td>
                     <td class="" align="center" >&nbsp;</td>
+                </tr>
+                <tr >
+                    <!-- <td style="text-align: right;" colspan="2">
+                        Sales Discount
+                        <small><?php  echo $sales_info->total_overall_discount > 0 ? "(". strval(number_format($sales_info->total_overall_discount,2))." %)" : '' ?></small>
+                    </td>
+                    <td style="text-align: right;" ><?php echo number_format($discount,2); ?></td>
+                    <td class="table-cellpadding  tbl-left"></td>
+                    <td class="" align="center"></td> -->
+
+                    <td style="text-align: right; padding-right: 40px" width="40%" colspan="2" class="table-cellpadding  tbl-right">
+                        Sales Discount
+                        <small><?php  echo $sales_info->total_overall_discount > 0 ? "(". strval(number_format($sales_info->total_overall_discount,2))." %)" : '' ?></small>
+                    </td>
+                    <td style="text-align: right; padding-right: 20px; " class="" width="10%"><?php echo number_format($discount,2); ?></td>
+                    <td width="20%" class="table-cellpadding  tbl-left">&nbsp;</td>
+                    <td class="" align="center" width="30%">&nbsp;</td>
                 </tr>
                 <tr>
                     <td class="" >&nbsp;</td>
@@ -178,7 +195,7 @@
                     <td width="20%" class="table-cellpadding  tbl-left"><!-- Amount Due -->&nbsp;</td>
                     <td class="" style="color: transparent;" align="center" width="30%"><?php echo number_format($sales_info->total_before_tax,2); ?></td>
                     <!-- 270px -->
-                    <span style="position: absolute; margin-top: 255px; margin-left: 600px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($sales_info->total_before_tax,2); ?></span>
+                    <span style="position: absolute; margin-top: 285px; margin-left: 600px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($sales_info->total_before_tax,2); ?></span>
                 </tr>
                 <tr>
                     <td width="40%" colspan="2" class="table-cellpadding  tbl-right"><!-- VAT Amount -->&nbsp;</td>
@@ -186,14 +203,14 @@
                     <td width="20%" class="table-cellpadding  tbl-left"><!-- Add: VAT -->&nbsp;</td>
                     <td class="" style="color: transparent;" align="center" width="30%"><?php echo number_format($sales_info->total_tax_amount,2); ?></td>
                     <!-- 300px -->
-                    <span style="position: absolute; margin-top: 285px; margin-left: 600px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($sales_info->total_tax_amount,2); ?></span>
+                    <span style="position: absolute; margin-top: 315px; margin-left: 600px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($sales_info->total_tax_amount,2); ?></span>
                 </tr>
                 <tr>
                     <td class=""  width="50%" colspan="3">&nbsp;</td>
                     <td width="20%" class="table-cellpadding  tbl-left"><strong><!-- TOTAL AMOUNT DUE -->&nbsp;</td>
                     <td class="" style="color: transparent;font-family: 'Times New Roman', serif; font-weight: 200;" align="center" width="30%"><strong><?php echo number_format($sales_info->total_after_tax,2); ?></td>
                     <!-- 330px -->
-                    <span style="position: absolute; margin-top: 315px; margin-left: 600px;font-family: 'Times New Roman', serif; font-weight: 200;"><strong><?php echo number_format($sales_info->total_after_tax,2); ?></strong></span>
+                    <span style="position: absolute; margin-top: 345px; margin-left: 600px;font-family: 'Times New Roman', serif; font-weight: 200;"><strong><?php echo number_format($sales_info->total_after_tax,2); ?></strong></span>
                 </tr>
             </tbody>
         </table>
