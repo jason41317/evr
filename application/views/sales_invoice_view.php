@@ -1415,6 +1415,8 @@
                         vat_input = 0;
                     }
 
+                    var globalDiscountPercentage =  $('#txt_overall_discount').val() / 100;
+
                     if (true) {
                         $('#tbl_items > tbody').append(newRowItem({
                             inv_qty: "1",
@@ -1431,7 +1433,7 @@
                             inv_discount: "0.00",
                             tax_type_id: null,
                             inv_line_total_gross: total,
-                            inv_line_total_price: total,
+                            inv_line_total_price: globalDiscountPercentage > 0 ? (total - (total * globalDiscountPercentage)) : total,
                             inv_non_tax_amount: net_vat,
                             inv_tax_amount: vat_input,
                             batch_no: suggestion.batch_no,
