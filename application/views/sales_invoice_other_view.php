@@ -1599,7 +1599,7 @@
                     discount = 0;
                 }
 
-                var global_discount = $('#txt_overall_discount').val();
+                var global_discount = discount > 0 ? 0 : $('#txt_overall_discount').val();
                 var line_total = price*qty; //ok not included in the output (view) and not saved in the database
                 // var line_total_discount=discount*qty; 
                 var line_total_discount = line_total * (discount / 100);
@@ -1937,6 +1937,7 @@
                 //if has line item discount 
                 //set global discount to 0 to prevent double discount
                 $('#txt_overall_discount').val(0)
+                $('#txt_overall_discount_amount').val(0)
             }
 
             var global_discount = (gross - discounts) * ($('#txt_overall_discount').val() / 100);
