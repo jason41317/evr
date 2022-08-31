@@ -345,10 +345,10 @@
                     <select name="lookup_price" id="cboLookupPrice">
                         <option value="0">None</option>
                         <option value="1">SRP (Recommended)</option>
-                        <option value="2" >Distributor Price</option>
+                        <!-- <option value="2" >Distributor Price</option> -->
                         <!-- <option value="3" hidden>Dealer Price</option> -->
                         <option value="4">Selling/Vet Price</option>
-                        <option value="5">Discounted Price</option>
+                        <!-- <option value="5">Discounted Price</option> -->
                         <!-- <option value="6">Purchase Cost</option> -->
                     </select>
                 </div>
