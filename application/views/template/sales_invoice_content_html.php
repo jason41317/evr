@@ -119,7 +119,7 @@
                     <td width="3%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($item->inv_qty,0); ?></td>
                     <td width="3%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo $item->size; ?></td>
                     <td width="23%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($item->inv_price,2); ?></td>
-                    <td width="20%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($item->inv_line_total_price,2); ?></td>
+                    <td width="20%" align="center" class="tbl-center" style="font-size: 15px;font-family: 'Times New Roman', serif; font-weight: 200;"><?php echo number_format($item->inv_qty * $item->inv_price,2); ?></td>
                 </tr>
                 <?php 
                     $total = $item->inv_line_total_price;
@@ -143,6 +143,15 @@
                     <td class="" >&nbsp;</td>
                     <td  class="table-cellpadding  tbl-left">&nbsp;</td>
                     <td class="" align="center" >&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; padding-top: 10px;" colspan="2">
+                        Sales Discount
+                        <small><?php  echo $sales_info->total_overall_discount > 0 ? "(". strval(number_format($sales_info->total_overall_discount,2))." %)" : '' ?></small>
+                    </td>
+                    <td style="text-align: right; padding-top: 10px;" ><?php echo number_format($discount,2); ?></td>
+                    <td class="table-cellpadding  tbl-left"></td>
+                    <td class="" align="center"></td>
                 </tr>
                 <tr>
                     <td class="" >&nbsp;</td>
