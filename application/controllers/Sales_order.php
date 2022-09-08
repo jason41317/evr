@@ -246,6 +246,8 @@ class Sales_order extends CORE_Controller
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
                 $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
                 $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
+                $m_sales_order->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                $m_sales_order->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_sales_order->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_sales_order->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_sales_order->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -344,8 +346,9 @@ class Sales_order extends CORE_Controller
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);
                 $m_sales_order->address=$this->input->post('address',TRUE);
                 $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
-                $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
-
+                $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_ordere',TRUE)));
+                $m_sales_order->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                $m_sales_order->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_sales_order->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                 $m_sales_order->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                 $m_sales_order->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -501,7 +504,9 @@ class Sales_order extends CORE_Controller
                 'customers.customer_name',
                 'sales_order.order_status_id',
                 'order_status.order_status',
-                'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson'
+                'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson',
+                'sales_order.total_overall_discount',
+                'sales_order.total_overall_discount_amount',
             ),
 
             array(
