@@ -227,6 +227,9 @@ class Sales_invoice_other extends CORE_Controller
                 $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                 $m_invoice->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 $m_invoice->posted_by_user=$this->session->user_id;
+                $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
+
                 $m_invoice->save();
 
                 $sales_invoice_id=$m_invoice->last_insert_id();
@@ -384,6 +387,11 @@ class Sales_invoice_other extends CORE_Controller
                 $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
                 $m_invoice->total_after_tax=$this->get_numeric_value($this->input->post('summary_after_tax',TRUE));
                 $m_invoice->modified_by_user=$this->session->user_id;
+
+                $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
+
+
                 $m_invoice->modify($sales_invoice_id);
 
 
@@ -569,7 +577,9 @@ class Sales_invoice_other extends CORE_Controller
                 'departments.department_name',
                 'customers.customer_name',
                 'sales_order.so_no',
-                'dd.department_name as issued_department'
+                'dd.department_name as issued_department',
+                'sales_invoice.total_overall_discount',
+                'sales_invoice.total_overall_discount_amount'
             ),
             array(
                 array('departments','departments.department_id=sales_invoice.department_id','left'),

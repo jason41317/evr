@@ -153,14 +153,22 @@ class Sales_invoice extends CORE_Controller
                 $data['company_info']=$company_info[0];
 
                 $data['sales_info']=$info[0];
-                $data['sales_invoice_items']=$m_sales_invoice_items->get_list(
-                    array('sales_invoice_items.sales_invoice_id'=>$id_filter),
+                $invoiceItems = $m_sales_invoice_items->get_list(
+                    array('sales_invoice_items.sales_invoice_id' => $id_filter),
                     'sales_invoice_items.*,products.product_desc,products.size,units.unit_name',
                     array(
-                        array('products','products.product_id=sales_invoice_items.product_id','left'),
-                        array('units','units.unit_id=sales_invoice_items.unit_id','left')
+                      array('products', 'products.product_id=sales_invoice_items.product_id', 'left'),
+                      array('units', 'units.unit_id=sales_invoice_items.unit_id', 'left')
                     )
-                );
+                  );
+                  $data['sales_invoice_items'] = $invoiceItems;
+
+                  $discount = 0;
+                  foreach($invoiceItems as $item) {
+                      $discount = $discount  + $item->inv_line_total_discount;
+                  }
+
+                 $data['discount'] = $discount + $info[0]->total_overall_discount_amount;
 
                 $data['_def_css_files'] = $this->load->view('template/assets/css_files', '', TRUE);
                 $data['_def_js_files'] = $this->load->view('template/assets/js_files', '', TRUE);
@@ -307,6 +315,9 @@ class Sales_invoice extends CORE_Controller
                                 $m_invoice->date_delivered = null;
                             }
 
+
+                            $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                            $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
 
                             $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                             $m_invoice->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
@@ -457,7 +468,8 @@ class Sales_invoice extends CORE_Controller
                         $m_invoice->date_delivered = null;
                     }
 
-
+                    $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
+                    $m_invoice->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                     $m_invoice->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
                     $m_invoice->total_before_tax=$this->get_numeric_value($this->input->post('summary_before_discount',TRUE));
                     $m_invoice->total_tax_amount=$this->get_numeric_value($this->input->post('summary_tax_amount',TRUE));
@@ -665,7 +677,9 @@ class Sales_invoice extends CORE_Controller
                     WHEN isnull(sales_invoice.date_delivered) 
                     THEN ""
                     ELSE DATE_FORMAT(sales_invoice.date_delivered,"%m/%d/%Y")
-                END) as date_delivered'
+                END) as date_delivered',
+                'sales_invoice.total_overall_discount',
+                'sales_invoice.total_overall_discount_amount'
             ),
             array(
                 array('departments','departments.department_id=sales_invoice.department_id','left'),

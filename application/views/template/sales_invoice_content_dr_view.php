@@ -88,13 +88,17 @@
                     <td width="10%" class="table-cellpadding tbl-border-si tbl-center" style="font-size:12px;"><center><?php echo number_format($item->inv_qty,0); ?></center></td>
                     <td width="10%" class="table-cellpadding tbl-border-si tbl-center" style="font-size:12px;"><center><?php echo $item->size; ?></center></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-center" style="font-size:12px;"><center><?php echo number_format($item->inv_price,2); ?></center></td>
-                    <td width="30%" class="table-cellpadding tbl-border-si tbl-center" style="font-size:12px;"><center><?php echo number_format($item->inv_line_total_price,2); ?></center></td>
+                    <td width="30%" class="table-cellpadding tbl-border-si tbl-center" style="font-size:12px;"><center><?php echo number_format($item->inv_qty * $item->inv_price,2); ?></center></td>
                 </tr>
                 <?php
                 } 
                     
                 ?>
-                
+                <tr>
+                    <td class=" tbl-border-si"  width="50%" colspan="3"></td>
+                    <td width="20%" class="table-cellpadding tbl-border-si tbl-left" style="font-size:12px;"><strong>SALES DISCOUNT</strong></td>
+                    <td class=" tbl-border-si" align="center" width="30%"><?php echo number_format($discount,2); ?></td>
+                </tr>
                 <tr>
                     <td class=" tbl-border-si"  width="50%" colspan="3"></td>
                     <td width="20%" class="table-cellpadding tbl-border-si tbl-left" style="font-size:12px;"><strong>TOTAL AMOUNT DUE</strong></td>
