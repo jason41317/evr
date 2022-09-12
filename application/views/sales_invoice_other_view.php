@@ -190,7 +190,7 @@
                                         <h2 class="h2-panel-heading">Other Sales Invoice</h2><hr>
                                         <div class="row">
                                             <div class="col-lg-3"><br>
-                                                <button class="btn btn-primary <?php echo (in_array('26-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Sales Invoice</button>
+                                                <button class="btn btn-primary <?php echo (in_array('27-1',$this->session->user_rights)?'':'hidden'); ?>" id="btn_new" style="text-transform: none;font-family: Tahoma, Georgia, Serif;"><i class="fa fa-plus-circle"></i> New Sales Invoice</button>
                                             </div>
                                             <div class="col-lg-3">
                                                     From :<br />
@@ -995,7 +995,7 @@
                     total=getFloat(suggestion.discounted_price);
                 }
                 else if(_defLookUp=="6"){
-                    total=getFloat(suggestion.purchase_cost);
+                    total=getFloat(suggestion.srp_cost);
                 }else{
                     total=getFloat(suggestion.sale_price);
                 }
