@@ -342,7 +342,7 @@
                         <!-- <option value="2">Distributor Price</option> -->
                         <!-- <option value="3">Dealer Price</option> -->
                         <option value="4">Selling/Vet Price</option>
-                        <!-- <option value="5">Discounted Price</option> -->
+                        <option value="5">Discounted Price</option>
                     </select>
                 </div>
             </div>
@@ -1081,8 +1081,8 @@ $(document).ready(function(){
                 '<td width="30%" align="left"><b>Description 1</b></td>'+
                 '<td width="10%" style="text-align: right;"><b>On hand</b></td>'+
                 '<td width="10%" align="right"><b>SRP</b></td>'+
-                '<td width="10%" align="right"><b>Dealer</b></td>'+
-                '<td width="10%" align="right"><b>Distributor</b></td>'+
+                // '<td width="10%" align="right"><b>Dealer</b></td>'+
+                // '<td width="10%" align="right"><b>Distributor</b></td>'+
                 '<td width="10%" align="right"><b>Discounted</b></td>'+
                 '<td width="10%" align="right" style="padding-right:1%;"><b>Selling/Vet</b></td></tr></table>'
             ].join('\n'),
@@ -1092,8 +1092,8 @@ $(document).ready(function(){
                 '<td width="30%" align="left">{{product_desc}}</td>'+
                 '<td width="10%" align="right">{{on_hand}}</td>'+
                 '<td width="10%" align="right">{{sale_price}}</td>'+
-                '<td width="10%" align="right">{{dealer_price}}</td>'+
-                '<td width="10%" align="right">{{distributor_price}}</td>'+
+                // '<td width="10%" align="right">{{dealer_price}}</td>'+
+                // '<td width="10%" align="right">{{distributor_price}}</td>'+
                 '<td width="10%" align="right">{{discounted_price}}</td>'+
                 '<td width="10%" align="right" style="padding-right:1%;">{{public_price}}</td></tr></table>')
 
