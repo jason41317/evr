@@ -998,7 +998,7 @@
                     total=getFloat(suggestion.discounted_price);
                 }
                 else if(_defLookUp=="6"){
-                    total=getFloat(suggestion.purchase_cost);
+                    total=getFloat(suggestion.srp_cost);
                 }else{
                     total=getFloat(suggestion.sale_price);
                 }
