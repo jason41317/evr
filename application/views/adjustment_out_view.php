@@ -1512,7 +1512,7 @@
                 '<td width="10%"><input name="adjust_qty[]" type="text" class="number form-control" value="'+ d.adjust_qty+'"></td>'+
                 '<td width="5%">'+ (d.unit_name==null ? 'none' : d.unit_name) +'</td>'+
                 '<td width="30%">'+ d.product_desc +'</td>'+
-                '<td width="11%"><input name="adjust_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.adjust_price,2)+'" style="text-align:right;"></td>'+
+                '<td width="11%"><input name="adjust_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.adjust_price,4)+'" style="text-align:right;"></td>'+
                 '<td width="11%" style="display:none;"><input name="adjust_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_discount,2)+'" style="text-align:right;"></td>'+
                 '<td style="display: none;" width="11%"><input name="adjust_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_line_total_discount,2)+'" readonly></td>'+
                 '<td width="11%" style="display:none;"><input name="adjust_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.adjust_tax_rate,2)+'"></td>'+
@@ -1561,7 +1561,7 @@
 
 
         var reInitializeNumeric=function(){
-            $('.numeric').autoNumeric('init');
+            $('.numeric').autoNumeric('init', {mDec:4});
             $('.number').autoNumeric('init', {mDec:0});
         };
 
