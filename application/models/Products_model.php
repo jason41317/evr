@@ -609,6 +609,94 @@ class Products_model extends CORE_Model {
     }
 
 
+
+    function get_current_item_list_so($criteria="",$type=3){
+        $sql = "SELECT 
+                    rc.*,
+                    p.*,
+                    u.unit_name,
+                    IFNULL(tt.tax_rate, 0) AS tax_rate,
+                    FORMAT(sale_price, 4) AS srp,
+                    IFNULL(sinv.out_qty, 0) AS out_qty,
+                    FORMAT(dealer_price, 4) AS srp_dealer,
+                    FORMAT(distributor_price, 4) AS srp_distributor,
+                    FORMAT(public_price, 4) AS srp_public,
+                    FORMAT(discounted_price, 4) AS srp_discounted,
+                    FORMAT(purchase_cost_2, 2) AS cost_price,
+                    FORMAT(rc.item_cost, 4) AS srp_cost,
+                    (rc.in_qty - IFNULL(sinv.out_qty, 0) - IFNULL(iss.out_qty, 0) - IFNULL(aoQ.out_qty, 0)) AS on_hand_per_batch
+                FROM
+                    (SELECT
+                        inQ.*,
+                        inQ.product_item_cost AS item_cost,
+                        SUM(inQ.receive_qty) AS in_qty
+                    FROM
+                        (SELECT
+                            dii.product_id,
+                            dii.dr_qty AS receive_qty,
+                            dii.product_item_cost
+                        FROM
+                            (SELECT
+                                dii.product_id,
+                                dii.dr_qty,
+                                dii.dr_price AS product_item_cost,
+                                di.date_created
+                            FROM
+                                delivery_invoice_items AS dii
+                            INNER JOIN delivery_invoice AS di ON dii.dr_invoice_id = di.dr_invoice_id
+                            WHERE di.is_active = TRUE AND di.is_deleted = FALSE
+                            UNION ALL SELECT
+                                aii.product_id,
+                                aii.adjust_qty AS receive_qty,
+                                aii.adjust_price AS product_item_cost,
+                                ai.date_created
+                            FROM
+                                adjustment_items AS aii
+                            INNER JOIN adjustment_info AS ai ON aii.adjustment_id = ai.adjustment_id
+                            WHERE ai.adjustment_type = 'IN' AND ai.is_active = TRUE AND ai.is_deleted = FALSE) AS dii
+                        ORDER BY dii.date_created DESC) AS inQ
+                    GROUP BY inQ.product_id) AS rc
+                LEFT JOIN
+                    (SELECT
+                        sii.product_id,
+                        SUM(sii.inv_qty) AS out_qty
+                    FROM
+                        sales_invoice_items AS sii
+                    INNER JOIN sales_invoice AS si ON sii.sales_invoice_id = si.sales_invoice_id
+                    WHERE si.is_active = TRUE AND si.is_deleted = FALSE
+                    GROUP BY sii.product_id) AS sinv ON rc.product_id = sinv.product_id
+                LEFT JOIN
+                    (SELECT
+                        iss.product_id,
+                        SUM(iss.issue_qty) AS out_qty
+                    FROM
+                        issuance_items AS iss
+                    INNER JOIN issuance_info AS iin ON iin.issuance_id = iss.issuance_id
+                    WHERE iin.is_active = TRUE AND iin.is_deleted = FALSE
+                    GROUP BY iss.product_id) AS iss ON rc.product_id = iss.product_id
+                LEFT JOIN
+                    (SELECT
+                        aii.product_id,
+                        SUM(aii.adjust_qty) AS out_qty
+                    FROM
+                        adjustment_items AS aii
+                    INNER JOIN adjustment_info AS ai ON aii.adjustment_id = ai.adjustment_id
+                    WHERE ai.adjustment_type = 'OUT' AND ai.is_active = TRUE AND ai.is_deleted = FALSE
+                    GROUP BY aii.product_id) AS aoQ ON rc.product_id = aoQ.product_id
+                LEFT JOIN
+                    (SELECT
+                        *
+                    FROM
+                        products
+                    WHERE is_active = TRUE AND is_deleted = FALSE) AS p ON rc.product_id = p.product_id
+                LEFT JOIN tax_types AS tt ON p.tax_type_id = tt.tax_type_id
+                LEFT JOIN units AS u ON p.unit_id = u.unit_id
+                WHERE ".($type==3?"":" p.refproduct_id=".$type." AND ")." (p.product_desc LIKE '%".$criteria."%' OR p.product_code LIKE '%".$criteria."%' OR p.product_desc1 LIKE '%".$criteria."%' OR CAST(p.product_id AS CHAR) LIKE '%".$criteria."%') HAVING on_hand_per_batch>0";
+
+        return $this->db->query($sql)->result();
+    }
+
+
     //per expiration inventory report
     function get_all_items_inventory($date){
         // $sql="SELECT rc.*,p.*,rp.product_type,cat.category_name,DATE_FORMAT(exp_date,'%m/%d/%Y')as expiration,IFNULL(sinv.out_qty,0) as out_qty,(rc.in_qty-IFNULL(sinv.out_qty,0)-IFNULL(iss.out_qty,0)) as on_hand
