@@ -1090,7 +1090,7 @@ $(document).ready(function(){
             suggestion: Handlebars.compile('<table class="tt-items"><tr>'+
                 '<td width="10%" style="padding-left:1%;">{{product_code}}</td>'+
                 '<td width="30%" align="left">{{product_desc}}</td>'+
-                '<td width="10%" align="right">{{on_hand}}</td>'+
+                '<td width="10%" align="right">{{on_hand_per_batch}}</td>'+
                 '<td width="10%" align="right">{{sale_price}}</td>'+
                 // '<td width="10%" align="right">{{dealer_price}}</td>'+
                 // '<td width="10%" align="right">{{distributor_price}}</td>'+
