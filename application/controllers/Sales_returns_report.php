@@ -40,6 +40,7 @@
 						 "adjustment_info.is_deleted = FALSE
 						 AND adjustment_info.is_active= TRUE 
 						 AND adjustment_info.is_returns = TRUE 
+						 AND adjustment_info.is_approved = TRUE 
 						 AND DATE(adjustment_info.date_adjusted) BETWEEN '$tsd' AND '$ted' ",
 
 						'adjustment_items.*,

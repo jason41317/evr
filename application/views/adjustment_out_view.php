@@ -172,6 +172,7 @@
                                                     <th>Type</th>
                                                     <th>Invoice</th>
                                                     <th>Branch</th>
+                                                    <th>Approved</th>
                                                     <th width="20%">Remarks</th>
                                                     <th><center>Action</center></th>
                                                     <th>ID</th>
@@ -641,7 +642,7 @@
                 "dom": '<"toolbar">frtip',
                 "bLengthChange":false,
                 "pageLength":15,
-                "order": [[ 7, "desc" ]],
+                "order": [[ 8, "desc" ]],
                 oLanguage: {
                         sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
                 },
@@ -669,14 +670,21 @@
                     { targets:[2],data: "adjustment_type_desc" },
                     { targets:[3],data: "inv_no" },
                     { targets:[4],data: "department_name" },
-                    { targets:[5],data: "remarks" , render: $.fn.dataTable.render.ellipsis(80)},
-                    {
-                        targets:[6],
-                        render: function (data, type, full, meta){
-                            return '<center>'+adjout_btn_edit+'&nbsp;'+adjout_btn_trash+'</center>';
+                    { targets:[5],
+                        render: function(data, type, full, meta) {
+                            return full.is_approved == 1 ? 'Approved' : 'Pending';
                         }
                     },
-                    { visible:false, targets:[7],data: "adjustment_id" },
+                    { targets:[6],data: "remarks" , render: $.fn.dataTable.render.ellipsis(80)},
+                    {
+                        targets:[7],
+                        render: function (data, type, full, meta){
+                            var editButton = !!Number(full.is_approved) ? "" : adjout_btn_edit;
+
+                            return '<center>'+editButton+'&nbsp;'+adjout_btn_trash+'</center>';
+                        }
+                    },
+                    { visible:false, targets:[8],data: "adjustment_id" },
                 ]
 
             });

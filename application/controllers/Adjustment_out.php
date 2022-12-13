@@ -88,6 +88,32 @@ class Adjustment_out extends CORE_Controller
                 echo json_encode($response);
                 break;
 
+
+            case 'list-for-approved':
+                $m_adjustment=$this->Adjustment_model;
+                $response['data']=$this->response_rows(
+                    "adjustment_info.is_active=TRUE AND adjustment_info.adjustment_type='OUT' AND adjustment_info.is_deleted=FALSE
+                    AND adjustment_info.is_approved=FALSE
+                    ".($id_filter==null?"":" AND adjustment_info.adjustment_id=".$id_filter)
+                );
+                echo json_encode($response);
+                break;
+
+            case 'mark-approved':  //this returns JSON of Issuance to be rendered on Datatable
+                $m_adjustments=$this->Adjustment_model;
+                $adjustment_id=$this->input->post('adjustment_id',TRUE); 
+
+                $m_adjustments->set('date_approved','NOW()'); //treat NOW() as function and not string, set date of approval
+                $m_adjustments->approved_by_user=$this->session->user_id; //deleted by user
+                $m_adjustments->is_approved=1; //1 means approved
+                if($m_adjustments->modify($adjustment_id)){
+                    $response['title']='Success!';
+                    $response['stat']='success';
+                    $response['msg']='Adjustment successfully approved.';
+                    echo json_encode($response);
+                }
+                break;
+
             ////****************************************items/products of selected Items***********************************************
             case 'items': //items on the specific PO, loads when edit button is called
                 $m_items=$this->Adjustment_item_model;
@@ -397,6 +423,7 @@ class Adjustment_out extends CORE_Controller
                 'DATE_FORMAT(adjustment_info.date_adjusted,"%m/%d/%Y") as date_adjusted',
                 'departments.department_id',
                 'departments.department_name',
+                'adjustment_info.is_approved',
                 '(CASE 
                     WHEN inv_type_id = 1 THEN "Sales Return"
                     WHEN inv_type_id = 2 THEN "Sales Return"

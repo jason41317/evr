@@ -188,9 +188,10 @@
                 <tr>
                     <th width="3%"></th>
                     <th width="15%">Adjustment #</th>
-                    <th width="10%"> Type</th>
+                    <th width="10%">Type</th>
                     <th>Invoice</th>
                     <th width="15%">Branch</th>
+                    <th width="10%">Approved</th>
                     <th>Remarks</th>
                     <th width="10%" class="align-center">Adjustment</th>
                     <th width="10%"><center>Action</center></th>
@@ -720,7 +721,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 8, "desc" ]],
+            "order": [[ 9, "desc" ]],
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
             },
@@ -748,15 +749,22 @@ $(document).ready(function(){
                 { targets:[2],data: "trans_type" },
                 { targets:[3],data: "inv_no" },
                 { targets:[4],data: "department_name" },
-                { targets:[5],data: "remarks", render: $.fn.dataTable.render.ellipsis(160) },
-                { visible:false, sClass: "Align-center" ,targets:[6],data: "adjustment_type" },
-                {
-                    targets:[7],
-                    render: function (data, type, full, meta){
-                        return '<center>'+adj_btn_edit+'&nbsp;'+adj_btn_trash+'</center>';
+                { targets:[5],
+                    render: function(data, type, full, meta) {
+                        return full.is_approved == 1 ? 'Approved' : 'Pending';
                     }
                 },
-                {visible:false, sClass: "align-center" ,targets:[8],data: "adjustment_id" },
+                { targets:[6],data: "remarks", render: $.fn.dataTable.render.ellipsis(160) },
+                { visible:false, sClass: "Align-center" ,targets:[7],data: "adjustment_type" },
+                {
+                    targets:[8],
+                    render: function (data, type, full, meta){
+                        var editButton = !!Number(full.is_approved) ? "" : adj_btn_edit;
+
+                        return '<center>'+editButton+'&nbsp;'+adj_btn_trash+'</center>';
+                    }
+                },
+                {visible:false, sClass: "align-center" ,targets:[9],data: "adjustment_id" },
             ]
 
         });

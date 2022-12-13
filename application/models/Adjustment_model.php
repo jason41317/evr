@@ -37,6 +37,7 @@ protected $pk_id = "adjustment_id";
 			ai.is_deleted=FALSE AND 
 			ai.is_journal_posted=FALSE
 			AND ai.adjustment_type = "IN"
+			AND ai.is_approved=TRUE
 			AND ai.is_closed = FALSE
 
 			UNION ALL
@@ -66,6 +67,7 @@ protected $pk_id = "adjustment_id";
 			ai.is_deleted=FALSE AND 
 			ai.is_journal_posted=FALSE
 			AND ai.adjustment_type = "OUT"
+			AND ai.is_approved=TRUE
 			AND ai.is_closed = FALSE) as main
 
 			ORDER BY main.adjustment_id';

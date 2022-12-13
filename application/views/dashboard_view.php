@@ -426,7 +426,60 @@
                         </div>
                     </div>
  -->
-                                 <div class="col-xs-12 <?php echo ($this->session->user_group_id == 1 ? ' col-sm-offset-8 col-sm-4' : 'hidden' ); ?>">
+
+                    <div class="container-fluid mt-n">
+                        <div data-widget-group="group1">
+                            <div class="row">
+                                <div class="col-xs-12   <?php echo ($this->session->user_group_id != 1 ? 'col-sm-12' : 'col-sm-8'); ?>">
+
+                                    <div class="row" style="margin-left: 1px;">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body table-responsive" style="border-top: 3px solid #2196f3;">
+                                            <h2>Adjustment In for Approval</h2>
+                                                <table id="tbl_adjustment_in_list" class="table table-striped" cellspacing="0" width="100%">
+                                                    <thead class="">
+                                                    <tr>
+                                                        <th width="3%"></th>
+                                                        <th width="15%">Adjustment #</th>
+                                                        <th width="15%">Type</th>
+                                                        <th width="15%">Invoice</th>
+                                                        <th width="15%">Branch</th>
+                                                        <th width="10%"><center>Action</center></th>
+                                                        <th>ID</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" style="margin-left: 1px;">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body table-responsive" style="border-top: 3px solid #2196f3;">
+                                            <h2>Adjustment Out for Approval</h2>
+                                                <table id="tbl_adjustment_out_list" class="table table-striped" cellspacing="0" width="100%">
+                                                    <thead class="">
+                                                    <tr>
+                                                        <th width="3%"></th>
+                                                        <th>Adjustment #</th>
+                                                        <th>Branch</th>
+                                                        <th width="30%">Remarks</th>
+                                                        <th class="align-center">Adjustment</th>
+                                                        <th><center>Action</center></th>
+                                                        <th>ID</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-12 <?php echo ($this->session->user_group_id == 1 ? 'col-sm-4' : 'hidden' ); ?>">
                                   <div id="style-1" class="data-container" style="min-height: 700px; max-height: 700px; overflow-y: scroll;">
                                     <h3><i class="fa fa-rss" style="color: #067cb2;;"></i> ACTIVITY FEED</h3>
                                     <div class="v-timeline vertical-container">
@@ -434,7 +487,13 @@
                                     </div>
                                   </div>
                                 </div>
-                    </div> <!-- #page-content -->
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div> <!-- #page-content -->
             </div>
 
 
@@ -654,53 +713,182 @@
 <script>
 
     $(document).ready(function(){
-        var dt; var _selectedID; var _selectRowObj;
+        var dt; var dtAI; var dtAO; var _selectedID; var _selectRowObj;
 
-        // var initializeControls=(function(){
-        //     dt=$('#tbl_po_list').DataTable({
-        //         "dom": '<"toolbar">frtip',
-        //         "bLengthChange":false,
-        //         "ajax" : "Purchases/transaction/po-for-approved",
-        //         "columns": [
-        //             {
-        //                 "targets": [0],
-        //                 "class":          "details-control",
-        //                 "orderable":      false,
-        //                 "data":           null,
-        //                 "defaultContent": ""
-        //             },
-        //             { targets:[1],data: "po_no" },
-        //             { targets:[2],data: "supplier_name" },
-        //             { targets:[3],data: "term_description" },
-        //             { targets:[4],data: "posted_by" },
-        //             {
-        //                 targets:[5],data: "attachment",
-        //                 render: function (data, type, full, meta){
+        var initializeControls=(function(){
+             dtAI=$('#tbl_adjustment_in_list').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                "pageLength":5,
+                "ajax" : {
+                    "url" : "Adjustments/transaction/list-for-approved",
+                },
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "adjustment_code" },
+                    { targets:[2],data: "trans_type" },
+                    { targets:[3],data: "inv_no" },
+                    { targets:[4],data: "department_name" },
+                    {
+                        targets:[5],
+                        render: function (data, type, full, meta){
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_ai"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approved this Adjustment"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
 
-        //                     return '<center>'+ data +' <i class="fa fa-paperclip"></i></center>';
-        //                 }
+                            return '<center>'+btn_approved+'</center>';
+                        }
+                    },
+                    {visible:false, sClass: "align-center" ,targets:[6],data: "adjustment_id" },
+                ]
 
-        //             },
-        //             {
-        //                 targets:[6],
-        //                 render: function (data, type, full, meta){
-        //                     //alert(full.purchase_order_id);
+            });
 
-        //                     var btn_approved='<button class="btn btn-success btn-sm" name="approve_po"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approved this PO"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
-        //                     var btn_conversation='<a id="link_conversation" href="Po_messages?id='+full.purchase_order_id+'" target="_blank" class="btn btn-info btn-sm"  style="margin-right:0px;" data-toggle="tooltip" data-placement="top" title="Open Conversation"><i class="fa fa-envelope"></i> </a>';
+            dtAO=$('#tbl_adjustment_out_list').DataTable({
+                "dom": '<"toolbar">frtip',
+                "bLengthChange":false,
+                "pageLength":5,
+                "ajax" : {
+                    "url" : "Adjustment_out/transaction/list-for-approved",
+                },
+                "columns": [
+                    {
+                        "targets": [0],
+                        "class":          "details-control",
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ""
+                    },
+                    { targets:[1],data: "adjustment_code" },
+                    { targets:[2],data: "department_name" },
+                    { targets:[3],data: "remarks" },
+                    { sClass:"align-center", targets:[4],data: "adjustment_type" },
+                    {
+                        targets:[5],
+                        render: function (data, type, full, meta){
+                            var btn_approved='<button class="btn btn-success btn-sm" name="approve_ao"  style="margin-left:-15px;" data-toggle="tooltip" data-placement="top" title="Approved this Adjustment"><i class="fa fa-check" style="color: white;"></i> <span class=""></span></button>';
 
-        //                     return '<center>'+btn_approved+'&nbsp;'+btn_conversation+'</center>';
-        //                 }
-        //             }
-        //         ]
-        //     });
-        // })();
+                            return '<center>'+btn_approved+'</center>';
+                        }
+                    },
+                    { visible:false, targets:[6],data: "adjustment_id" },
+                ]
+
+            });
+        })();
 
 
         var bindEventHandlers=(function(){
 
 
             var detailRows = [];
+
+            $('#tbl_adjustment_in_list > tbody').on('click','button[name="approve_ai"]',function(){
+            // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+
+                var data=dtAI.row(_selectRowObj).data();
+                _selectedID=data.adjustment_id;
+
+                approveAdjustmentIn().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        console.log("True");
+                        dtAI.row(_selectRowObj).remove().draw();
+                    }
+
+                });
+            });
+
+
+            $('#tbl_adjustment_out_list > tbody').on('click','button[name="approve_ao"]',function(){
+            // showNotification({title:"Approving PO and Sending Email!",stat:"info",msg:"Please wait for a few seconds."});
+                _selectRowObj=$(this).closest('tr'); //hold dom of tr which is selected
+
+                var data=dtAO.row(_selectRowObj).data();
+                _selectedID=data.adjustment_id;
+
+                approveAdjustmentOut().done(function(response){
+                    showNotification(response);
+                    if(response.stat=="success"){
+                        console.log("True");
+                        dtAO.row(_selectRowObj).remove().draw();
+                    }
+
+                });
+            });
+
+            $('#tbl_adjustment_in_list tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dtAI.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/adjustments/"+ d.adjustment_id,
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response ).show();
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+                    });
+                }
+            });
+
+            $('#tbl_adjustment_out_list tbody').on( 'click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = dtAO.row( tr );
+                var idx = $.inArray( tr.attr('id'), detailRows );
+
+                if ( row.child.isShown() ) {
+                    tr.removeClass( 'details' );
+                    row.child.hide();
+
+                    // Remove from the 'open' array
+                    detailRows.splice( idx, 1 );
+                }
+                else {
+                    tr.addClass( 'details' );
+                    //console.log(row.data());
+                    var d=row.data();
+
+                    $.ajax({
+                        "dataType":"html",
+                        "type":"POST",
+                        "url":"Templates/layout/adjustments/"+ d.adjustment_id,
+                        "beforeSend" : function(){
+                            row.child( '<center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center>' ).show();
+                        }
+                    }).done(function(response){
+                        row.child( response ).show();
+                        // Add to the 'open' array
+                        if ( idx === -1 ) {
+                            detailRows.push( tr.attr('id') );
+                        }
+                    });
+                }
+            });
 
             // $('#tbl_po_list tbody').on( 'click', 'tr td.details-control', function () {
             //     var tr = $(this).closest('tr');
@@ -779,10 +967,6 @@
         })();
 
 
-
-
-
-
         //functions called on bindEventHandlers
         // var approvePurchaseOrder=function(){
         //     return $.ajax({
@@ -793,6 +977,28 @@
 
         //     });
         // };
+
+        //functions called on bindEventHandlers
+        var approveAdjustmentIn=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Adjustments/transaction/mark-approved",
+                "data":{adjustment_id : _selectedID}
+
+            });
+        };
+
+        //functions called on bindEventHandlers
+        var approveAdjustmentOut=function(){
+            return $.ajax({
+                "dataType":"json",
+                "type":"POST",
+                "url":"Adjustment_out/transaction/mark-approved",
+                "data":{adjustment_id : _selectedID}
+
+            });
+        };
 
         var showNotification=function(obj){
             PNotify.removeAll(); //remove all notifications

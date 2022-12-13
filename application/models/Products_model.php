@@ -387,7 +387,8 @@
                                     ai.is_active=TRUE AND 
                                     ai.is_deleted=FALSE AND 
                                     ai.date_adjusted<='$as_of_date' AND
-                                    ai.adjustment_type='IN'
+                                    ai.adjustment_type='IN' AND
+                                    ai.is_approved=TRUE
                                     ".($department_id==0?"":" AND ai.department_id=".$department_id)."
 
                                 GROUP BY aii.product_id
@@ -403,7 +404,8 @@
                                     ai.is_active=TRUE AND 
                                     ai.is_deleted=FALSE AND 
                                     ai.date_adjusted<='$as_of_date' AND
-                                    ai.adjustment_type='OUT'
+                                    ai.adjustment_type='OUT' AND
+                                    ai.is_approved=TRUE
                                     ".($department_id==0?"":" AND ai.department_id=".$department_id)."
 
                                 GROUP BY aii.product_id
@@ -552,7 +554,8 @@
                                     ai.is_active=TRUE AND 
                                     ai.is_deleted=FALSE AND 
                                     ai.date_adjusted<='$as_of_date' AND
-                                    ai.adjustment_type='IN'
+                                    ai.adjustment_type='IN' AND
+                                    ai.is_approved=TRUE
                                     ".($department_id==0?"":" AND ai.department_id=".$department_id)."
 
                                 GROUP BY aii.product_id
@@ -568,7 +571,8 @@
                                     ai.is_active=TRUE AND 
                                     ai.is_deleted=FALSE AND 
                                     ai.date_adjusted<='$as_of_date' AND
-                                    ai.adjustment_type='OUT'
+                                    ai.adjustment_type='OUT' AND
+                                    ai.is_approved=TRUE
                                     ".($department_id==0?"":" AND ai.department_id=".$department_id)."
 
                                 GROUP BY aii.product_id
@@ -680,7 +684,7 @@
                     FROM adjustment_info as ai
                     INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
                     LEFT JOIN departments d ON d.department_id = ai.department_id
-                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='IN' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
                     AND aii.product_id=$product_id AND ai.date_adjusted BETWEEN '$start' AND '$end'
                     ".($department_id==0?"":" AND ai.department_id=".$department_id)."
 
@@ -702,7 +706,7 @@
                     FROM adjustment_info as ai
                     INNER JOIN `adjustment_items` as aii ON aii.adjustment_id=ai.adjustment_id
                     LEFT JOIN departments d ON d.department_id = ai.department_id
-                    WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                    WHERE ai.adjustment_type='OUT' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
                     AND aii.product_id=$product_id AND ai.date_adjusted BETWEEN '$start' AND '$end'
                     ".($department_id==0?"":" AND ai.department_id=".$department_id)."
 
@@ -1268,7 +1272,7 @@
                         FROM adjustment_items as aii
                         INNER JOIN adjustment_info as ai
                         ON aii.adjustment_id=ai.adjustment_id
-                        WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                        WHERE ai.adjustment_type='IN' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
                         AND ai.date_adjusted<='$date'
                         GROUP BY aii.product_id,aii.batch_no,aii.exp_date) as inQ
                         GROUP By inQ.product_id,inQ.batch_no,inQ.exp_date
@@ -1306,7 +1310,7 @@
                         FROM adjustment_items as aii
                         INNER JOIN adjustment_info as ai
                         ON aii.adjustment_id=ai.adjustment_id
-                        WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                        WHERE ai.adjustment_type='OUT' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
                         AND ai.date_adjusted<='$date'
                         GROUP BY aii.product_id,aii.batch_no,aii.exp_date
                         )as aoQ
@@ -1370,7 +1374,7 @@
                         FROM adjustment_items as aii
                         INNER JOIN adjustment_info as ai
                         ON aii.adjustment_id=ai.adjustment_id
-                        WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                        WHERE ai.adjustment_type='IN' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
                         ".($department_id==0?"":" AND ai.department_id=".$department_id."")."
                         ".($as_of_date==null?"":" AND ai.date_adjusted <= '".$as_of_date."'")."                            
                         GROUP BY aii.product_id,aii.batch_no,aii.exp_date
@@ -1438,7 +1442,7 @@
                         FROM adjustment_items as aii
                         INNER JOIN adjustment_info as ai
                         ON aii.adjustment_id=ai.adjustment_id
-                        WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                        WHERE ai.adjustment_type='OUT' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
                         ".($department_id==0?"":" AND ai.department_id=".$department_id."")."
                         ".($as_of_date==null?"":" AND ai.date_adjusted <= '".$as_of_date."'")."                    
                         GROUP BY aii.product_id,aii.batch_no,aii.exp_date
@@ -1763,7 +1767,7 @@
                         FROM adjustment_items as aii
                         INNER JOIN adjustment_info as ai
                         ON aii.adjustment_id=ai.adjustment_id
-                        WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                        WHERE ai.adjustment_type='IN' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
                         AND ai.date_adjusted<='$date'
                         GROUP BY aii.product_id,aii.batch_no,aii.exp_date) as inQ
                         GROUP By inQ.product_id,inQ.batch_no,inQ.exp_date
@@ -1801,7 +1805,7 @@
                         FROM adjustment_items as aii
                         INNER JOIN adjustment_info as ai
                         ON aii.adjustment_id=ai.adjustment_id
-                        WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                        WHERE ai.adjustment_type='OUT' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
                         AND ai.date_adjusted<='$date'
                         GROUP BY aii.product_id,aii.batch_no,aii.exp_date
                         )as aoQ
