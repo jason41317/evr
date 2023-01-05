@@ -28,6 +28,7 @@ class Delivery_invoice_model extends CORE_Model {
             LEFT JOIN products AS p ON p.`product_id`=dii.product_id
             LEFT JOIN refproduct AS rp ON rp.`refproduct_id`=p.`refproduct_id`
             WHERE date_delivered BETWEEN '$startDate' AND '$endDate' ". ($refproduct_id==3 ? '' : 'AND rp.refproduct_id='.$refproduct_id.'')." AND di.is_active=TRUE AND di.is_deleted=FALSE
+            GROUP BY di.dr_invoice_id
             ORDER BY di.date_delivered,di.dr_invoice_id ASC) AS x";
 
         return $this->db->query($sql)->result();
@@ -55,7 +56,6 @@ class Delivery_invoice_model extends CORE_Model {
 
         return $this->db->query($sql)->result();
     }
-
 
     function get_journal_entries($purchase_invoice_id){
         $sql="SELECT main.* FROM(SELECT
