@@ -184,7 +184,8 @@
                     FORMAT(p.public_price,4) as public_price,
                     FORMAT(p.purchase_cost,4) as purchase_cost,
                     FORMAT(p.purchase_cost,4)as cost,
-                    FORMAT(COALESCE(m.on_hand,0),2) as on_hand
+                    FORMAT(COALESCE(m.on_hand,0),2) as on_hand,
+                    FORMAT(COALESCE(m.proj_on_hand,0),2) as proj_on_hand
 
                     FROM
                     
@@ -196,13 +197,14 @@
                     AVG(IF(n.in_qty>0,n.avg_cost,null))as avg_cost,/**********get the AVG of in qty only**********/
                     SUM(n.in_qty) as quantity_in,
                     SUM(n.out_qty) as quantity_out,
-                    (SUM(n.in_qty)-SUM(n.out_qty)) as on_hand
+                    (SUM(n.in_qty)-SUM(n.out_qty)) as on_hand,
+                    (SUM(n.in_qty)-SUM(n.out_qty)-SUM(n.proj_out_qty)) as proj_on_hand
 
                     FROM
 
                     (           
                                 /* Delivery Invoice */
-                                SELECT dii.product_id,AVG(dii.dr_price) as avg_cost,SUM(dii.dr_qty)as in_qty,0 as out_qty FROM delivery_invoice_items as dii
+                                SELECT dii.product_id,AVG(dii.dr_price) as avg_cost,SUM(dii.dr_qty)as in_qty,0 as out_qty, 0 as proj_out_qty FROM delivery_invoice_items as dii
                                 INNER JOIN delivery_invoice as di ON di.dr_invoice_id=dii.dr_invoice_id
 
                                 WHERE 
@@ -216,7 +218,7 @@
 
                                 UNION ALL
 
-                                SELECT iss.product_id,0 AS avg_cost,0 as in_qty,SUM(iss.issue_qty)as out_qty FROM issuance_items as iss
+                                SELECT iss.product_id,0 AS avg_cost,0 as in_qty,SUM(iss.issue_qty)as out_qty, 0 as proj_out_qty FROM issuance_items as iss
                                 INNER JOIN issuance_info as ii ON ii.issuance_id=iss.issuance_id
 
                                 WHERE 
@@ -230,7 +232,7 @@
 
                                 UNION ALL
 
-                                SELECT aii.product_id,adjust_price AS avg_cost,SUM(aii.adjust_qty) as in_qty,0 as out_qty FROM adjustment_items as aii
+                                SELECT aii.product_id,adjust_price AS avg_cost,SUM(aii.adjust_qty) as in_qty,0 as out_qty, 0 as proj_out_qty FROM adjustment_items as aii
                                 INNER JOIN adjustment_info as ai ON ai.adjustment_id=aii.adjustment_id
 
                                 WHERE 
@@ -245,7 +247,7 @@
 
                                 UNION ALL
 
-                                SELECT aii.product_id,0 AS avg_cost,0 as in_qty,SUM(aii.adjust_qty) as out_qty FROM adjustment_items as aii
+                                SELECT aii.product_id,0 AS avg_cost,0 as in_qty,SUM(aii.adjust_qty) as out_qty, 0 as proj_out_qty FROM adjustment_items as aii
                                 INNER JOIN adjustment_info as ai ON ai.adjustment_id=aii.adjustment_id
 
                                 WHERE 
@@ -260,7 +262,7 @@
 
                                 UNION ALL
 
-                                SELECT sii.product_id,0 AS avg_cost,0 as in_qty,SUM(sii.inv_qty)as out_qty FROM sales_invoice_items as sii
+                                SELECT sii.product_id,0 AS avg_cost,0 as in_qty,SUM(sii.inv_qty)as out_qty, 0 as proj_out_qty FROM sales_invoice_items as sii
                                 INNER JOIN sales_invoice as si ON si.sales_invoice_id=sii.sales_invoice_id
 
                                 WHERE 
@@ -273,7 +275,7 @@
 
                                 UNION ALL
 
-                                SELECT sii.product_id,0 AS avg_cost,SUM(sii.inv_qty) as in_qty,0 as out_qty FROM sales_invoice_items as sii
+                                SELECT sii.product_id,0 AS avg_cost,SUM(sii.inv_qty) as in_qty,0 as out_qty, 0 as proj_out_qty FROM sales_invoice_items as sii
                                 INNER JOIN sales_invoice as si ON si.sales_invoice_id=sii.sales_invoice_id
 
                                 WHERE 
@@ -287,7 +289,7 @@
 
                                 UNION ALL
 
-                                SELECT idii.product_id, 0 as avg_cost, 0 as in_qty, SUM(idii.issue_qty) as out_qty
+                                SELECT idii.product_id, 0 as avg_cost, 0 as in_qty, SUM(idii.issue_qty) as out_qty, 0 as proj_out_qty
                                 FROM issuance_department_items as idii
                                 INNER JOIN issuance_department_info as idi ON idi.issuance_department_id = idii.issuance_department_id
 
@@ -301,7 +303,7 @@
 
                                 UNION ALL
 
-                                SELECT idii.product_id, 0 as avg_cost, SUM(idii.issue_qty) as in_qty, 0 as out_qty
+                                SELECT idii.product_id, 0 as avg_cost, SUM(idii.issue_qty) as in_qty, 0 as out_qty, 0 as proj_out_qty
                                 FROM issuance_department_items as idii
                                 INNER JOIN issuance_department_info as idi ON idi.issuance_department_id = idii.issuance_department_id
 
@@ -309,7 +311,23 @@
                                     idi.is_active=TRUE AND
                                     idi.is_deleted=FALSE 
                                     ".($department_id==null?"":" AND idi.to_department_id=".$department_id)."
-                                GROUP BY idii.product_id                            
+                                GROUP BY idii.product_id
+
+                                /* Picklist */
+
+                                UNION ALL
+
+                                SELECT pli.product_id, 0 as avg_cost, 0 as in_qty, 0 as out_qty, SUM(pli.so_qty) as proj_out_qty
+                                FROM picklist_items as pli
+                                INNER JOIN picklist as pl ON pl.picklist_id = pli.picklist_id
+
+                                WHERE 
+                                    pl.is_active=TRUE AND
+                                    pl.is_deleted=FALSE AND
+                                    pl.is_canceled=FALSE AND
+                                    pl.picklist_status_id = 1
+                                    ".($department_id==null?"":" AND pl.department_id=".$department_id)."
+                                GROUP BY pli.product_id
 
 
 
@@ -1022,6 +1040,12 @@
             return (count($result)>0?$result[0]->batch_qty:0);
         }
 
+        function get_product_projected_qty($batch_no,$product_id,$expire_date,$department_id=0){
+            $sql="SELECT `get_product_projected_qty_per_batch`('$batch_no',$product_id,'$expire_date','$department_id') as batch_qty";
+            $result=$this->db->query($sql)->result();
+            return (count($result)>0?$result[0]->batch_qty:0);
+        }
+
         function get_current_item_list($criteria="",$type=3,$department_id=0){
                 //adjusted 1/3/2017
                 //added adjustment IN and OUT on Query
@@ -1042,7 +1066,13 @@
                     (IFNULL(sinv.out_qty,0) + 
                     IFNULL(iss.out_qty,0) +
                     IFNULL(aoQ.out_qty,0) + 
-                    IFNULL(itf.out_qty,0))) as on_hand_per_batch
+                    IFNULL(itf.out_qty,0))) as on_hand_per_batch,
+                    (rc.in_qty -
+                    (IFNULL(sinv.out_qty,0) + 
+                    IFNULL(plist.out_qty,0) +
+                    IFNULL(iss.out_qty,0) +
+                    IFNULL(aoQ.out_qty,0) + 
+                    IFNULL(itf.out_qty,0))) as projected_qty
 
                         FROM
 
@@ -1085,7 +1115,7 @@
                                     FROM adjustment_items as aii
                                     INNER JOIN adjustment_info as ai
                                     ON aii.adjustment_id=ai.adjustment_id
-                                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                                    WHERE ai.adjustment_type='IN' AND ai.is_active=TRUE AND ai.is_deleted=FALSE AND ai.is_approved=TRUE
                                     ".($department_id==0?"":" AND ai.department_id=".$department_id)."
 
                                     UNION ALL
@@ -1141,6 +1171,22 @@
 
                         ON rc.unq_id=sinv.unq_id
 
+                        /* Picklist for Projected Qty */
+
+                        LEFT JOIN
+
+
+                        (SELECT pli.product_id,
+                        CONCAT_WS('-',pli.batch_no,pli.product_id,pli.exp_date)as unq_id,
+                        SUM(pli.so_qty) as out_qty
+                        FROM picklist_items as pli
+                        INNER JOIN picklist as pl ON pli.picklist_id=pl.picklist_id
+                        WHERE pl.is_active=TRUE AND pl.is_deleted=FALSE AND pl.is_canceled=FALSE AND pl.picklist_status_id=1
+                        ".($department_id==0?"":" AND pl.department_id=".$department_id)."
+                        GROUP BY pli.product_id,pli.batch_no,pli.exp_date) as plist
+
+                        ON rc.unq_id=plist.unq_id
+
                         /* Item Issuance */
 
                         LEFT JOIN
@@ -1166,7 +1212,7 @@
                         FROM adjustment_items as aii
                         INNER JOIN adjustment_info as ai
                         ON aii.adjustment_id=ai.adjustment_id
-                        WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                        WHERE ai.adjustment_type='OUT' AND ai.is_active=TRUE AND ai.is_deleted=FALSE AND ai.is_approved=TRUE
                         ".($department_id==0?"":" AND ai.department_id=".$department_id)."
                         GROUP BY aii.product_id,aii.batch_no,aii.exp_date
                         )as aoQ
@@ -1733,97 +1779,107 @@
 
         //per expiration inventory report
         function get_all_items_inventory_excel($date,$product_type_id=3,$supplier_id){
-            $sql="SELECT main.*,s.supplier_name,rf.product_type FROM (SELECT rc.*,
-                    p.product_code,
-                    p.product_desc,
-                    p.size,
-                    p.refproduct_id,
-                    p.supplier_id,
-                    p.purchase_cost,
-                    p.sale_price,
-                    c.category_name,DATE_FORMAT(rc.exp_date,'%m/%d/%Y')as expiration,
-                        FORMAT(sale_price,2) as srp
-                        ,IFNULL(sinv.out_qty,0) as out_qty,
-                        (rc.in_qty-IFNULL(sinv.out_qty,0)-IFNULL(iss.out_qty,0)-IFNULL(aoQ.out_qty,0)) as on_hand_per_batch
+            $sql="SELECT main.*,s.supplier_name,rf.product_type
+                    FROM
+                        (SELECT rc.*,
+                            p.product_code,
+                            p.product_desc,
+                            p.size,
+                            p.refproduct_id,
+                            p.supplier_id,
+                            p.sale_price,
+                            c.category_name,DATE_FORMAT(rc.exp_date,'%m/%d/%Y')as expiration,
+                            FORMAT(sale_price,2) as srp,
+                            IFNULL(sinv.out_qty,0) as out_qty,
+                            rc.in_cost as in_purchase_cost,
+                            (rc.in_qty-IFNULL(sinv.out_qty,0)-IFNULL(iss.out_qty,0)-IFNULL(aoQ.out_qty,0)) as on_hand_per_batch
                         FROM
                         (
-                        SELECT inQ.*,SUM(inQ.receive_qty)as in_qty
-                        FROM
-                        (SELECT dii.product_id,dii.batch_no,dii.exp_date,
-                        CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date)as unq_id,
-                        SUM(dii.dr_qty) as receive_qty
-                        FROM delivery_invoice_items as dii
-                        INNER JOIN delivery_invoice as di
-                        ON dii.dr_invoice_id=di.dr_invoice_id
-                        WHERE di.is_active=TRUE AND di.is_deleted=FALSE
-                        AND di.date_delivered<='$date'
-                        GROUP BY dii.product_id,dii.`batch_no`,dii.exp_date
+                            SELECT inQ.*,SUM(inQ.receive_qty)as in_qty, AVG(inQ.receive_cost) as in_cost
+                            FROM
+                                (SELECT dii.product_id,dii.batch_no,dii.exp_date,
+                                CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date)as unq_id,
+                                SUM(dii.dr_qty) as receive_qty,
+                                AVG(dii.dr_price) as receive_cost
+                                FROM delivery_invoice_items as dii
+                                INNER JOIN delivery_invoice as di
+                                ON dii.dr_invoice_id=di.dr_invoice_id
+                                WHERE di.is_active=TRUE AND di.is_deleted=FALSE
+                                AND di.date_delivered<='$date'
+                                GROUP BY dii.product_id,dii.`batch_no`,dii.exp_date
 
-                        UNION ALL
+                                UNION ALL
 
-                        SELECT aii.product_id,aii.batch_no,aii.exp_date,
-                        CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
-                        SUM(aii.adjust_qty) as receive_qty
-                        FROM adjustment_items as aii
-                        INNER JOIN adjustment_info as ai
-                        ON aii.adjustment_id=ai.adjustment_id
-                        WHERE ai.adjustment_type='IN' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
-                        AND ai.date_adjusted<='$date'
-                        GROUP BY aii.product_id,aii.batch_no,aii.exp_date) as inQ
-                        GROUP By inQ.product_id,inQ.batch_no,inQ.exp_date
+                                SELECT aii.product_id,aii.batch_no,aii.exp_date,
+                                CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
+                                SUM(aii.adjust_qty) as receive_qty,
+                                AVG(aii.adjust_price) as receive_cost
+                                FROM adjustment_items as aii
+                                INNER JOIN adjustment_info as ai
+                                ON aii.adjustment_id=ai.adjustment_id
+                                WHERE ai.adjustment_type='IN' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                                AND ai.date_adjusted<='$date'
+                                GROUP BY aii.product_id,aii.batch_no,aii.exp_date
+                            ) as inQ
+
+                            GROUP By inQ.product_id,inQ.batch_no,inQ.exp_date
                         )as rc
 
 
-                        LEFT JOIN
-                        (SELECT sii.product_id,
-                        CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date)as unq_id,
-                        SUM(sii.inv_qty) as out_qty
-                        FROM sales_invoice_items as sii
-                        INNER JOIN sales_invoice as si
-                        ON sii.sales_invoice_id=si.sales_invoice_id
-                        WHERE si.is_active=TRUE AND si.is_deleted=FALSE
-                        AND si.date_invoice<='$date'
-                        GROUP BY sii.product_id,sii.batch_no,sii.exp_date) as sinv
-                        ON rc.unq_id=sinv.unq_id
+                            LEFT JOIN
+                                (SELECT sii.product_id,
+                                CONCAT_WS('-',sii.batch_no,sii.product_id,sii.exp_date)as unq_id,
+                                SUM(sii.inv_qty) as out_qty
+                                FROM sales_invoice_items as sii
+                                INNER JOIN sales_invoice as si
+                                ON sii.sales_invoice_id=si.sales_invoice_id
+                                WHERE si.is_active=TRUE AND si.is_deleted=FALSE
+                                AND si.date_invoice<='$date'
+                                GROUP BY sii.product_id,sii.batch_no,sii.exp_date
+                            ) as sinv
+                            ON rc.unq_id=sinv.unq_id
 
-                        LEFT JOIN
-                        (SELECT iss.product_id,
-                        CONCAT_WS('-',iss.batch_no,iss.product_id,iss.exp_date)as unq_id,
-                        SUM(iss.issue_qty) as out_qty
-                        FROM issuance_items as iss
-                        INNER JOIN issuance_info as iin
-                        ON iss.issuance_id=iin.issuance_id
-                        WHERE iin.date_issued<='$date' AND iin.is_active=TRUE AND iin.is_deleted=FALSE
-                        GROUP BY iss.product_id,iss.batch_no,iss.exp_date)as iss
-                        ON rc.unq_id=iss.unq_id
+                            LEFT JOIN
+                                (SELECT iss.product_id,
+                                CONCAT_WS('-',iss.batch_no,iss.product_id,iss.exp_date)as unq_id,
+                                SUM(iss.issue_qty) as out_qty
+                                FROM issuance_items as iss
+                                INNER JOIN issuance_info as iin
+                                ON iss.issuance_id=iin.issuance_id
+                                WHERE iin.date_issued<='$date' AND iin.is_active=TRUE AND iin.is_deleted=FALSE
+                                GROUP BY iss.product_id,iss.batch_no,iss.exp_date
+                            )as iss
+                            ON rc.unq_id=iss.unq_id
 
-                        LEFT JOIN
-                        (
-                        SELECT aii.product_id,aii.batch_no,aii.exp_date,
-                        CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
-                        SUM(aii.adjust_qty) as out_qty
-                        FROM adjustment_items as aii
-                        INNER JOIN adjustment_info as ai
-                        ON aii.adjustment_id=ai.adjustment_id
-                        WHERE ai.adjustment_type='OUT' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
-                        AND ai.date_adjusted<='$date'
-                        GROUP BY aii.product_id,aii.batch_no,aii.exp_date
-                        )as aoQ
-                        ON rc.unq_id=aoQ.unq_id
-                        LEFT JOIN
-                        
-                        (SELECT * FROM products where is_deleted = false AND is_active = TRUE
-                        ) as p ON rc.product_id=p.product_id
-                        LEFT JOIN (SELECT category_id,category_name FROM categories) as c ON p.category_id=c.category_id
+                            LEFT JOIN
+                                (SELECT aii.product_id,aii.batch_no,aii.exp_date,
+                                CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
+                                SUM(aii.adjust_qty) as out_qty
+                                FROM adjustment_items as aii
+                                INNER JOIN adjustment_info as ai
+                                ON aii.adjustment_id=ai.adjustment_id
+                                WHERE ai.adjustment_type='OUT' AND ai.is_approved=TRUE AND ai.is_active=TRUE AND ai.is_deleted=FALSE
+                                AND ai.date_adjusted<='$date'
+                                GROUP BY aii.product_id,aii.batch_no,aii.exp_date
+                            )as aoQ
+                            ON rc.unq_id=aoQ.unq_id
+
+                            LEFT JOIN
+                                (SELECT * FROM products where is_deleted = false AND is_active = TRUE
+                            ) as p ON rc.product_id=p.product_id
+
+                            LEFT JOIN
+                                (SELECT category_id,category_name FROM categories
+                            ) as c ON p.category_id=c.category_id
+
                         ORDER BY p.product_desc,exp_date) as main
-                        LEFT JOIN (select supplier_id, supplier_name FROM suppliers where is_active = TRUE and is_deleted = FALSE) as s on s.supplier_id=main.supplier_id
-                        LEFT JOIN refproduct rf ON rf.refproduct_id = main.refproduct_id
-                        WHERE on_hand_per_batch > 0
 
+                    LEFT JOIN (select supplier_id, supplier_name FROM suppliers where is_active = TRUE and is_deleted = FALSE) as s on s.supplier_id=main.supplier_id
+                    LEFT JOIN refproduct rf ON rf.refproduct_id = main.refproduct_id
+                    WHERE on_hand_per_batch > 0
                         ".($product_type_id==3?"":" AND main.refproduct_id=".$product_type_id)."
                         ".($supplier_id==0?"":" AND main.supplier_id=".$supplier_id)."
                         ";
-
 
             return $this->db->query($sql)->result();
         }

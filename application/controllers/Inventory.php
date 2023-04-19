@@ -87,7 +87,7 @@ class Inventory extends CORE_Controller
                         $x->category_name,
                         $x->batch_no,
                         $x->expiration,
-                        $x->purchase_cost,
+                        $x->in_purchase_cost,
                         $x->sale_price,
                         $x->on_hand_per_batch
                     );

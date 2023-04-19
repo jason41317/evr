@@ -1,10 +1,10 @@
 <?php
 
-class Sales_order_item_model extends CORE_Model
+class Picklist_item_model extends CORE_Model
 {
-    protected $table = "sales_order_items";
-    protected $pk_id = "sales_order_item_id";
-    protected $fk_id = "sales_order_id";
+    protected $table = "picklist_items";
+    protected $pk_id = "picklist_item_id";
+    protected $fk_id = "picklist_id";
 
     function __construct()
     {
@@ -19,7 +19,7 @@ class Sales_order_item_model extends CORE_Model
 
 
 
-    function get_products_with_balance_qty($sales_order_id,$picklist_id){
+    function get_products_with_balance_qty($sales_order_id){
         $sql="SELECT o.*,(o.so_line_total-o.non_tax_amount)as tax_amount FROM
 
                 (SELECT n.*,
@@ -47,10 +47,7 @@ class Sales_order_item_model extends CORE_Model
 
                 (
                     SELECT so.sales_order_id,so.so_no,soi.product_id,so_price as price,SUM(soi.so_qty) as SoQty,0 as InvQty,
-                    SUM(soi.so_price * soi.so_qty) / SUM(soi.so_qty) AS so_price,
-                    SUM(soi.so_discount * soi.so_qty) / SUM(soi.so_qty) AS so_discount,
-                    SUM(soi.so_tax_rate * soi.so_qty) / SUM(soi.so_qty) AS so_tax_rate,
-                    soi.batch_no,soi.exp_date,soi.product_category FROM sales_order as so
+                    soi.so_price,soi.so_discount,soi.so_tax_rate,soi.batch_no,soi.exp_date,soi.product_category FROM sales_order as so
                     INNER JOIN (SELECT *, IF(ROUND(so_price) = 0, 'free','paid') as product_category FROM sales_order_items) soi ON so.sales_order_id=soi.sales_order_id
                     WHERE so.sales_order_id=$sales_order_id AND so.is_active=TRUE AND so.is_deleted=FALSE
                     GROUP BY so.so_no,soi.product_id,soi.product_category
@@ -59,12 +56,12 @@ class Sales_order_item_model extends CORE_Model
                     UNION ALL
                     
 
-                    SELECT so.sales_order_id,so.so_no,pli.product_id,pli.so_price as price,0 as SoQty,SUM(pli.so_qty) as InvQty,
-                    0 as so_price,0 as so_discount,0 as so_tax_rate,pli.batch_no,pli.exp_date,pli.product_category FROM (picklist as pl
-                    INNER JOIN sales_order as so ON pl.sales_order_id=so.sales_order_id)
-                    INNER JOIN (SELECT *, IF(ROUND(so_price) = 0, 'free','paid') as product_category FROM picklist_items) as pli ON pl.picklist_id=pli.picklist_id
-                    WHERE so.sales_order_id=$sales_order_id AND pl.picklist_id!=$picklist_id AND pl.is_active=TRUE AND pl.is_deleted=FALSE
-                    GROUP BY so.so_no,pli.product_id,pli.product_category)as
+                    SELECT so.sales_order_id,so.so_no,sii.product_id,inv_price as price,0 as SoQty,SUM(sii.inv_qty) as InvQty,
+                    0 as so_price,0 as so_discount,0 as so_tax_rate,sii.batch_no,sii.exp_date,sii.product_category FROM (sales_invoice as si
+                    INNER JOIN sales_order as so ON si.sales_order_id=so.sales_order_id)
+                    INNER JOIN (SELECT *, IF(ROUND(inv_price) = 0, 'free','paid') as product_category FROM sales_invoice_items) as sii ON si.sales_invoice_id=sii.sales_invoice_id
+                    WHERE so.sales_order_id=$sales_order_id AND si.is_active=TRUE AND si.is_deleted=FALSE
+                    GROUP BY so.so_no,sii.product_id,sii.product_category)as
 
                     m GROUP BY m.so_no,m.product_id,m.product_category HAVING so_qty>0
 

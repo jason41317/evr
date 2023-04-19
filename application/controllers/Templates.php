@@ -28,6 +28,9 @@ class Templates extends CORE_Controller {
         $this->load->model('Sales_order_model');
         $this->load->model('Sales_order_item_model');
 
+        $this->load->model('Picklist_model');
+        $this->load->model('Picklist_item_model');
+
         $this->load->model('Suppliers_model');
 
         $this->load->model('Customers_model');
@@ -806,6 +809,73 @@ class Templates extends CORE_Controller {
                         $pdfFilePath = $file_name.".pdf"; //generate filename base on id
                         $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
                         $content=$this->load->view('template/so_content',$data,TRUE); //load the template
+                        $pdf->setFooter('{PAGENO}');
+                        $pdf->WriteHTML($content);
+                        //download it.
+                        $pdf->Output();
+                    }
+    
+                    break;
+
+                case 'picklist': //picklist
+                    $m_picklist=$this->Picklist_model;
+                    $m_picklist_items=$this->Picklist_item_model;
+                    $type=$this->input->get('type',TRUE);
+    
+                    $info=$m_picklist->get_list(
+                        $filter_value,
+                        'picklist.*,departments.department_name,customers.customer_name,CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson',
+                        array(
+                            array('departments','departments.department_id=picklist.department_id','left'),
+                            array('salesperson','salesperson.salesperson_id=picklist.salesperson_id','left'),
+                            array('customers','customers.customer_id=picklist.customer_id','left')
+                        )
+                    );
+    
+    
+                    $data['picklist']=$info[0];
+                    $data['picklist_items']=$m_picklist_items->get_list(
+                        array('picklist_items.picklist_id'=>$filter_value),
+                        'picklist_items.*,products.product_desc,products.size,units.unit_name',
+                        array(
+                            array('products','products.product_id=picklist_items.product_id','left'),
+                            array('units','units.unit_id=picklist_items.unit_id','left')
+                        )
+                    );
+    
+    
+    
+                    //show only inside grid with menu button
+                    if($type=='fullview'||$type==null){
+                        echo $this->load->view('template/picklist_content',$data,TRUE);
+                        echo $this->load->view('template/picklist_content_menus',$data,TRUE);
+                    }
+    
+                    //show only inside grid without menu button
+                    if($type=='contentview'){
+                        echo $this->load->view('template/picklist_content',$data,TRUE);
+                    }
+    
+    
+                    //download pdf
+                    if($type=='pdf'){
+                        $file_name=$info[0]->picklist_no;
+                        $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                        $content=$this->load->view('template/picklist_content',$data,TRUE); //load the template
+                        $pdf->setFooter('{PAGENO}');
+                        $pdf->WriteHTML($content);
+                        //download it.
+                        $pdf->Output($pdfFilePath,"D");
+    
+                    }
+    
+                    //preview on browser
+                    if($type=='preview'){
+                        $file_name=$info[0]->picklist_no;
+                        $pdfFilePath = $file_name.".pdf"; //generate filename base on id
+                        $pdf = $this->m_pdf->load(); //pass the instance of the mpdf class
+                        $content=$this->load->view('template/picklist_content',$data,TRUE); //load the template
                         $pdf->setFooter('{PAGENO}');
                         $pdf->WriteHTML($content);
                         //download it.

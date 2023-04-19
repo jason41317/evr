@@ -241,7 +241,7 @@
                                         <div class="pull-right">
                                             <h4 class="sales_invoice_title" style="margin-top: 0%;"></h4>
                                             <div class="btn btn-green" style="margin-left: 10px;">
-                                                <strong><a id="btn_receive_so" href="#" style="text-decoration: none; color: white;">Create from Sales Order</a></strong>
+                                                <strong><a id="btn_receive_picklist" href="#" style="text-decoration: none; color: white;">Create from Sales Order</a></strong>
                                             </div>
                                         </div>
 
@@ -286,9 +286,9 @@
                                                         </div>
 
                                                         <div class="col-sm-3">
-                                                            SO # : <br />
+                                                            Picklist # : <br />
                                                             <div class="input-group">
-                                                                <input type="text" name="so_no" class="form-control" readonly>
+                                                                <input type="text" name="picklist_no" class="form-control" readonly>
                                                                 <span class="input-group-addon">
                                                                     <a href="#" id="link_browse" style="text-decoration: none;color:black;"><b>...</b></a>
                                                                 </span>
@@ -362,21 +362,21 @@
                                                         <thead class="">
                                                         <tr>
 
-                                                            <th width="10%">Qty</th>
+                                                            <th width="7%">Qty</th>
                                                             <th width="5%">UM</th>
-                                                            <th width="30%">Item</th>
-                                                            <th width="20%" style="text-align: right;">Unit Price</th>
+                                                            <th width="23%">Item</th>
+                                                            <th width="10%" style="text-align: right;">Unit Price</th>
                                                             <th width="10%" style="text-align: right;">Discount %</th>
                                                             <th width="10%" style="text-align: right;">Total Discount</th> <!-- total discount -->
                                                             <th style="display: none;">Tax %</th>
-                                                            <th width="10%" style="text-align: right;">Total</th>
+                                                            <th width="11%" style="text-align: right;">Total</th>
                                                             <th class="hidden">Total Price</th>
                                                             <th style="display: none;">V.I</th> <!-- vat input -->
                                                             <th style="display: none;">N.V</th> <!-- net of vat -->
                                                             <td style="display: none;">Item ID</td><!-- product id -->
-                                                            <th >Batch</th> <!-- net of vat -->
-                                                            <th >Expiration</th>
-                                                            <th width="10%"><center>Action</center></th>
+                                                            <th width="12%">Batch</th> <!-- net of vat -->
+                                                            <th width="12%">Expiration</th>
+                                                            <!-- <th width="10%"><center>Action</center></th> -->
 
                                                         </tr>
                                                         </thead>
@@ -404,7 +404,7 @@
                                                         </tbody>
                                                         <tfoot>
                                                         <tr>
-                                                            <td colspan="10" style="height: 50px;">&nbsp;</td>
+                                                            <td colspan="9" style="height: 50px;">&nbsp;</td>
                                                         </tr>
                                                         <tr>
                                                             <td colspan="4" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Discount :</strong></td>
@@ -412,13 +412,13 @@
                                                                 <input id="txt_overall_discount" name="total_overall_discount" type="text" class="numeric form-control" value="0.00">
                                                                 <input id="txt_overall_discount_amount" name="total_overall_discount_amount" type="hidden" class="numeric form-control" value="0.00" readonly>
                                                             </td>
-                                                            <td colspan="4" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
+                                                            <td colspan="3" id="" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total Before Tax :</strong></td>
                                                             <td align="right" colspan="1" id="td_before_tax" color="red">0.00</td>
                                                         </tr>
                                                         <tr>
                                                             <td colspan="4" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Tax :</strong></td>
                                                             <td align="right" colspan="1" id="td_tax" color="red">0.00</td>
-                                                            <td colspan="4" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
+                                                            <td colspan="3" style="text-align: right;"><strong><i class="glyph-icon icon-star"></i> Total After Tax :</strong></td>
                                                             <td align="right" colspan="1" id="td_after_tax" color="red">0.00</td>
                                                         </tr>
                                                         </tfoot>
@@ -578,6 +578,50 @@
             </div><!---content---->
         </div>
     </div><!---modal-->
+
+
+    <div id="modal_picklist" class="modal fade" tabindex="-1" role="dialog">
+        <!--modal-->
+        <div class="modal-dialog" style="width: 80%;">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                    <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Picklist</h2>
+                </div>
+
+                <div class="modal-body">
+                    <table id="tbl_picklist" class="table table-striped" cellspacing="0" width="100%">
+                        <thead class="">
+                            <tr>
+                                <th></th>
+                                <th width="10%">Picklist #</th>
+                                <th>Customer</th>
+                                <th width="15%">Remarks</th>
+                                <th>Salesperson</th>
+                                <th>Pick Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th width="5%">
+                                    <center>Action</center>
+                                </th>
+                                <th>ID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Picklist Content -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-footer">
+                    <!-- <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
+                    <button id="cancel_picklist_modal" class="btn btn-default" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+                </div>
+            </div>
+            <!---content-->
+        </div>
+    </div>
+    <!---modal-->
 
     <div id="modal_sales_invoice" class="modal fade" role="dialog">
         <div class="modal-dialog modal-lg">
@@ -750,7 +794,7 @@
 
     $(document).ready(function(){
         var _lookUpPrice;
-        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboCustomers; var dt_so, _productType, _cboSalesperson;
+        var dt; var _txnMode; var _selectedID; var _selectRowObj; var _cboDepartments; var _cboCustomers; var dt_so, dt_picklist, _productType, _cboSalesperson;
         var global_item_desc = 'evrvetoptionscorporation';  var _selectRowTblItems;
         var oTableItems={
             qty : 'td:eq(0)',
@@ -862,6 +906,68 @@
                         }
                     },
                     {visible:false, targets:[9],data: "sales_order_id" },
+
+                ]
+
+            });
+
+
+
+            dt_picklist = $('#tbl_picklist').DataTable({
+                "bLengthChange": false,
+                "autoWidth": false,
+                "order": [
+                    [9, "desc"]
+                ],
+                "ajax": "Picklist/transaction/open",
+                "columns": [{
+                        "targets": [0],
+                        "class": "details-control",
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ""
+                    },
+                    {
+                        targets: [1],
+                        data: "picklist_no"
+                    },
+                    {
+                        targets: [2],
+                        data: "customer_name"
+                    },
+                    {
+                        targets: [3],
+                        data: "remarks",
+                        render: $.fn.dataTable.render.ellipsis(60)
+                    },
+                    {
+                        targets: [4],
+                        data: "salesperson"
+                    },
+                    {
+                        targets: [5],
+                        data: "date_pick"
+                    },
+                    {
+                        targets: [6],
+                        data: "time_created"
+                    },
+                    {
+                        targets: [7],
+                        data: "order_status"
+                    },
+                    {
+                        targets: [8],
+                        render: function(data, type, full, meta) {
+                            var btn_accept = '<button class="btn btn-success btn-sm" name="accept_picklist"  style="margin-left:-15px;text-transform: none;" data-toggle="tooltip" data-placement="top" title="Create Sales Invoice on SO"><i class="fa fa-check accept"></i> <span class=""></span></button>';
+                            return '<center>' + btn_accept + '</center>';
+                        }
+                    },
+                    {
+                        visible: false,
+                        targets: [9],
+                        data: "picklist_id"
+                    },
 
                 ]
 
@@ -1099,7 +1205,8 @@
             });
 
             $('#link_browse').click(function(){
-                $('#btn_receive_so').click();
+                // $('#btn_receive_so').click();
+                $('#btn_receive_picklist').click();
             });
 
 
@@ -1227,6 +1334,12 @@
                 $('#tbl_so_list tbody').html('<tr><td colspan="8"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
                 dt_so.ajax.reload( null, false );
                 $('#modal_so_list').modal('show');
+            });
+
+            $('#btn_receive_picklist').click(function(){
+                $('#tbl_picklist tbody').html('<tr><td colspan="8"><center><br /><img src="assets/img/loader/ajax-loader-lg.gif" /><br /><br /></center></td></tr>');
+                dt_picklist.ajax.reload( null, false );
+                $('#modal_picklist').modal('show');
             });
 
             //create new customer
@@ -1431,6 +1544,83 @@
                 });
 
                 $('#modal_so_list').modal('hide');
+            });
+
+
+
+            $('#tbl_picklist > tbody').on('click','button[name="accept_picklist"]',function(){
+                _selectRowObj=$(this).closest('tr');
+                var data=dt_picklist.row(_selectRowObj).data();
+                btn = $(this);
+
+                $('input,textarea').each(function(){ 
+                    var _elem=$(this);
+                    $.each(data,function(name,value){
+                        if(_elem.attr('name')==name&&_elem.attr('type')!='password'){
+                            _elem.val(value);
+                        }
+
+                    });
+
+                    // $('#cbo_customers').select2('val',data.customer_id);
+                    $('#cbo_issue_departments').select2('val',data.department_id);
+
+                });
+
+                resetSummary();
+
+
+                $.ajax({
+                    url : 'Picklist/transaction/items/'+data.picklist_id,
+                    type : "GET",
+                    cache : false,
+                    dataType : 'json',
+                    processData : false,
+                    contentType : false,
+                    beforeSend : function(){
+                        $('#tbl_items > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                        showSpinningProgress(btn);
+                    },
+                    success : function(response){
+                        var rows=response.data;
+                        $('#tbl_items > tbody').html('');
+
+                        var rowCount = $('#tbl-items .row-item');
+
+
+                        console.log(rowCount);
+                        $.each(rows,function(i,value){
+                            $('#tbl_items > tbody').append(newRowItem({
+                                inv_qty: value.so_qty,
+                                product_code: value.product_code,
+                                unit_id: value.unit_id,
+                                unit_name: value.unit_name,
+                                product_id: value.product_id,
+                                product_desc: value.product_desc,
+                                inv_line_total_discount: value.so_line_total_discount,
+                                tax_exempt: false,
+                                inv_tax_rate: value.so_tax_rate,
+                                inv_price: value.so_price,
+                                inv_discount: value.so_discount,
+                                tax_type_id: null,
+                                inv_line_total_gross: (value.so_price * value.so_qty),
+                                inv_line_total_price: value.so_line_total,
+                                inv_non_tax_amount: value.non_tax_amount,
+                                inv_tax_amount: value.tax_amount,
+                                batch_no: value.batch_no,
+                                exp_date: value.exp_date,
+                                orig_so_price: value.so_price,
+                                cost_upon_invoice: value.srp_cost
+                            }));
+                        });
+
+                        $('.trigger-keyup').keyup();
+                        reComputeTotal();
+                        showSpinningProgress(btn);
+                    }
+                });
+
+                $('#modal_picklist').modal('hide');
             });
 
 
@@ -1863,6 +2053,10 @@
         });
 
 
+        $('#cancel_picklist_modal').on('click', function() {
+            $('#modal_picklist').modal('hide');
+        });
+
 
         var showSpinningProgress=function(e){
             $(e).toggleClass('disabled');
@@ -1891,7 +2085,7 @@
 
         var newRowItem=function(d){
             return '<tr class="row-item">'+
-                '<td width="10%"><input name="inv_qty[]" type="text" class="number form-control trigger-keyup" value="'+ d.inv_qty+'"></td>'+
+                '<td width="10%"><input name="inv_qty[]" type="text" class="number form-control trigger-keyup" value="'+ d.inv_qty+'" readonly></td>'+
                 '<td width="5%">'+ d.unit_name+'</td>'+
                 '<td width="10%">'+d.product_desc+'</td>'+
                 '<td width="11%"><input name="inv_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.inv_price,4)+'" style="text-align:right;"></td>'+
@@ -1908,7 +2102,7 @@
                 '<td><input name="exp_date[]" type="text" class="form-control" value="'+ d.exp_date+'" readonly></td>'+
                 '<td style="display:none;"><input name="orig_so_price[]" type="text" class="form-control" value="'+ d.orig_so_price+'" readonly></td>'+
                 '<td style="display:none;"><input name="cost_upon_invoice[]" type="text" class="form-control" value="'+ d.cost_upon_invoice+'" readonly></td>'+
-                '<td align="center"><button type="button" name="search_item" class="btn btn-warning"><i class="fa fa-search"></i></button><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
+                //'<td align="center"><button type="button" name="search_item" class="btn btn-warning"><i class="fa fa-search"></i></button><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
                 '</tr>';
         };
 

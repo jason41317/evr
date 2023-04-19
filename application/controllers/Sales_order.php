@@ -1,5 +1,7 @@
 <?php
 
+
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Sales_order extends CORE_Controller
@@ -8,6 +10,8 @@ class Sales_order extends CORE_Controller
     function __construct() {
         parent::__construct('');
         $this->validate_session();
+
+        $this->load->library('excel');
 
         $this->load->model('Sales_order_model');
         $this->load->model('Sales_order_item_model');
@@ -63,36 +67,22 @@ class Sales_order extends CORE_Controller
 
 
 
-    function transaction($txn = null,$id_filter=null) {
+    function transaction($txn = null,$id_filter=null,$picklist_id=null) {
         switch ($txn){
-            case 'test':
-
-                    $arr=array(
-                        'customers'=>array(
-                            'cus_name'=>'Paul Rueda',
-                            'Address'=>'San Simon'
-                        ),
-                        'suppliers'=>array(
-                            'Sup_name'=>'JK',
-                            'Address'=>'San Simon'
-                        )
-                    );
-
-
-
-                break;
-
             case 'list':  //this returns JSON of Issuance to be rendered on Datatable
                 $m_sales_order=$this->Sales_order_model;
                 $tsd = date('Y-m-d',strtotime($this->input->get('tsd')));
                 $ted = date('Y-m-d',strtotime($this->input->get('ted')));
                 $salesperson_id = $this->input->get('salesperson_id');
                 $status = $this->input->get('status');
+                $status_finalize = $this->input->get('status_finalize');
+
                 $response['data']=$this->response_rows(
                     "sales_order.is_active=TRUE AND sales_order.is_deleted=FALSE
                     AND DATE(sales_order.date_order) BETWEEN '$tsd' AND '$ted'
                     ".($salesperson_id==-1 || $salesperson_id==null?"":" AND sales_order.salesperson_id =".$salesperson_id)."
                     ".($status==0 || $status==null?"":" AND sales_order.order_status_id =".$status)."
+                    ".($status_finalize==-1 || $status_finalize==null?"":" AND sales_order.is_finalized =".$status_finalize)."
                     ".($id_filter==null?"" :" AND sales_order.sales_order_id=".$id_filter)
                 );
                 echo json_encode($response);
@@ -141,7 +131,7 @@ class Sales_order extends CORE_Controller
                 //$where_filter=null,$select_list=null,$join_array=null,$order_by=null,$group_by=null,$auto_select_escape=TRUE,$custom_where_filter=null
                 $response['data']= $m_sales_order->get_list(
 
-                    'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3)',
+                    'sales_order.is_deleted=FALSE AND sales_order.is_active=TRUE AND sales_order.is_finalized=TRUE AND (sales_order.order_status_id=1 OR sales_order.order_status_id=3)',
 
                     array(
                         'sales_order.*',
@@ -196,8 +186,10 @@ class Sales_order extends CORE_Controller
 
             ////****************************************items/products of selected Items***********************************************
             case 'item-balance':
+                $id_filter = $this->input->get('id_filter',TRUE);
+                $picklist_id = $this->input->get('picklist_id',TRUE);
                 $m_items=$this->Sales_order_item_model;
-                $response['data']=$m_items->get_products_with_balance_qty($id_filter);
+                $response['data']=$m_items->get_products_with_balance_qty($id_filter,$picklist_id);
                 echo json_encode($response);
 
                 break;
@@ -431,6 +423,42 @@ class Sales_order extends CORE_Controller
 
 
             //***************************************************************************************
+            case 'finalized':
+                $m_sales_order=$this->Sales_order_model;
+                $sales_order_id=$this->input->post('sales_order_id',TRUE);
+
+
+                $m_sales_order->begin();
+
+                $m_sales_order->is_finalized = 1;
+                $m_sales_order->finalized_by_user = $this->session->user_id;
+                $m_sales_order->set('finalized_datetime','NOW()');
+                $m_sales_order->modify($sales_order_id);
+
+
+                $sal_info=$m_sales_order->get_list($sales_order_id,'so_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=16; // TRANS TYPE
+                $m_trans->trans_log='Finalized : '.$sal_info[0]->so_no;
+                $m_trans->save();
+
+                $m_sales_order->commit();
+
+                if($m_sales_order->status()===TRUE){
+                    $response['title'] = 'Success!';
+                    $response['stat'] = 'success';
+                    $response['msg'] = 'Sales order successfully updated.';
+                    //$response['row_updated']=$this->response_rows($sales_order_id);
+                    $response['row_finalize']=$this->response_rows($sales_order_id);
+
+                    echo json_encode($response);
+                }
+
+                break;
+
             case 'delete':
                 $m_sales_order=$this->Sales_order_model;
                 $sales_order_id=$this->input->post('sales_order_id',TRUE);
@@ -483,6 +511,119 @@ class Sales_order extends CORE_Controller
                 echo json_encode($response);
 
                 break;
+            case 'export':
+                $m_sales_order=$this->Sales_order_model;
+                $as_of_date=date('Y-m-d',strtotime($this->input->get('as_of_date',TRUE)));
+
+                $data = $m_sales_order->so_product_export($as_of_date);
+
+                $excel=$this->excel;
+                $excel->getDefaultStyle()->getNumberFormat()
+                ->setFormatCode(
+                    PHPExcel_Style_NumberFormat::FORMAT_TEXT
+                );
+                $excel->setActiveSheetIndex(0);
+                $sheet = $excel->getActiveSheet();
+
+                //name the worksheet
+                // $sheet->setTitle('Inventory Report '.date('M d Y',strtotime($date)));
+                $sheet->setTitle('Sales Order - For Picklist');
+
+                $sheet->setCellValue('A1', 'Sales Order - For Picklist (' . $as_of_date . ')');
+                $sheet->mergeCells('A1:Z1');
+
+                $sheet
+                    ->setCellValue('A2', 'PICKER: ')
+                    ->setCellValue('A3', 'PICK START: ')
+                    ->setCellValue('A4', 'PICK END: ')
+                    ->setCellValue('C2', 'DISPATCHED BY:')
+                    ->setCellValue('C3', 'LOADING START:')
+                    ->setCellValue('C4', 'FINISHED:');
+
+
+                //region col width
+                $sheet->getColumnDimension('A')->setWidth('25');
+                $sheet->getColumnDimension('B')->setWidth('25');
+                $sheet->getColumnDimension('C')->setWidth('25');
+                $sheet->getColumnDimension('D')->setWidth('25');
+                $sheet->getColumnDimension('E')->setWidth('20');
+
+                $sheet->getColumnDimension('F')->setWidth('20');
+                $sheet->getColumnDimension('G')->setWidth('20');
+
+                $sheet->getColumnDimension('H')->setWidth('30');
+
+                $sheet->getColumnDimension('I')->setWidth('20');
+                $sheet->getColumnDimension('J')->setWidth('20');
+                $sheet->getColumnDimension('K')->setWidth('20');
+
+                $sheet->getColumnDimension('L')->setWidth('20');
+                $sheet->getColumnDimension('M')->setWidth('20');
+                //endregion
+
+
+                //region list header
+                 $sheet->setCellValue('A6', 'LOCATION ID');
+                 $sheet->setCellValue('B6', 'SALES ORDER NO.');
+                 $sheet->setCellValue('C6', 'CUSTOMER');
+ 
+                 $sheet->setCellValue('D6', 'DELIVERY ADDRESS');
+                 $sheet->setCellValue('E6', 'SALES PERSON');
+                 $sheet->setCellValue('F6', 'SKU');
+ 
+                 $sheet->setCellValue('G6', 'ITEM CODE');
+                 $sheet->setCellValue('H6', 'ITEM DESCRIPTION');
+                 $sheet->setCellValue('I6', 'ORDER QTY');
+ 
+                 $sheet->setCellValue('J6', 'PICK QTY');
+                 $sheet->setCellValue('K6', 'ACTUAL QTY');
+                 $sheet->setCellValue('L6', 'UOM');
+                 $sheet->setCellValue('M6', 'EXPIRATION DATE');
+                 //endregion
+
+                //region rows
+                // $rows=array();
+                $i = 7;
+                foreach($data as $product) {
+
+                    $sheet
+                        ->setCellValue('B'.$i, $product->so_no)
+                        ->setCellValue('C'.$i, $product->customer_name)
+                        ->setCellValue('D'.$i, $product->address)
+                        ->setCellValue('E'.$i, $product->acr_name)
+                        ->setCellValue('F'.$i, $product->product_code)
+                        ->setCellValue('G'.$i, $product->product_code)
+                        ->setCellValue('H'.$i, $product->product_desc)
+                        ->setCellValue('I'.$i, $product->so_balance)
+                        ->setCellValue('L'.$i, $product->unit_name);
+                    $i++;
+                }
+
+
+                $sheet
+                ->getStyle('A6:M6')
+                ->getFill()
+                ->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+                ->getStartColor()->setARGB('FFDBE2F1');
+
+
+                // Redirect output to a client’s web browser (Excel2007)
+                header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                header('Content-Disposition: attachment;filename=SalesOrder-'.$as_of_date.'.xlsx');
+                header('Cache-Control: max-age=0');
+                // If you're serving to IE 9, then the following may be needed
+                header('Cache-Control: max-age=1');
+
+                // If you're serving to IE over SSL, then the following may be needed
+                header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+                header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+                header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+                header ('Pragma: public'); // HTTP/1.0
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+                $objWriter->save('php://output');
+
+                break;
 
             //***************************************************************************************
         }
@@ -515,7 +656,8 @@ class Sales_order extends CORE_Controller
                 'customers.customer_name',
                 'sales_order.order_status_id',
                 'order_status.order_status',
-                'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson'
+                'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson',
+                'sales_order.is_finalized'
             ),
 
             array(

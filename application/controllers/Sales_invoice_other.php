@@ -13,6 +13,7 @@ class Sales_invoice_other extends CORE_Controller
         $this->load->model('Sales_invoice_item_model');
         $this->load->model('Refproduct_model');
         $this->load->model('Sales_order_model');
+        $this->load->model('Picklist_model');
         $this->load->model('Departments_model');
         $this->load->model('Customers_model');
         $this->load->model('Products_model');
@@ -173,11 +174,18 @@ class Sales_invoice_other extends CORE_Controller
 
                 //get sales order id base on SO number
                 $m_so=$this->Sales_order_model;
-                $arr_so_info=$m_so->get_list(
-                    array('sales_order.so_no'=>$this->input->post('so_no',TRUE)),
-                    'sales_order.sales_order_id'
+                $m_picklist=$this->Picklist_model;
+                // $arr_so_info=$m_so->get_list(
+                //     array('sales_order.so_no'=>$this->input->post('so_no',TRUE)),
+                //     'sales_order.sales_order_id'
+                // );
+                $arr_so_info=$m_picklist->get_list(
+                    array('picklist.picklist_no'=>$this->input->post('picklist_no',TRUE)),
+                    'picklist.sales_order_id, picklist.picklist_id'
                 );
+
                 $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
+                $picklist_id=(count($arr_so_info)>0?$arr_so_info[0]->picklist_id:0);
 
 
                 $m_invoice->begin();
@@ -219,6 +227,7 @@ class Sales_invoice_other extends CORE_Controller
                 $m_invoice->issue_to_department=$this->input->post('issue_to_department',TRUE);
                 $m_invoice->address=$this->input->post('address',TRUE);
                 $m_invoice->sales_order_id=$sales_order_id;
+                $m_invoice->picklist_id=$picklist_id;
                 $m_invoice->remarks=$this->input->post('remarks',TRUE);
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
@@ -301,6 +310,10 @@ class Sales_invoice_other extends CORE_Controller
                 $m_so->order_status_id=$this->get_so_status($sales_order_id);
                 $m_so->modify($sales_order_id);
 
+                //update status of picklist
+                $m_picklist->picklist_status_id = 2;
+                $m_picklist->modify($picklist_id);
+
                 //******************************************************************************************
                 // IMPORTANT!!!
                 //update receivable amount field of customer table
@@ -340,11 +353,18 @@ class Sales_invoice_other extends CORE_Controller
 
                 //get sales order id base on SO number
                 $m_so=$this->Sales_order_model;
-                $arr_so_info=$m_so->get_list(
-                    array('sales_order.so_no'=>$this->input->post('so_no',TRUE)),
-                    'sales_order.sales_order_id'
+                $m_picklist=$this->Picklist_model;
+                // $arr_so_info=$m_so->get_list(
+                //     array('sales_order.so_no'=>$this->input->post('so_no',TRUE)),
+                //     'sales_order.sales_order_id'
+                // );
+                $arr_so_info=$m_picklist->get_list(
+                    array('picklist.picklist_no'=>$this->input->post('picklist_no',TRUE)),
+                    'picklist.sales_order_id, picklist.picklist_id'
                 );
+
                 $sales_order_id=(count($arr_so_info)>0?$arr_so_info[0]->sales_order_id:0);
+                $picklist_id=(count($arr_so_info)>0?$arr_so_info[0]->picklist_id:0);
 
 
                 $m_invoice->begin();
@@ -381,6 +401,7 @@ class Sales_invoice_other extends CORE_Controller
                 $m_invoice->issue_to_department=$this->input->post('issue_to_department',TRUE);
                 $m_invoice->address=$this->input->post('address',TRUE);
                 $m_invoice->sales_order_id=$sales_order_id;
+                $m_invoice->picklist_id=$picklist_id;
                 $m_invoice->date_due=date('Y-m-d',strtotime($this->input->post('date_due',TRUE)));
                 $m_invoice->date_invoice=date('Y-m-d',strtotime($this->input->post('date_invoice',TRUE)));
                 $m_invoice->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
@@ -459,6 +480,10 @@ class Sales_invoice_other extends CORE_Controller
                 //update status of so
                 $m_so->order_status_id=$this->get_so_status($sales_order_id);
                 $m_so->modify($sales_order_id);
+
+                //update status of picklist
+                $m_picklist->picklist_status_id = 2;
+                $m_picklist->modify($picklist_id);
 
 
                 //******************************************************************************************
@@ -577,12 +602,14 @@ class Sales_invoice_other extends CORE_Controller
                 'departments.department_name',
                 'customers.customer_name',
                 'sales_order.so_no',
+                'picklist.picklist_no',
                 'dd.department_name as issued_department'
             ),
             array(
                 array('departments','departments.department_id=sales_invoice.department_id','left'),
                 array('customers','customers.customer_id=sales_invoice.customer_id','left'),
                 array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
+                array('picklist', 'picklist.picklist_id=sales_invoice.picklist_id', 'left'),
                 array('departments as dd','dd.department_id=sales_invoice.issue_to_department','left')
             ),null,'sales_invoice.sales_invoice_id'
         );

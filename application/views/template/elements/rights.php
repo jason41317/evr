@@ -25,6 +25,13 @@
     var so_btn_edit='<button class="btn btn-primary btn-sm <?php echo (in_array('25-2',$this->session->user_rights)?'':'hidden'); ?>" name="edit_info" title="Edit"><i class="fa fa-pencil"></i> </button>';
     var so_btn_trash='<button class="btn btn-red btn-sm <?php echo (in_array('25-3',$this->session->user_rights)?'':'hidden'); ?>" name="remove_info" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
     var so_btn_mark_as_closed='<button class="btn btn-warning btn-sm <?php echo (in_array('25-4',$this->session->user_rights)?'':'hidden'); ?>" name="mark_as_closed" title="Mark as Closed"><i class="fa fa-times"></i> </button>';
+    var so_finalized = '<button class="btn btn-success btn-sm <?php echo (in_array('25-5',$this->session->user_rights)?'':'hidden'); ?>" name="finalize_info" title="Finalize"><i class="fa fa-check"></i> </button>';
+
+    // Picklist Buttons
+    var pl_btn_edit='<button class="btn btn-primary btn-sm <?php echo (in_array('28-1',$this->session->user_rights)?'':'hidden'); ?>" name="edit_info" title="Edit"><i class="fa fa-pencil"></i> </button>';
+    var pl_btn_trash='<button class="btn btn-red btn-sm <?php echo (in_array('28-2',$this->session->user_rights)?'':'hidden'); ?>" name="remove_info" title="Move to trash"><i class="fa fa-trash-o"></i> </button>';
+    var pl_finalized = '<button class="btn btn-success btn-sm <?php echo (in_array('28-3',$this->session->user_rights)?'':'hidden'); ?>" name="finalize_info" title="Finalize"><i class="fa fa-check"></i> </button>';
+    var pl_cancel = '<button class="btn btn-red btn-sm <?php echo (in_array('28-4',$this->session->user_rights)?'':'hidden'); ?>" name="cancel_info" title="Cancel"><i class="fa fa-times"></i> </button>';
 
     // Sales Invoice Buttons
     var si_btn_edit='<button class="btn btn-primary btn-sm <?php echo (in_array('26-2',$this->session->user_rights)?'':'hidden'); ?>" name="edit_info"  style="margin-left:0px;" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil"></i> </button>';
