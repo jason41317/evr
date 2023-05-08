@@ -828,6 +828,7 @@ class Products_model extends CORE_Model {
                 p.refproduct_id,
                 p.supplier_id,
                 p.purchase_cost,
+                rc.in_cost as in_purchase_cost,
                 p.sale_price,
                 c.category_name,DATE_FORMAT(rc.exp_date,'%m/%d/%Y')as expiration,
                     FORMAT(sale_price,2) as srp
@@ -835,11 +836,12 @@ class Products_model extends CORE_Model {
                     (rc.in_qty-IFNULL(sinv.out_qty,0)-IFNULL(iss.out_qty,0)-IFNULL(aoQ.out_qty,0)) as on_hand_per_batch
                     FROM
                     (
-                    SELECT inQ.*,SUM(inQ.receive_qty)as in_qty
+                    SELECT inQ.*,SUM(inQ.receive_qty)as in_qty, AVG(inQ.receive_cost) as in_cost
                     FROM
                     (SELECT dii.product_id,dii.batch_no,dii.exp_date,
                     CONCAT_WS('-',dii.batch_no,dii.product_id,dii.exp_date)as unq_id,
-                    SUM(dii.dr_qty) as receive_qty
+                    SUM(dii.dr_qty) as receive_qty,
+                    AVG(dii.dr_price) as receive_cost
                     FROM delivery_invoice_items as dii
                     INNER JOIN delivery_invoice as di
                     ON dii.dr_invoice_id=di.dr_invoice_id
@@ -851,7 +853,8 @@ class Products_model extends CORE_Model {
 
                     SELECT aii.product_id,aii.batch_no,aii.exp_date,
                     CONCAT_WS('-',aii.batch_no,aii.product_id,aii.exp_date)as unq_id,
-                    SUM(aii.adjust_qty) as receive_qty
+                    SUM(aii.adjust_qty) as receive_qty,
+                    AVG(aii.adjust_price) as receive_cost
                     FROM adjustment_items as aii
                     INNER JOIN adjustment_info as ai
                     ON aii.adjustment_id=ai.adjustment_id

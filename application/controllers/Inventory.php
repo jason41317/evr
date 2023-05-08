@@ -87,7 +87,7 @@ class Inventory extends CORE_Controller
                         $x->category_name,
                         $x->batch_no,
                         $x->expiration,
-                        $x->purchase_cost,
+                        $x->in_purchase_cost,
                         $x->sale_price,
                         $x->on_hand_per_batch
                     );
@@ -96,7 +96,7 @@ class Inventory extends CORE_Controller
                 $max_rows=count($inventory)+4;
 
                 for($i=5;$i<=$max_rows;$i++){
-                    $excel->getActiveSheet()->getStyle('G'.$i.':H'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
+                    $excel->getActiveSheet()->getStyle('H'.$i.':I'.$i)->getNumberFormat()->setFormatCode('###,##0.00;(###,##0.00)');
                 }
 
                 //autofit column
