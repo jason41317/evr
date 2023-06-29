@@ -408,8 +408,7 @@ class Sales_invoice_model extends CORE_Model
             FROM  adjustment_items aii 
                 LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
                 LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
-                LEFT JOIN sales_invoice_items sii ON sii.sales_invoice_id = si.sales_invoice_id
-                LEFT JOIN products p ON p.product_id = sii.product_id
+                LEFT JOIN products p ON p.product_id = aii.product_id
                 WHERE ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
                 AND  si.is_active = TRUE AND si.is_deleted = FALSE
                 ".($refproduct_id == 'all' || $refproduct_id == null ? '' : 'AND p.refproduct_id='."'".$refproduct_id."'")."
