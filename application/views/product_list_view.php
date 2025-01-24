@@ -246,7 +246,7 @@
                 enabled: false
             });
 
-            _cboStatus.select2("val",-1);
+            _cboStatus.select2("val",1);
 
             _cboReport=$("#cbo_report").select2({
                 placeholder: "Please select type.",
