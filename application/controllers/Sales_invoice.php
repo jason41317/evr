@@ -21,6 +21,7 @@ class Sales_invoice extends CORE_Controller
     $this->load->model('Invoice_counter_model');
     $this->load->model('Company_model');
     $this->load->model('Salesperson_model');
+    $this->load->model('Users_model');
     $this->load->model('Trans_model');
     $this->load->model('Adjustment_model');
   }
@@ -42,10 +43,12 @@ class Sales_invoice extends CORE_Controller
       'department_id,department_name'
     );
 
-    $data['salespersons'] = $this->Salesperson_model->get_list(
-      array('salesperson.is_active' => TRUE, 'salesperson.is_deleted' => FALSE),
-      'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
-    );
+    // $data['salespersons'] = $this->Salesperson_model->get_list(
+    //   array('salesperson.is_active' => TRUE, 'salesperson.is_deleted' => FALSE),
+    //   'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
+    // );
+
+    $data['salespersons']=$this->Users_model->get_user_list();
 
     //data required by active view
     $data['customers'] = $this->Customers_model->get_list(

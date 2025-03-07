@@ -38,12 +38,13 @@
         <table width="95%" style="border-collapse: collapse;border-spacing: 0;font-family: tahoma;font-size: 11">
             <thead>
             <tr>
-                <th width="50%" style="border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;">Item</th>
+                <th width="40%" style="border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;">Item</th>
                 <th width="10%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Qty</th>
                 <th width="10%" style="border-bottom: 2px solid gray;text-align: center;height: 30px;padding: 6px;">UM</th>
                 <th width="10%" style="border-bottom: 2px solid gray;text-align: center;height: 30px;padding: 6px;">Pack Size</th>
                 <th width="10%" style="border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;">Batch</th>
                 <th width="10%" style="border-bottom: 2px solid gray;text-align: left;height: 30px;padding: 6px;">Expiration</th>
+                <th width="10%" style="border-bottom: 2px solid gray;text-align: right;height: 30px;padding: 6px;">Unit Cost</th>
             </tr>
             </thead>
             <tbody>
@@ -51,12 +52,13 @@
                 foreach($picklist_items as $item){
             ?>
                 <tr>
-                    <td width="50%" style="border-bottom: 1px solid gray;text-align: left;height: 30px;padding: 6px;"><?php echo $item->product_desc; ?></td>
+                    <td width="40%" style="border-bottom: 1px solid gray;text-align: left;height: 30px;padding: 6px;"><?php echo $item->product_desc; ?></td>
                     <td width="10%" style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($item->so_qty,0); ?></td>
                     <td width="10%" style="border-bottom: 1px solid gray;text-align: center;height: 30px;padding: 6px;"><?php echo $item->unit_name; ?></td>
                     <td width="10%" style="border-bottom: 1px solid gray;text-align: center;height: 30px;padding: 6px;"><?php echo $item->size; ?></td>
                     <td width="10%" style="border-bottom: 1px solid gray;text-align: left;height: 30px;padding: 6px;"><?php echo $item->batch_no; ?></td>
                     <td width="10%" style="border-bottom: 1px solid gray;text-align: left;height: 30px;padding: 6px;"><?php echo $item->exp_date; ?></td>
+                    <td width="10%" style="border-bottom: 1px solid gray;text-align: right;height: 30px;padding: 6px;"><?php echo number_format($item->srp_cost,2); ?></td>
                 </tr>
             <?php } ?>
 

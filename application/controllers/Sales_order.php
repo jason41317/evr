@@ -16,6 +16,7 @@ class Sales_order extends CORE_Controller
         $this->load->model('Sales_order_model');
         $this->load->model('Sales_order_item_model');
         $this->load->model('Salesperson_model');
+        $this->load->model('Users_model');
         $this->load->model('Departments_model');
         $this->load->model('Customers_model');
         $this->load->model('Products_model');
@@ -39,10 +40,12 @@ class Sales_order extends CORE_Controller
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );
 
-        $data['salespersons']=$this->Salesperson_model->get_list(
-            array('salesperson.is_active'=>TRUE,'salesperson.is_deleted'=>FALSE),
-            'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
-        );
+        // $data['salespersons']=$this->Salesperson_model->get_list(
+        //     array('salesperson.is_active'=>TRUE,'salesperson.is_deleted'=>FALSE),
+        //     'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
+        // );
+
+        $data['salespersons']=$this->Users_model->get_user_list();
 
         //data required by active view
         $data['customers']=$this->Customers_model->get_list(
@@ -141,13 +144,14 @@ class Sales_order extends CORE_Controller
                         'order_status.order_status',
                         'departments.department_name',
                         'IF(sales_order.address="",customers.address,sales_order.address) as address',
-                        'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson'
+                        'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as salesperson'
                 
                     ),
                     array(
                         array('customers','customers.customer_id=sales_order.customer_id','left'),
                         array('departments','departments.department_id=sales_order.department_id','left'),
                         array('salesperson','salesperson.salesperson_id=sales_order.salesperson_id','left'),
+                        array('user_accounts','user_accounts.user_id=sales_order.salesperson_id','left'),
                         array('order_status','order_status.order_status_id=sales_order.order_status_id','left')
                     )
 
@@ -240,13 +244,15 @@ class Sales_order extends CORE_Controller
 
                 //treat NOW() as function and not string
                 $m_sales_order->set('date_created','NOW()'); //treat NOW() as function and not string
+                $m_sales_order->set('date_order','NOW()');
 
                 $m_sales_order->department_id=$this->input->post('department',TRUE);
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);
                 $m_sales_order->address=$this->input->post('address',TRUE);
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
-                $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
-                $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
+                // $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
+                $m_sales_order->salesperson_id=$this->session->user_id;
+                $m_sales_order->set('date_order','NOW()');
                 $m_sales_order->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                 $m_sales_order->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_sales_order->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
@@ -346,8 +352,8 @@ class Sales_order extends CORE_Controller
                 $m_sales_order->remarks=$this->input->post('remarks',TRUE);
                 $m_sales_order->customer_id=$this->input->post('customer',TRUE);
                 $m_sales_order->address=$this->input->post('address',TRUE);
-                $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
-                $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
+                // $m_sales_order->salesperson_id=$this->input->post('salesperson_id',TRUE);
+                // $m_sales_order->date_order=date('Y-m-d',strtotime($this->input->post('date_order',TRUE)));
                 $m_sales_order->total_overall_discount=$this->get_numeric_value($this->input->post('total_overall_discount',TRUE));
                 $m_sales_order->total_overall_discount_amount=$this->get_numeric_value($this->input->post('total_overall_discount_amount',TRUE));
                 $m_sales_order->total_discount=$this->get_numeric_value($this->input->post('summary_discount',TRUE));
@@ -423,6 +429,42 @@ class Sales_order extends CORE_Controller
 
 
             //***************************************************************************************
+            case 'completed':
+                $m_sales_order=$this->Sales_order_model;
+                $sales_order_id=$this->input->post('sales_order_id',TRUE);
+
+
+                $m_sales_order->begin();
+
+                $m_sales_order->is_completed = 1;
+                $m_sales_order->completed_by_user = $this->session->user_id;
+                $m_sales_order->set('completed_datetime','NOW()');
+                $m_sales_order->modify($sales_order_id);
+
+
+                $sal_info=$m_sales_order->get_list($sales_order_id,'so_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=16; // TRANS TYPE
+                $m_trans->trans_log='Completed : '.$sal_info[0]->so_no;
+                $m_trans->save();
+
+                $m_sales_order->commit();
+
+                if($m_sales_order->status()===TRUE){
+                    $response['title'] = 'Success!';
+                    $response['stat'] = 'success';
+                    $response['msg'] = 'Sales order successfully completed.';
+                    //$response['row_updated']=$this->response_rows($sales_order_id);
+                    $response['row_complete']=$this->response_rows($sales_order_id);
+
+                    echo json_encode($response);
+                }
+
+                break;
+            
             case 'finalized':
                 $m_sales_order=$this->Sales_order_model;
                 $sales_order_id=$this->input->post('sales_order_id',TRUE);
@@ -450,9 +492,81 @@ class Sales_order extends CORE_Controller
                 if($m_sales_order->status()===TRUE){
                     $response['title'] = 'Success!';
                     $response['stat'] = 'success';
-                    $response['msg'] = 'Sales order successfully updated.';
+                    $response['msg'] = 'Sales order successfully finalized.';
                     //$response['row_updated']=$this->response_rows($sales_order_id);
                     $response['row_finalize']=$this->response_rows($sales_order_id);
+
+                    echo json_encode($response);
+                }
+
+                break;
+            
+            case 'locked':
+                $m_sales_order=$this->Sales_order_model;
+                $sales_order_id=$this->input->post('sales_order_id',TRUE);
+
+
+                $m_sales_order->begin();
+
+                $m_sales_order->is_locked = 1;
+                $m_sales_order->locked_by_user = $this->session->user_id;
+                $m_sales_order->set('locked_datetime','NOW()');
+                $m_sales_order->modify($sales_order_id);
+
+
+                $sal_info=$m_sales_order->get_list($sales_order_id,'so_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=16; // TRANS TYPE
+                $m_trans->trans_log='Locked : '.$sal_info[0]->so_no;
+                $m_trans->save();
+
+                $m_sales_order->commit();
+
+                if($m_sales_order->status()===TRUE){
+                    $response['title'] = 'Success!';
+                    $response['stat'] = 'success';
+                    $response['msg'] = 'Sales order successfully locked.';
+                    //$response['row_updated']=$this->response_rows($sales_order_id);
+                    $response['row_lock']=$this->response_rows($sales_order_id);
+
+                    echo json_encode($response);
+                }
+
+                break;
+            
+            case 'unlocked':
+                $m_sales_order=$this->Sales_order_model;
+                $sales_order_id=$this->input->post('sales_order_id',TRUE);
+
+
+                $m_sales_order->begin();
+
+                $m_sales_order->is_locked = 0;
+                $m_sales_order->locked_by_user = $this->session->user_id;
+                $m_sales_order->set('locked_datetime','NOW()');
+                $m_sales_order->modify($sales_order_id);
+
+
+                $sal_info=$m_sales_order->get_list($sales_order_id,'so_no');
+                $m_trans=$this->Trans_model;
+                $m_trans->user_id=$this->session->user_id;
+                $m_trans->set('trans_date','NOW()');
+                $m_trans->trans_key_id=2; //CRUD
+                $m_trans->trans_type_id=16; // TRANS TYPE
+                $m_trans->trans_log='Unlocked : '.$sal_info[0]->so_no;
+                $m_trans->save();
+
+                $m_sales_order->commit();
+
+                if($m_sales_order->status()===TRUE){
+                    $response['title'] = 'Success!';
+                    $response['stat'] = 'success';
+                    $response['msg'] = 'Sales order successfully unlocked.';
+                    //$response['row_updated']=$this->response_rows($sales_order_id);
+                    $response['row_unlock']=$this->response_rows($sales_order_id);
 
                     echo json_encode($response);
                 }
@@ -656,13 +770,15 @@ class Sales_order extends CORE_Controller
                 'customers.customer_name',
                 'sales_order.order_status_id',
                 'order_status.order_status',
-                'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson',
-                'sales_order.is_finalized'
+                'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as salesperson',
+                'sales_order.is_completed',
+                'sales_order.is_finalized',
+                'sales_order.is_locked'
             ),
 
             array(
                 array('departments','departments.department_id=sales_order.department_id','left'),
-                array('salesperson','salesperson.salesperson_id=sales_order.salesperson_id','left'),
+                array('user_accounts','user_accounts.user_id=sales_order.salesperson_id','left'),
                 array('customers','customers.customer_id=sales_order.customer_id','left'),
                 array('order_status','order_status.order_status_id=sales_order.order_status_id','left')
             )

@@ -13,6 +13,7 @@ class Picklist extends CORE_Controller
         $this->load->model('Picklist_item_model');
         $this->load->model('Sales_order_model');
         $this->load->model('Salesperson_model');
+        $this->load->model('Users_model');
         $this->load->model('Departments_model');
         $this->load->model('Customers_model');
         $this->load->model('Products_model');
@@ -36,10 +37,12 @@ class Picklist extends CORE_Controller
             array('departments.is_active'=>TRUE,'departments.is_deleted'=>FALSE)
         );
 
-        $data['salespersons']=$this->Salesperson_model->get_list(
-            array('salesperson.is_active'=>TRUE,'salesperson.is_deleted'=>FALSE),
-            'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
-        );
+        // $data['salespersons']=$this->Salesperson_model->get_list(
+        //     array('salesperson.is_active'=>TRUE,'salesperson.is_deleted'=>FALSE),
+        //     'salesperson_id, acr_name, CONCAT(firstname, " ", middlename, " ", lastname) AS fullname, firstname, middlename, lastname'
+        // );
+
+        $data['salespersons']=$this->Users_model->get_user_list();
 
         //data required by active view
         $data['customers']=$this->Customers_model->get_list(
@@ -473,12 +476,13 @@ class Picklist extends CORE_Controller
                         'order_status.order_status',
                         'departments.department_name',
                         'IF(picklist.address="",customers.address,picklist.address) as address',
-                        'CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson'
+                        'CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as salesperson'
                     ),
                     array(
                         array('customers','customers.customer_id=picklist.customer_id','left'),
                         array('departments','departments.department_id=picklist.department_id','left'),
                         array('salesperson','salesperson.salesperson_id=picklist.salesperson_id','left'),
+                        array('user_accounts','user_accounts.user_id=picklist.salesperson_id','left'),
                         array('order_status','order_status.order_status_id=picklist.picklist_status_id','left')
                     )
 

@@ -11,6 +11,7 @@ class Sales_detailed_summary extends CORE_Controller {
             'Company_model',
             'Customers_model',
             'Salesperson_model',
+            'Users_model',
             'Refproduct_model',
             'Suppliers_model'
         ));
@@ -25,10 +26,14 @@ class Sales_detailed_summary extends CORE_Controller {
         $data['_top_navigation']=$this->load->view('template/elements/top_navigation','',TRUE);
 
         $data['customers']=$this->Customers_model->get_customer_list_for_sales_report();
-        $data['salespersons']=$this->Salesperson_model->get_list(
-            'is_deleted=FALSE AND is_active=TRUE',
-            'salesperson_id, CONCAT(firstname, " " , lastname, " - ", acr_name) AS salesperson_name, firstname, lastname, acr_name'
-        );
+
+        // $data['salespersons']=$this->Salesperson_model->get_list(
+        //     'is_deleted=FALSE AND is_active=TRUE',
+        //     'salesperson_id, CONCAT(firstname, " " , lastname, " - ", acr_name) AS salesperson_name, firstname, lastname, acr_name'
+        // );
+
+        $data['salespersons']=$this->Users_model->get_user_list();
+
         $data['product_types']=$this->Refproduct_model->get_list(
             'is_deleted=FALSE'
         );

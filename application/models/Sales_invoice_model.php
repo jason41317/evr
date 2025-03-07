@@ -275,7 +275,7 @@ class Sales_invoice_model extends CORE_Model
                 )as cost_of_sales
 
                 FROM
-                (SELECT si.sales_inv_no,si.date_invoice,sii.inv_price, CONCAT(sp.firstname, ' ', sp.lastname, ' - ', sp.acr_name) AS salesperson_name,
+                (SELECT si.sales_inv_no,si.date_invoice,sii.inv_price, CONCAT(sp.user_fname, ' ', sp.user_mname, ' ', sp.user_lname) AS salesperson_name,
                 (CASE 
                     WHEN isnull(si.date_delivered) 
                     THEN ''
@@ -312,7 +312,7 @@ class Sales_invoice_model extends CORE_Model
                 INNER JOIN sales_invoice_items as sii ON si.sales_invoice_id=sii.sales_invoice_id
                 LEFT JOIN (products as pr  LEFT JOIN refproduct as refp ON refp.refproduct_id=pr.refproduct_id)ON sii.product_id=pr.product_id
                 LEFT JOIN suppliers as s ON pr.supplier_id=s.supplier_id
-                LEFT JOIN salesperson as sp ON sp.salesperson_id=si.salesperson_id
+                LEFT JOIN user_accounts as sp ON sp.user_id=si.salesperson_id
                 LEFT JOIN (
                 SELECT 
                     ai.inv_no,
@@ -481,19 +481,19 @@ class Sales_invoice_model extends CORE_Model
             si.salesperson_id,
             si.sales_invoice_id,
             si.sales_inv_no,
-            CONCAT(sp.firstname, ' ', sp.lastname) AS salesperson_name,
+            CONCAT(sp.user_fname, ' ', sp.user_lname) AS salesperson_name,
             si.date_invoice as date_invoice,
             si.remarks,
             sii.inv_line_total_price AS total_amount_invoice
         FROM
             (sales_invoice AS si
-            INNER JOIN salesperson AS sp ON sp.salesperson_id = si.salesperson_id)
+            INNER JOIN user_accounts AS sp ON sp.user_id = si.salesperson_id)
                 INNER JOIN
             sales_invoice_items AS sii ON sii.sales_invoice_id = si.sales_invoice_id
         WHERE
             si.is_active = TRUE
                 AND si.is_deleted = FALSE
-                AND si.date_invoice BETWEEN '$start' AND '$end' ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND sp.salesperson_id='."'".$salesperson_id."'")."
+                AND si.date_invoice BETWEEN '$start' AND '$end' ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND si.salesperson_id='."'".$salesperson_id."'")."
                 
                 
         UNION ALL
@@ -501,17 +501,17 @@ class Sales_invoice_model extends CORE_Model
         SELECT si.salesperson_id,
             si.sales_invoice_id,
             CONCAT(ai.adjustment_code, ' (', si.sales_inv_no,')') as sales_inv_no,
-            CONCAT(sp.firstname, ' ', sp.lastname) AS salesperson_name,
+            CONCAT(sp.user_fname, ' ', sp.user_lname) AS salesperson_name,
             ai.date_adjusted as date_invoice,
             si.remarks,
             (aii.adjust_line_total_price * -1) as total_amount_invoice 
             FROM  adjustment_items aii 
                 LEFT JOIN adjustment_info ai ON ai.adjustment_id  =aii.adjustment_id  
                 LEFT JOIN sales_invoice si On si.sales_inv_no = ai.inv_no
-                LEFT JOIN salesperson AS sp ON sp.salesperson_id = si.salesperson_id
+                LEFT JOIN user_accounts AS sp ON sp.user_id = si.salesperson_id
                 WHERE ai.is_active = TRUE AND ai.is_deleted = FALSE AND ai.is_returns = TRUE
                 AND  si.is_active = TRUE AND si.is_deleted = FALSE AND
-                si.date_invoice BETWEEN '$start' AND '$end'  AND si.inv_type = 1   ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND sp.salesperson_id='."'".$salesperson_id."'")."     
+                si.date_invoice BETWEEN '$start' AND '$end'  AND si.inv_type = 1   ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND si.salesperson_id='."'".$salesperson_id."'")."     
         
 
          ORDER BY salesperson_id";
@@ -529,11 +529,11 @@ class Sales_invoice_model extends CORE_Model
             si.salesperson_id,
             si.sales_invoice_id,
             si.sales_inv_no,
-            CONCAT(sp.firstname, ' ', sp.lastname) AS salesperson_name,
+            CONCAT(sp.user_fname, ' ', sp.user_lname) AS salesperson_name,
             SUM(sii.inv_line_total_price) AS inv_line_total_price
         FROM
             (sales_invoice AS si
-            INNER JOIN salesperson AS sp ON sp.salesperson_id = si.salesperson_id)
+            INNER JOIN user_accounts AS sp ON sp.user_id = si.salesperson_id)
                 INNER JOIN
             sales_invoice_items AS sii ON sii.sales_invoice_id = si.sales_invoice_id
             INNER JOIN products AS p ON p.product_id = sii.product_id
@@ -542,7 +542,7 @@ class Sales_invoice_model extends CORE_Model
             ".($refproduct_id == 'all' || $refproduct_id == null ? '' : 'AND p.refproduct_id='."'".$refproduct_id."'")."
             ".($supplier_id == 'all' || $supplier_id == null ? '' : 'AND p.supplier_id='."'".$supplier_id."'")."
                 AND si.is_deleted = FALSE
-                AND si.date_invoice BETWEEN '$start' AND '$end' ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND sp.salesperson_id='."'".$salesperson_id."'")."
+                AND si.date_invoice BETWEEN '$start' AND '$end' ".($salesperson_id == 'all' || $salesperson_id == null ? '' : 'AND si.salesperson_id='."'".$salesperson_id."'")."
         GROUP BY si.salesperson_id) as main_sales
         
         LEFT JOIN 

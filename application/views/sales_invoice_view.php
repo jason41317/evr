@@ -418,7 +418,7 @@
                                                                     <select name="salesperson_id" id="cbo_salesperson" data-error-msg="Sales person is required." disabled>
                                                                         <option value="0">[ Create New Salesperson ]</option>
                                                                         <?php foreach ($salespersons as $salesperson) { ?>
-                                                                            <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name . ' - ' . $salesperson->fullname; ?></option>
+                                                                            <option value="<?php echo $salesperson->user_id; ?>"><?php echo $salesperson->full_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>

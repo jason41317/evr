@@ -246,7 +246,7 @@
                                                             <select name="salesperson" id="salesperson" class="form-control">
                                                                 <option value="-1">ALL</option>
                                                                 <?php foreach ($salespersons as $salesperson) { ?>
-                                                                    <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->fullname; ?></option>
+                                                                    <option value="<?php echo $salesperson->user_id; ?>"><?php echo $salesperson->full_name; ?></option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -368,7 +368,7 @@
                                                                     <select name="salesperson_id" id="cbo_salesperson" disabled>
                                                                         <option value="0">[ Create New Salesperson ]</option>
                                                                         <?php foreach ($salespersons as $salesperson) { ?>
-                                                                            <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name . ' - ' . $salesperson->fullname; ?></option>
+                                                                            <option value="<?php echo $salesperson->user_id; ?>"><?php echo $salesperson->full_name; ?></option>
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>
@@ -405,7 +405,7 @@
                                                                                 <th width="10%">Qty</th>
                                                                                 <th width="10%">UM</th>
                                                                                 <th width="10%">Pack Size</th>
-                                                                                <th width="30%">Item</th>
+                                                                                <th width="25%">Item</th>
                                                                                 <th width="20%" style="text-align: right; display: none;">Unit Price</th>
                                                                                 <th width="12%" style="text-align: right; display: none;">Discount</th>
                                                                                 <th style="display: none;">T.D</th> <!-- total discount -->
@@ -415,9 +415,10 @@
                                                                                 <th class="hidden">V.I</th>
                                                                                 <th class="hidden">N.V</th>
                                                                                 <td class="hidden">Item ID</td>
-                                                                                <th>Batch</th>
-                                                                                <th>Expiration</th>
-                                                                                <th>
+                                                                                <th width="10%">Batch</th>
+                                                                                <th width="10%">Expiration</th>
+                                                                                <th width="10%" style="text-align: right;">Unit Cost</th>
+                                                                                <th width="15%">
                                                                                     <center>Action</center>
                                                                                 </th>
                                                                             </tr>
@@ -1837,9 +1838,9 @@
             var newRowItem = function(d) {
                 return '<tr>'+
                 '<td width="10%"><input name="so_qty[]" type="text" class="number form-control trigger-keyup" value="'+ d.so_qty+'"></td>'+
-                '<td width="5%">'+ d.unit_name+'</td>'+
+                '<td width="10%">'+ d.unit_name+'</td>'+
                 '<td width="10%">'+ d.size + '</td>' + 
-                '<td width="30%">'+d.product_desc+'</td>'+
+                '<td width="25%">'+d.product_desc+'</td>'+
                 '<td width="11%" style="display: none;"><input name="so_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.so_price,4)+'" style="text-align:right;"></td>'+
                 '<td width="11%" style="display: none;"><input name="so_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.so_discount,4)+'" style="text-align:right;"></td>'+
                 '<td style="display: none;" width="11%"><input name="so_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.so_line_total_discount,4)+'" readonly></td>'+
@@ -1849,9 +1850,9 @@
                 '<td style="display: none;"><input name="so_tax_amount[]" type="text" class="numeric form-control" value="'+ d.so_tax_amount+'" readonly></td>'+
                 '<td style="display: none;"><input name="so_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.so_non_tax_amount+'" readonly></td>'+
                 '<td style="display: none;"><input name="product_id[]" type="text" class="form-control" value="'+ d.product_id+'" readonly></td>'+
-                '<td><input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no+'" readonly></td>'+
-                '<td><input name="exp_date[]" type="text" class="form-control" value="'+ d.exp_date+'" readonly></td>'+
-                '<td width="11%" style="display: none;"><input name="srp_cost[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.srp_cost,4)+'" style="text-align:right;"></td>'+
+                '<td width="10%"><input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no+'" readonly></td>'+
+                '<td width="10%"><input name="exp_date[]" type="text" class="form-control" value="'+ d.exp_date+'" readonly></td>'+
+                '<td width="10%"><input name="srp_cost[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.srp_cost,4)+'" style="text-align:right;" readonly></td>'+
                 '<td width="15%" align="center"><button type="button" name="copy_item" class="btn btn-orange"><i class="fa fa-files-o"></i></button> <button type="button" name="search_item" class="btn btn-warning"><i class="fa fa-search"></i></button> <button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>' +
                 '</tr>';
             };

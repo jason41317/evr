@@ -11,7 +11,7 @@
                     <td class="table-cellpadding" width="15%">Sold To :</td>
                     <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;" width="30%"><strong><?php if ($_GET['category'] == 1) { echo $sales_info->customer_name; } else { echo $sales_info->department_name; }?></strong></td>
                     <td class="table-cellpadding">REF NO. :</td>
-                    <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;"><strong><?php echo $sales_info->so_no.' '.$sales_info->acr_name; ?></strong></td>
+                    <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;"><strong><?php echo $sales_info->so_no.' '.$sales_info->new_salesperson; ?></strong></td>
                 </tr>
                 <tr>
                     <td class="table-cellpadding">ADDRESS :</td>

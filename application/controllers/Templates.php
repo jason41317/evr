@@ -606,12 +606,13 @@ class Templates extends CORE_Controller {
 
                 $info=$m_sales_invoice->get_list(
                     $filter_value,
-                    'sales_invoice.*,departments.department_name,customers.tin_no,customers.customer_name, sales_invoice.address,sales_order.so_no,salesperson.*',
+                    'sales_invoice.*,departments.department_name,customers.tin_no,customers.customer_name, sales_invoice.address,sales_order.so_no,salesperson.*,CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_lname) as new_salesperson',
                     array(
                         array('departments','departments.department_id=sales_invoice.issue_to_department','left'),
                         array('customers','customers.customer_id=sales_invoice.customer_id','left'),
                         array('sales_order','sales_order.sales_order_id=sales_invoice.sales_order_id','left'),
-                        array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left')
+                        array('salesperson','salesperson.salesperson_id=sales_invoice.salesperson_id','left'),
+                        array('user_accounts','user_accounts.user_id=sales_invoice.salesperson_id','left')
                     )
                 );
 
@@ -757,10 +758,11 @@ class Templates extends CORE_Controller {
     
                     $info=$m_sales_order->get_list(
                         $filter_value,
-                        'sales_order.*,departments.department_name,customers.customer_name,CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson',
+                        'sales_order.*,departments.department_name,customers.customer_name,CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as salesperson',
                         array(
                             array('departments','departments.department_id=sales_order.department_id','left'),
                             array('salesperson','salesperson.salesperson_id=sales_order.salesperson_id','left'),
+                            array('user_accounts','user_accounts.user_id=sales_order.salesperson_id','left'),
                             array('customers','customers.customer_id=sales_order.customer_id','left')
                         )
                     );
@@ -824,10 +826,11 @@ class Templates extends CORE_Controller {
     
                     $info=$m_picklist->get_list(
                         $filter_value,
-                        'picklist.*,departments.department_name,customers.customer_name,CONCAT_WS(" ",salesperson.firstname,salesperson.middlename,salesperson.lastname) as salesperson',
+                        'picklist.*,departments.department_name,customers.customer_name,CONCAT_WS(" ",user_accounts.user_fname,user_accounts.user_mname,user_accounts.user_lname) as salesperson',
                         array(
                             array('departments','departments.department_id=picklist.department_id','left'),
                             array('salesperson','salesperson.salesperson_id=picklist.salesperson_id','left'),
+                            array('user_accounts','user_accounts.user_id=picklist.salesperson_id','left'),
                             array('customers','customers.customer_id=picklist.customer_id','left')
                         )
                     );

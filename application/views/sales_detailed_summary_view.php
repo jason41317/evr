@@ -172,7 +172,7 @@
                                                                             <select id="cbo_salesperson" class="form-control" style="width: 100%;">
                                                                                 <option value="all">[All Salesperson]</option>
                                                                                 <?php foreach($salespersons as $salesperson) { ?>
-                                                                                    <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->salesperson_name; ?></option>
+                                                                                    <option value="<?php echo $salesperson->user_id; ?>"><?php echo $salesperson->full_name; ?></option>
                                                                                 <?php } ?>
                                                                             </select>
                                                                         </div>

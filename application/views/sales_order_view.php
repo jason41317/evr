@@ -142,6 +142,23 @@
         background-color: transparent!important; 
         } 
 
+        button[name="search_item"] {
+            font-size: 15px !important;
+            padding-top: 4px !important;
+            padding-right: 7px !important;
+            padding-bottom: 4px !important;
+            padding-left: 7px !important;
+            margin-right: 5px;
+        }
+
+        button[name="remove_item"] {
+            font-size: 15px !important;
+            padding-top: 4px !important;
+            padding-right: 7px !important;
+            padding-bottom: 4px !important;
+            padding-left: 7px !important;
+        }
+
 
         .hide-el {
             display: none!important;
@@ -189,7 +206,7 @@
                 <select name="salesperson" id="salesperson" class="form-control">
                     <option value="-1">ALL</option>
                     <?php foreach($salespersons as $salesperson){ ?>
-                        <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->fullname; ?></option>
+                        <option value="<?php echo $salesperson->user_id; ?>"><?php echo $salesperson->full_name; ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -241,14 +258,16 @@
                 <thead class="">
                 <tr>
                     <th>&nbsp;&nbsp;</th>
-                    <th width="12%">SO #</th>
+                    <th width="10%">SO #</th>
                     <th>Order Date</th>
                     <th width="10%">Time</th>
                     <th width="10%">Customer</th>
                     <th width="10%">Remarks</th>
                     <th>Salesperson</th>
-                    <th width="10%">Order Status</th>
-                    <th width="10%" style="text-align: center;">Is Finalized?</th>
+                    <th width="5%">Order Status</th>
+                    <th width="5%" style="text-align: center;">Is Completed?</th>
+                    <th width="5%" style="text-align: center;">Is Finalized?</th>
+                    <th width="5%" style="text-align: center;">Is Locked?</th>
                     <th width="15%" style="text-align: left;">Action</th>
                     <th></th>
                 </tr>
@@ -315,20 +334,20 @@
                         </select>
                     </div>
 
-                    <div class="col-sm-4">
+                    <div class="col-sm-4 hidden">
                         Sales person :<br/>
-                        <select name="salesperson_id" id="cbo_salesperson" data-error-msg="Salesperson is required." required>
+                        <select name="salesperson_id" id="cbo_salesperson" data-error-msg="Salesperson is required.">
                             <option value="0">[ Create New Salesperson ]</option>
                             <?php foreach($salespersons as $salesperson){ ?>
                                 <option value="<?php echo $salesperson->salesperson_id; ?>"><?php echo $salesperson->acr_name.' - '.$salesperson->fullname; ?></option>
                             <?php } ?>
                         </select>
                     </div>
-                    <div class="col-sm-2 col-sm-offset-1">
+                    <div class="col-sm-2 col-sm-offset-5">
                         Order Date : <br />
                         <div class="input-group">
 
-                            <input type="text" name="date_order" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Order" data-error-msg="Please set the date this items are ordered!" required>
+                            <input type="text" name="date_order" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>" placeholder="Date Order" data-error-msg="Please set the date this items are ordered!" required disabled>
                                  <span class="input-group-addon">
                                      <i class="fa fa-calendar"></i>
                                 </span>
@@ -398,19 +417,19 @@
                         <thead class="">
                         <tr>
 
-                            <th width="10%">Qty</th>
-                            <th width="10%">UM</th>
-                            <th width="10%">Pack Size</th>
+                            <th width="11%">Qty</th>
+                            <th width="12%">UM</th>
+                            <th width="12%">Pack Size</th>
                             <th width="30%">Item</th>
-                            <th width="20%" style="text-align: right;">Unit Price</th>
+                            <th width="1%" style="text-align: right;">Unit Price</th>
                             <th width="12%" style="text-align: right; display: none;">Discount</th>
                             <th style="display: none;">T.D</th> <!-- total discount -->
                             <th style="display: none;">Tax %</th>
-                            <th width="20%" style="text-align: right">Total</th>
+                            <th width="12%" style="text-align: right">Total</th>
                             <th class="hidden">Total Price</th>
                             <th class="hidden">V.I</th>
                             <th class="hidden">N.V</th>
-                            <td class="hidden">Item ID</td>
+                            <td width="11%" class="hidden">Item ID</td>
                             <th><center>Action</center></th>
                         </tr>
                         </thead>
@@ -551,21 +570,84 @@
     </div>
 </div><!---modal-->
 
+<div id="modal_completed" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content"><!---content--->
+            <div class="modal-header">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Complete</h4>
+
+            </div>
+
+            <div class="modal-body">
+                <p id="modal-body-message">Are you sure want to complete this order?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_yes_complete" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+            </div>
+        </div><!---content---->
+    </div>
+</div><!---modal-->
+
 <div id="modal_finalized" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
     <div class="modal-dialog modal-sm">
         <div class="modal-content"><!---content--->
             <div class="modal-header">
                 <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
-                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Finalized</h4>
+                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Finalize</h4>
 
             </div>
 
             <div class="modal-body">
-                <p id="modal-body-message">Are you sure want to finalize order ?</p>
+                <p id="modal-body-message">Are you sure want to finalize this order?</p>
             </div>
 
             <div class="modal-footer">
                 <button id="btn_yes_finalize" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+            </div>
+        </div><!---content---->
+    </div>
+</div><!---modal-->
+
+<div id="modal_locked" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content"><!---content--->
+            <div class="modal-header">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Lock</h4>
+
+            </div>
+
+            <div class="modal-body">
+                <p id="modal-body-message">Are you sure want to lock this order?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_yes_lock" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
+                <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
+            </div>
+        </div><!---content---->
+    </div>
+</div><!---modal-->
+
+<div id="modal_unlocked" class="modal fade" tabindex="-1" role="dialog"><!--modal-->
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content"><!---content--->
+            <div class="modal-header">
+                <button type="button" class="close"   data-dismiss="modal" aria-hidden="true">X</button>
+                <h4 class="modal-title"><span id="modal_mode"> </span>Confirm Unlock</h4>
+
+            </div>
+
+            <div class="modal-body">
+                <p id="modal-body-message">Are you sure want to unlock this order?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btn_yes_unlock" type="button" class="btn btn-danger" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">Yes</button>
                 <button id="btn_close" type="button" class="btn btn-default" data-dismiss="modal" style="text-transform: capitalize;font-family: Tahoma, Georgia, Serif;">No</button>
             </div>
         </div><!---content---->
@@ -723,6 +805,51 @@
         </div><!---content---->
     </div>
 </div><!---modal-->
+
+<div id="modal_search_list" class="modal fade" tabindex="-1" role="dialog">
+    <!--modal-->
+    <div class="modal-dialog" style="width: 90%;">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                <h2 class="modal-title" style="color: white;"><span id="modal_mode"> </span>Choose Item</h2>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <table id="tbl_search_list" class="table table-striped table-bordered table-responsive" cellspacing="0" width="100%">
+                        <thead class="">
+                            <tr>
+                                <th>PLU</th>
+                                <th>Description</th>
+                                <th>Batch</th>
+                                <th>Expiration</th>
+                                <th>On Hand</th>
+                                <th>Projected Qty</th>
+                                <!-- <th>SRP</th>
+                                <th>Dealer</th>
+                                <th>Distributor</th>
+                                <th>Discounted</th>
+                                <th>Selling/Vet</th>
+                                <th>Cost</th>
+                                <th>Action</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Sales Order Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button id="btn_accept" type="button" class="btn btn-green" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Receive this Order</button> -->
+                <button id="cancel_search_modal" class="btn btn-default" data-dismiss="modal" style="text-transform: none;font-family: Tahoma, Georgia, Serif;">Cancel</button>
+            </div>
+        </div>
+        <!---content-->
+    </div>
+</div>
+<!---modal-->
 
 
 
@@ -944,6 +1071,7 @@ $(document).ready(function(){
 
     var oTableItems={
         qty : 'td:eq(0)',
+        product_desc : 'td:eq(3)',
         unit_price : 'td:eq(4)',
         discount : 'td:eq(5)',
         total_line_discount : 'td:eq(6)',
@@ -990,7 +1118,7 @@ $(document).ready(function(){
             "dom": '<"toolbar">frtip',
             "bLengthChange":false,
             "pageLength":15,
-            "order": [[ 10, "desc" ]],
+            "order": [[ 12, "desc" ]],
             // "ajax" : "Sales_order/transaction/list",
             oLanguage: {
                     sProcessing: '<center><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></center>'
@@ -1039,6 +1167,18 @@ $(document).ready(function(){
                 { targets:[8],data: null,
                     render: function (data, type, full, meta){
                         var _attribute='';
+                        if(data.is_completed=="1"){
+                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
+                        }else{
+                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
+                        }
+
+                        return '<center><i '+_attribute+'></i></center>';
+                    }
+                },
+                { targets:[9],data: null,
+                    render: function (data, type, full, meta){
+                        var _attribute='';
                         if(data.is_finalized=="1"){
                             _attribute=' class="fa fa-check-circle" style="color:green;" ';
                         }else{
@@ -1048,32 +1188,82 @@ $(document).ready(function(){
                         return '<center><i '+_attribute+'></i></center>';
                     }
                 },
-                {
-                    targets:[9],data: null,
+                { targets:[10],data: null,
                     render: function (data, type, full, meta){
-                        var btnEdit  = ""
-                        var btnTrash  = so_btn_trash;
-                        var btnMarkClosed = ""
-                        var btnFinalized=  ""
-
-                        if(data.order_status_id == 1  || data.order_status_id == 3){
-                             btnEdit = so_btn_edit;
-                             btnMarkClosed = so_btn_mark_as_closed;
+                        var _attribute='';
+                        if(data.is_locked=="1"){
+                            _attribute=' class="fa fa-check-circle" style="color:green;" ';
+                        }else{
+                            _attribute=' class="fa fa-times-circle" style="color:red;" ';
                         }
 
-                        if(full.is_finalized == 0 || full.is_finalized == "0") {
-                            btnEdit = so_btn_edit;
-                            btnFinalized =  so_finalized
-                        }
-                        else {
-                            btnEdit = ""
-                            btnTrash = ""
-                        }
-
-                        return `${btnFinalized} ${btnEdit} ${btnTrash} ${btnMarkClosed} `;
+                        return '<center><i '+_attribute+'></i></center>';
                     }
                 },
-                { visible:false, targets:[10],data: "sales_order_id" },
+                {
+                    targets:[11],data: null,
+                    render: function (data, type, full, meta){
+                        var btnCompleted = "";
+                        var btnFinalized = "";
+                        var btnEdit = "";
+                        var btnLock = "";
+                        var btnUnlock = "";
+                        var btnTrash = "";
+                        var btnMarkClosed = "";
+
+                        if(full.is_completed == 0 || full.is_completed == "0") {
+                            btnCompleted = so_btn_completed;
+                            btnFinalized = "";
+                            btnEdit = so_btn_edit;
+                            btnLock = "";
+                            btnUnlock = "";
+                            btnTrash = so_btn_trash;
+                            btnMarkClosed = so_btn_mark_as_closed;
+                        }
+                        else {
+                            if((full.is_finalized == 0 || full.is_finalized == "0") && (full.is_locked == 0 || full.is_locked == "0")) {
+                                btnCompleted = "";
+                                btnFinalized = so_btn_finalized;
+                                btnEdit = "";
+                                btnLock = so_btn_lock;
+                                btnUnlock = "";
+                                btnTrash = so_btn_trash;
+                                btnMarkClosed = so_btn_mark_as_closed;
+                            }
+                            else if((full.is_finalized == 0 || full.is_finalized == "0") && (full.is_locked == 1 || full.is_locked == "1")) {
+                                btnCompleted = "";
+                                btnFinalized = "";
+                                btnEdit = "";
+                                btnLock = "";
+                                btnUnlock = so_btn_unlock;
+                                btnTrash = so_btn_trash;
+                                btnMarkClosed = so_btn_mark_as_closed;
+                            }
+                            else if(full.is_finalized == 1 || full.is_finalized == "1") {
+                                btnCompleted = "";
+                                btnFinalized = "";
+                                btnEdit = "";
+                                btnLock = "";
+                                btnUnlock = "";
+                                btnTrash = "";
+                                btnMarkClosed = so_btn_mark_as_closed;
+                            }
+                        }
+
+                        if(data.order_status_id == 2 || data.order_status_id == 4) {
+                            btnCompleted = "";
+                            btnFinalized = "";
+                            btnEdit = "";
+                            btnLock = "";
+                            btnUnlock = "";
+                            btnTrash = "";
+                            btnMarkClosed = "";
+                        }
+
+                        return `${btnCompleted} ${btnFinalized} ${btnEdit} ${btnLock} ${btnUnlock} ${btnTrash} ${btnMarkClosed} `;
+                    }
+                },
+                { visible:false, targets:[12],data: "sales_order_id" },
             ]
 
         }); 
@@ -1386,6 +1576,71 @@ $(document).ready(function(){
         $("#txt_start_date,#txt_end_date").on("change", function () {        
             $('#tbl_sales_order').DataTable().ajax.reload()
         });
+        
+        
+        $('#tbl_items > tbody').on('click', 'button[name="search_item"]', function() {
+            _selectRowTblItems = $(this).closest('tr');
+            var global_item_desc = _selectRowTblItems.find(oTableItems.product_desc).text();
+            //console.log(global_item_desc);
+
+            var _data = [];
+            _data.push({
+                name: "type",
+                value: 3
+            });
+            _data.push({
+                name: "description",
+                value: global_item_desc
+            });
+            _data.push({
+                name: "depid",
+                value: _cboDepartments.val()
+            });
+
+
+            $.ajax({
+                url: 'Picklist/transaction/current-items-search',
+                "dataType": "json",
+                "type": "POST",
+                cache: false,
+                dataType: 'json',
+                "data": _data,
+                beforeSend: function() {
+                    $('#tbl_search_list > tbody').html('<tr><td align="center" colspan="8"><br /><img src="assets/img/loader/ajax-loader-sm.gif" /><br /><br /></td></tr>');
+                },
+                success: function(response) {
+                    var rows = response.data;
+                    if (rows.length == 0) {
+                        showNotification({
+                            title: "<b style='color:white;display: inline;'>No Stocks!</b>",
+                            stat: "error",
+                            msg: "There are no stocks available for the item."
+                        });
+                    } else {
+                        $('#tbl_search_list > tbody').html('');
+                        $.each(rows, function(i, value) {
+                            $('#tbl_search_list > tbody').append('<tr class="row-item">' +
+                                '<td >' + value.product_code + '</td>' +
+                                '<td >' + value.product_desc + '</td>' +
+                                '<td >' + value.batch_no + '</td>' +
+                                '<td >' + value.exp_date + '</td>' +
+                                '<td >' + value.on_hand_per_batch + '</td>' +
+                                '<td >' + value.projected_qty + '</td>' +
+                                // '<td >' + value.srp + '</td>' +
+                                // '<td >' + value.srp_dealer + '</td>' +
+                                // '<td >' + value.srp_distributor + '</td>' +
+                                // '<td >' + value.srp_discounted + '</td>' +
+                                // '<td >' + value.srp_public + '</td>' +
+                                // '<td >' + value.srp_cost + '</td>' +
+                                // '<td ><button type="button" name="accept_search" class="btn btn-success"><i class="fa fa-check"></i></button> </td>' +
+                                '<tr></tr>'
+                            );
+                        });
+                        $("#modal_search_list").modal('show');
+                    }
+                }
+            });
+        });
 
 
 
@@ -1609,18 +1864,50 @@ $(document).ready(function(){
             }
         });
 
+        $('#tbl_sales_order tbody').on('click','button[name="complete_info"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+
+            if(data.is_completed === '1' || data.is_completed === 1 ){
+                showNotification({title:"Invalid",stat:"error",msg:"Only incomplete order can be completed."});
+            }else {
+
+            _selectedID=data.sales_order_id;
+
+            $('#modal_completed').modal('show');
+            }
+        });
+
         $('#tbl_sales_order tbody').on('click','button[name="finalize_info"]',function(){
             _selectRowObj=$(this).closest('tr');
             var data=dt.row(_selectRowObj).data();
 
             if(data.is_finalized === '1' || data.is_finalized === 1 ){
-                showNotification({title:"Invalid",stat:"error",msg:"Only Pending order can be finalized."});
+                showNotification({title:"Invalid",stat:"error",msg:"Only pending order can be finalized."});
             }else {
 
             _selectedID=data.sales_order_id;
 
             $('#modal_finalized').modal('show');
             }
+        });
+
+        $('#tbl_sales_order tbody').on('click','button[name="lock_info"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+
+            _selectedID=data.sales_order_id;
+
+            $('#modal_locked').modal('show');
+        });
+
+        $('#tbl_sales_order tbody').on('click','button[name="unlock_info"]',function(){
+            _selectRowObj=$(this).closest('tr');
+            var data=dt.row(_selectRowObj).data();
+
+            _selectedID=data.sales_order_id;
+
+            $('#modal_unlocked').modal('show');
         });
 
         $('#tbl_sales_order tbody').on('click','button[name="mark_as_closed"]',function(){
@@ -1702,12 +1989,48 @@ $(document).ready(function(){
             //}
         });
 
+        $('#btn_yes_complete').click(function(){
+            completedOrder().done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    //dt.row(_selectRowObj).remove().draw();
+                    dt.row(_selectRowObj).data(response.row_complete[0]).draw();
+                }
+
+            });
+            //}
+        });
+
         $('#btn_yes_finalize').click(function(){
             finalizedOrder().done(function(response){
                 showNotification(response);
                 if(response.stat=="success"){
                     //dt.row(_selectRowObj).remove().draw();
                     dt.row(_selectRowObj).data(response.row_finalize[0]).draw();
+                }
+
+            });
+            //}
+        });
+
+        $('#btn_yes_lock').click(function(){
+            lockedOrder().done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    //dt.row(_selectRowObj).remove().draw();
+                    dt.row(_selectRowObj).data(response.row_lock[0]).draw();
+                }
+
+            });
+            //}
+        });
+
+        $('#btn_yes_unlock').click(function(){
+            unlockedOrder().done(function(response){
+                showNotification(response);
+                if(response.stat=="success"){
+                    //dt.row(_selectRowObj).remove().draw();
+                    dt.row(_selectRowObj).data(response.row_unlock[0]).draw();
                 }
 
             });
@@ -1916,11 +2239,38 @@ $(document).ready(function(){
         });
     };
 
+    var completedOrder = function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Sales_order/transaction/completed",
+            "data":{sales_order_id : _selectedID}
+        });
+    };
+
     var finalizedOrder = function(){
         return $.ajax({
             "dataType":"json",
             "type":"POST",
             "url":"Sales_order/transaction/finalized",
+            "data":{sales_order_id : _selectedID}
+        });
+    };
+
+    var lockedOrder = function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Sales_order/transaction/locked",
+            "data":{sales_order_id : _selectedID}
+        });
+    };
+
+    var unlockedOrder = function(){
+        return $.ajax({
+            "dataType":"json",
+            "type":"POST",
+            "url":"Sales_order/transaction/unlocked",
             "data":{sales_order_id : _selectedID}
         });
     };
@@ -2000,22 +2350,25 @@ $(document).ready(function(){
 
 
         return '<tr>'+
-        '<td width="10%"><input name="so_qty[]" type="text" class="number form-control trigger-keyup" value="'+ d.so_qty+'"></td>'+
-        '<td width="5%">'+ d.unit_name+'</td>'+
-        '<td width="10%">'+ d.size + '</td>' + 
+        '<td width="11%"><input name="so_qty[]" type="text" class="number form-control trigger-keyup" value="'+ d.so_qty+'"></td>'+
+        '<td width="12%">'+ d.unit_name+'</td>'+
+        '<td width="12%">'+ d.size + '</td>' + 
         '<td width="30%">'+d.product_desc+'</td>'+
-        '<td width="11%"><input name="so_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.so_price,4)+'" style="text-align:right;"></td>'+
+        '<td width="12%"><input name="so_price[]" type="text" class="numeric form-control" value="'+accounting.formatNumber(d.so_price,4)+'" style="text-align:right;"></td>'+
         '<td width="11%" style="display: none;"><input name="so_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.so_discount,4)+'" style="text-align:right;"></td>'+
         '<td style="display: none;" width="11%"><input name="so_line_total_discount[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.so_line_total_discount,4)+'" readonly></td>'+
         '<td width="11%" style="display: none;"><input name="so_tax_rate[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.so_tax_rate,4)+'"></td>'+
-        '<td width="11%" align="right"><input name="so_line_total_gross[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.so_line_total_gross,4)+'" readonly></td>'+
+        '<td width="12%" align="right"><input name="so_line_total_gross[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.so_line_total_gross,4)+'" readonly></td>'+
         '<td class="hidden"><input name="so_line_total_price[]" type="text" class="numeric form-control" value="'+ accounting.formatNumber(d.so_line_total_price,4)+'" readonly></td>'+
         '<td style="display: none;"><input name="so_tax_amount[]" type="text" class="numeric form-control" value="'+ d.so_tax_amount+'" readonly></td>'+
         '<td style="display: none;"><input name="so_non_tax_amount[]" type="text" class="numeric form-control" value="'+ d.so_non_tax_amount+'" readonly></td>'+
         '<td style="display: none;"><input name="product_id[]" type="text" class="form-control" value="'+ d.product_id+'" readonly></td>'+
             '<td style="display: none;"><input name="batch_no[]" type="text" class="form-control" value="'+ d.batch_no+'" readonly></td>'+
             '<td style="display: none;"><input name="exp_date[]" type="text" class="numeric form-control" value="'+ d.exp_date+'" readonly></td>'+
-        '<td align="center"><button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button></td>'+
+        '<td width="11%" align="center">' +
+        '<button type="button" name="search_item" class="btn btn-warning"><i class="fa fa-search"></i></button>' +
+            '<button type="button" name="remove_item" class="btn btn-red"><i class="fa fa-trash"></i></button>' +
+        '</td>'+
         '</tr>';
 
 
