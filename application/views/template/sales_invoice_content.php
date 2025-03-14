@@ -34,7 +34,7 @@
                 <tr>
                     <td class="table-cellpadding" colspan="2"></td>
                     <td class="table-cellpadding">REF NO. :</td>
-                    <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;"><strong><?php echo $sales_info->so_no.' '.$sales_info->acr_name; ?></strong></td>
+                    <td class="table-cellpadding" style="border-bottom: 1px solid  #757575;"><strong><?php echo $sales_info->so_no.' '.$sales_info->new_salesperson; ?></strong></td>
                     <td class="table-cellpadding" colspan="2"></td>
                 </tr>
                 <tr>
