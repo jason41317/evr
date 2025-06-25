@@ -169,7 +169,7 @@ class Products_model extends CORE_Model {
         $sql="SELECT
 
                 m.*,
-                p.product_desc,p.product_desc1,rp.product_type,s.supplier_name,c.category_name,
+                p.product_desc,p.product_code,p.product_desc1,rp.product_type,s.supplier_name,c.category_name,
                 p.purchase_cost,p.sale_price,tt.tax_type,u.unit_name
 
                 FROM
